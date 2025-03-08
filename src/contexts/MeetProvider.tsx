@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
-import { nanoid } from 'nanoid';
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { nanoid } from "nanoid";
 import {
   Call,
   StreamCall,
   StreamVideo,
   StreamVideoClient,
   User,
-} from '@stream-io/video-react-sdk';
-import { User as ChatUser, StreamChat } from 'stream-chat';
-import { Chat } from 'stream-chat-react';
+} from "@stream-io/video-react-sdk";
+import { User as ChatUser, StreamChat } from "stream-chat";
+import { Chat } from "stream-chat-react";
 
-import LoadingOverlay from '../components/LoadingOverlay';
+import LoadingOverlay from "../components/LoadingOverlay";
 
 type MeetProviderProps = {
   meetingId: string;
   children: React.ReactNode;
 };
 
-export const CALL_TYPE = 'default';
+export const CALL_TYPE = "default";
 export const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY as string;
 export const GUEST_ID = `guest_${nanoid(15)}`;
 
@@ -50,7 +50,7 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
     };
 
     const setUpChat = async (user: ChatUser) => {
-      await _chatClient.connectUser(user, customProvider);
+      // await _chatClient.connectUser(user, customProvider);
       setChatClient(_chatClient);
       setLoading(false);
     };
@@ -66,11 +66,11 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
         },
       };
     } else {
-      user = {
-        id: GUEST_ID,
-        type: 'guest',
-        name: 'Guest',
-      };
+    user = {
+      id: GUEST_ID,
+      type: "guest",
+      name: "Guest",
+    };
     }
 
     const _chatClient = StreamChat.getInstance(API_KEY);
@@ -87,18 +87,20 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
 
     return () => {
       _videoClient.disconnectUser();
-      _chatClient.disconnectUser();
+      // _chatClient.disconnectUser();
     };
-  }, [clerkUser, isLoaded, isSignedIn, loading, meetingId]);
+  }, [clerkUser, isLoaded, isSignedIn, meetingId]);
 
   if (loading) return <LoadingOverlay />;
 
   return (
-    <Chat client={chatClient!}>
-      <StreamVideo client={videoClient!}>
-        <StreamCall call={call}>{children}</StreamCall>
-      </StreamVideo>
-    </Chat>
+      <Chat client={chatClient!}>
+    <StreamVideo client={videoClient!}>
+      <StreamCall call={call}>
+      {children}
+      </StreamCall>
+    </StreamVideo>
+    //   </Chat>
   );
 };
 

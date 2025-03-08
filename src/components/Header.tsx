@@ -1,33 +1,49 @@
-import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
-import clsx from 'clsx';
+// import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import clsx from "clsx";
 
-import Apps from './icons/Apps';
-import Avatar from './Avatar';
-import Feedback from './icons/Feedback';
-import Help from './icons/Help';
-import IconButton from './IconButton';
-import PlainButton from './PlainButton';
-import Videocam from './icons/Videocam';
-import Settings from './icons/Settings';
-import useTime from '../hooks/useTime';
+// import Apps from "./icons/Apps";
+import Avatar from "./Avatar";
+import Feedback from "./icons/Feedback";
+import Help from "./icons/Help";
+import IconButton from "./IconButton";
+// import PlainButton from "./PlainButton";
+import Videocam from "./icons/Videocam";
+import Settings from "./icons/Settings";
+import useTime from "../hooks/useTime";
+import { useState } from "react";
+import AiIcon from "./icons/AiIcon";
 
 interface HeaderProps {
   navItems?: boolean;
 }
 
 const Header = ({ navItems = true }: HeaderProps) => {
-  const { isLoaded, isSignedIn, user } = useUser();
+  // const { isLoaded, isSignedIn, user } = useUser();
+  // const { isLoaded } = useUser();
+  const [isLoaded, setIsLoaded] = useState<boolean>(false)
+  const user = {
+    name: "Guest",
+    fullName: "Guest 1",
+    image: undefined,
+    primaryEmailAddress: {
+      emailAddress: "guest_user@ai_interview.com",
+    },
+    hasImage: false,
+    imageUrl: "",
+  };
+
   const { currentDateTime } = useTime();
-  const email = user?.primaryEmailAddress?.emailAddress;
+  // const email = user?.primaryEmailAddress?.emailAddress;
 
   return (
     <header className="w-full px-4 pt-4 flex items-center justify-between bg-white">
       <div className="w-60 max-w-full">
         <a href="/#" className="flex items-center gap-2 w-full">
-          <Videocam width={40} height={40} color="var(--primary)" />
+          {/* <Videocam width={40} height={40} color="var(--primary)" /> */}
+          <AiIcon/>
           <div className="font-product-sans text-2xl leading-6 text-meet-gray select-none">
-            <span className="font-medium">Moogle </span>
-            <span>Meet</span>
+            <span className="font-medium">Ai </span>
+            <span>Interview</span>
           </div>
         </a>
       </div>
@@ -45,29 +61,30 @@ const Header = ({ navItems = true }: HeaderProps) => {
           </>
         )}
         <div className="ml-2 flex items-center justify-end w-[6.5625rem] lg:ml-5">
-          {navItems && (
+          {/* {navItems && (
             <div className="hidden sm:block">
               <IconButton title="Moogle apps" icon={<Apps />} />
             </div>
-          )}
+          )} */}
           <div
             className={clsx(
-              'w-[3.04rem] grow flex items-center justify-end [&_img]:w-9 [&_span]:w-9 [&_img]:h-9 [&_span]:h-9',
-              isLoaded ? 'animate-fade-in' : 'opacity-0'
+              "w-[3.04rem] grow flex items-center justify-end [&_img]:w-9 [&_span]:w-9 [&_img]:h-9 [&_span]:h-9",
+              isLoaded ? "animate-fade-in" : "opacity-0"
             )}
           >
-            {isSignedIn ? (
+            {
+              // isSignedIn ?
               <>
-                {!navItems && (
+                {/* {!navItems && (
                   <div className="hidden sm:block mr-3 font-roboto leading-4 text-right text-meet-black">
                     <div className="text-sm leading-4">{email}</div>
                     <div className="text-sm hover:text-meet-blue cursor-pointer">
                       Switch account
                     </div>
                   </div>
-                )}
+                )} */}
                 <div className="relative h-9">
-                  <UserButton />
+                  {/* <UserButton /> */}
                   <div className="absolute left-0 top-0 flex items-center justify-center pointer-events-none">
                     <Avatar
                       participant={{
@@ -79,11 +96,13 @@ const Header = ({ navItems = true }: HeaderProps) => {
                   </div>
                 </div>
               </>
-            ) : (
-              <SignInButton>
-                <PlainButton size="sm">Sign In</PlainButton>
-              </SignInButton>
-            )}
+
+              // : (
+              //   <SignInButton>
+              //     <PlainButton size="sm">Sign In</PlainButton>
+              //   </SignInButton>
+              // )
+            }
           </div>
         </div>
       </div>

@@ -1,96 +1,108 @@
-'use client';
-import { useContext, useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  CallingState,
-  CallParticipantResponse,
-  ErrorFromResponse,
-  GetCallResponse,
-  useCall,
-  useCallStateHooks,
-  useConnectedUser,
-} from '@stream-io/video-react-sdk';
-import { useChatContext } from 'stream-chat-react';
-import { useUser } from '@clerk/nextjs';
+"use client";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+// import {
+//   CallingState,
+//   CallParticipantResponse,
+//   ErrorFromResponse,
+//   GetCallResponse,
+//   useCall,
+//   useCallStateHooks,
+//   useConnectedUser,
+// } from "@stream-io/video-react-sdk";
+// import { useChatContext } from "stream-chat-react";
+import { useUser } from "@clerk/nextjs";
 
-import { AppContext, MEETING_ID_REGEX } from '@/contexts/AppProvider';
-import { GUEST_ID, tokenProvider } from '@/contexts/MeetProvider';
-import Button from '@/components/Button';
-import CallParticipants from '@/components/CallParticipants';
-import Header from '@/components/Header';
-import MeetingPreview from '@/components/MeetingPreview';
-import Spinner from '@/components/Spinner';
-import TextField from '@/components/TextField';
+import { AppContext, MEETING_ID_REGEX } from "@/contexts/AppProvider";
+// import { GUEST_ID, tokenProvider } from "@/contexts/MeetProvider";
+import Button from "@/components/Button";
+import CallParticipants from "@/components/CallParticipants";
+import Header from "@/components/Header";
+import MeetingPreview from "@/components/MeetingPreview";
+import Spinner from "@/components/Spinner";
+import TextField from "@/components/TextField";
+import { ai_interviwer } from "./constants";
+// import { SettingsOut } from "svix";
 
 interface LobbyProps {
   params: {
     meetingId: string;
   };
 }
+// user: {
+//   name: "Ai Interviewer",
+//   : 123,
+//   image: "https://i.ibb.co/hzGNkVs/sia-avtar.png",
+//   role: "host",
+// },
 
 const Lobby = ({ params }: LobbyProps) => {
   const { meetingId } = params;
   const validMeetingId = MEETING_ID_REGEX.test(meetingId);
   const { newMeeting, setNewMeeting } = useContext(AppContext);
-  const { client: chatClient } = useChatContext();
+  // const { client: chatClient } = useChatContext();
   const { isSignedIn } = useUser();
   const router = useRouter();
-  const connectedUser = useConnectedUser();
-  const call = useCall();
-  const { useCallCallingState } = useCallStateHooks();
-  const callingState = useCallCallingState();
-  const [guestName, setGuestName] = useState('');
-  const [errorFetchingMeeting, setErrorFetchingMeeting] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // const connectedUser = useConnectedUser();
+  // const call = useCall();
+  // const { useCallCallingState } = useCallStateHooks();
+  // const callingState = useCallCallingState();
+  const [guestName, setGuestName] = useState("");
+  // const [errorFetchingMeeting, setErrorFetchingMeeting] = useState(false);
+  const [loading,  setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
-  const [participants, setParticipants] = useState<CallParticipantResponse[]>(
-    []
-  );
+  // const [participants, setParticipants] = useState<CallParticipantResponse[]>([
+  //   ai_interviwer,
+  // ]);
   const isGuest = !isSignedIn;
 
   useEffect(() => {
-    const leavePreviousCall = async () => {
-      if (callingState === CallingState.JOINED) {
-        await call?.leave();
-      }
-    };
-
-    const getCurrentCall = async () => {
-      try {
-        const callData = await call?.get();
-        setParticipants(callData?.call?.session?.participants || []);
-      } catch (e) {
-        const err = e as ErrorFromResponse<GetCallResponse>;
-        console.error(err.message);
-        setErrorFetchingMeeting(true);
-      }
+    setTimeout(() => {
       setLoading(false);
-    };
+    }, 1000);
+    // const leavePreviousCall = async () => {
+    //   if (callingState === CallingState.JOINED) {
+    //     await call?.leave();
+    //   }
+    // };
 
-    const createCall = async () => {
-      await call?.create({
-        data: {
-          members: [
-            {
-              user_id: connectedUser?.id!,
-              role: 'host',
-            },
-          ],
-        },
-      });
-      setLoading(false);
-    };
+    // const getCurrentCall = async () => {
+    //   try {
+    //     // const callData = await call?.get();
+    //     setParticipants([ai_interviwer]);
+    //   } catch (e) {
+    //     const err = e as ErrorFromResponse<GetCallResponse>;
+    //     console.error(err.message);
+    //     setErrorFetchingMeeting(true);
+    //   }
+    //   setLoading(false);
+    // };
 
-    if (!joining && validMeetingId) {
-      leavePreviousCall();
-      if (!connectedUser) return;
-      if (newMeeting) {
-        createCall();
-      } else {
-        getCurrentCall();
-      }
-    }
-  }, [call, callingState, connectedUser, joining, newMeeting, validMeetingId]);
+    // const createCall = async () => {
+    //   await call?.create({
+    //     data: {
+    //       members: [
+    //         {
+    //           user_id: connectedUser?.id!,
+    //           role: "host",
+    //         },
+    //       ],
+    //     },
+    //   });
+    //   setLoading(false);
+    // };
+
+    // if (!joining && validMeetingId) {
+    //   // leavePreviousCall();
+    //   // if (!connectedUser) return;
+    //   // if (newMeeting) {
+    //   //   createCall();
+    //   // } else {
+    //   //   getCurrentCall();
+    //   // }
+    // }
+  }, []);
+  // }, [call, callingState, connectedUser, joining, newMeeting, validMeetingId]);
 
   useEffect(() => {
     setNewMeeting(newMeeting);
@@ -101,8 +113,8 @@ const Lobby = ({ params }: LobbyProps) => {
   }, [newMeeting, setNewMeeting]);
 
   const heading = useMemo(() => {
-    if (loading) return 'Getting ready...';
-    return isGuest ? "What's your name?" : 'Ready to join?';
+    if (loading) return "Getting ready...";
+    return isGuest ? "What's your name?" : "Ready to join?";
   }, [loading, isGuest]);
 
   const participantsUI = useMemo(() => {
@@ -111,48 +123,48 @@ const Lobby = ({ params }: LobbyProps) => {
         return "You'll be able to join in just a moment";
       case joining:
         return "You'll join the call in just a moment";
-      case participants.length === 0:
-        return 'No one else is here';
-      case participants.length > 0:
-        return <CallParticipants participants={participants} />;
+      // case participants.length === 0:
+      //   return "No one else is here";
+      // case participants.length > 0:
       default:
-        return null;
+        return <CallParticipants participants={[ai_interviwer]} />;
+      // return null;
     }
-  }, [loading, joining, participants]);
+  }, [loading, joining]);
 
-  const updateGuestName = async () => {
-    try {
-      await fetch('/api/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user: { id: connectedUser?.id, name: guestName },
-        }),
-      });
-      await chatClient.disconnectUser();
-      await chatClient.connectUser(
-        {
-          id: GUEST_ID,
-          type: 'guest',
-          name: guestName,
-        },
-        tokenProvider
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const updateGuestName = async () => {
+  //   try {
+  //     // await fetch("/api/user", {
+  //     //   method: "POST",
+  //     //   headers: {
+  //     //     "Content-Type": "application/json",
+  //     //   },
+  //     //   body: JSON.stringify({
+  //     //     user: { id: connectedUser?.id, name: guestName },
+  //     //   }),
+  //     // });
+  //     // await chatClient.disconnectUser();
+  //     // await chatClient.connectUser(
+  //     //   {
+  //     //     id: GUEST_ID,
+  //     //     type: "guest",
+  //     //     name: guestName,
+  //     //   },
+  //     //   tokenProvider
+  //     // );
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const joinCall = async () => {
     setJoining(true);
-    if (isGuest) {
-      await updateGuestName();
-    }
-    if (callingState !== CallingState.JOINED) {
-      await call?.join();
-    }
+    // if (isGuest) {
+    //   await updateGuestName();
+    // }
+    // if (callingState !== CallingState.JOINED) {
+    //   await call?.join();
+    // }
     router.push(`/${meetingId}/meeting`);
   };
 
@@ -164,16 +176,16 @@ const Lobby = ({ params }: LobbyProps) => {
           <h1 className="text-4xl leading-[2.75rem] font-normal text-dark-gray tracking-normal mb-12">
             Invalid video call name.
           </h1>
-          <Button size="sm" onClick={() => router.push('/')}>
+          <Button size="sm" onClick={() => router.push("/")}>
             Return to home screen
           </Button>
         </div>
       </div>
     );
 
-  if (errorFetchingMeeting) {
-    router.push(`/${meetingId}/meeting-end?invalid=true`);
-  }
+  // if (errorFetchingMeeting) {
+  //   router.push(`/${meetingId}/meeting-end?invalid=true`);
+  // }
 
   return (
     <div>
