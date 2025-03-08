@@ -22,11 +22,11 @@ export const CALL_TYPE = "default";
 export const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY as string;
 export const GUEST_ID = `guest_${nanoid(15)}`;
 
-export const tokenProvider = async (userId: string = '') => {
-  const response = await fetch('/api/token', {
-    method: 'POST',
+export const tokenProvider = async (userId: string = "") => {
+  const response = await fetch("/api/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ userId: userId || GUEST_ID }),
   });
@@ -66,11 +66,11 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
         },
       };
     } else {
-    user = {
-      id: GUEST_ID,
-      type: "guest",
-      name: "Guest",
-    };
+      user = {
+        id: GUEST_ID,
+        type: "guest",
+        name: "Guest",
+      };
     }
 
     const _chatClient = StreamChat.getInstance(API_KEY);
@@ -94,13 +94,11 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
   if (loading) return <LoadingOverlay />;
 
   return (
-      <Chat client={chatClient!}>
-    <StreamVideo client={videoClient!}>
-      <StreamCall call={call}>
-      {children}
-      </StreamCall>
-    </StreamVideo>
-    //   </Chat>
+    <Chat client={chatClient!}>
+      <StreamVideo client={videoClient!}>
+        <StreamCall call={call}>{children}</StreamCall>
+      </StreamVideo>
+    </Chat>
   );
 };
 
