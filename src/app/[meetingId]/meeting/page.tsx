@@ -128,6 +128,8 @@ const Meeting = ({ params }: MeetingProps) => {
   const leaveCall = async () => {
     // end chat
     // await call?.leave();
+    stopVapiSession();
+
     router.push(`/${meetingId}/meeting-end`);
   };
 
