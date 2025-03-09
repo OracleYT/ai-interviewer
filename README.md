@@ -1,5 +1,8 @@
 # The Google Meet Clone
 
+
+
+
 A video conferencing application that replicates the core functionalities of Google Meet. Built using Next.js, TypeScript, and Stream's Video and Chat SDKs, this application allows users to conduct virtual meetings with real-time video, audio, and messaging capabilities.
 
 <p align="center">
