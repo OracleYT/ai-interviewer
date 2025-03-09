@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CallingState,
@@ -84,18 +84,16 @@ const Meeting = ({ params }: MeetingProps) => {
 
   useEffect(() => {
     const startup = async () => {
-      if (!vapiInstance) {
-        const call = await startVapiSession(
-          "b2e858df-8f72-48ce-aa89-2583acf51075"
-        );
+      await startVapiSession(process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID);
+      // if (!vapiInstance) {
 
-        // if (isUnkownOrIdle) {
-        //   router.push(`/${meetingId}`);
-        // } else if (chatClient) {
-        //   const channel = chatClient.channel("messaging", meetingId);
-        //   setChatChannel(channel);
-        // }
-      }
+      //   // if (isUnkownOrIdle) {
+      //   //   router.push(`/${meetingId}`);
+      //   // } else if (chatClient) {
+      //   //   const channel = chatClient.channel("messaging", meetingId);
+      //   //   setChatChannel(channel);
+      //   // }
+      // }
     };
     startup();
 
@@ -106,7 +104,7 @@ const Meeting = ({ params }: MeetingProps) => {
       // }
       stopVapiSession();
     };
-  }, [router, meetingId, vapiInstance]);
+  }, [router, meetingId, stopVapiSession, startVapiSession]);
 
   useEffect(() => {
     if (participants.length > prevParticipantsCount) {
@@ -125,11 +123,12 @@ const Meeting = ({ params }: MeetingProps) => {
     return false;
   }, [participantInSpotlight]);
 
-  const leaveCall = async () => {
+  const leaveCall = useCallback(async () => {
     // end chat
     // await call?.leave();
+    stopVapiSession();
     router.push(`/${meetingId}/meeting-end`);
-  };
+  }, [stopVapiSession]);
 
   // const toggleScreenShare = async () => {
   //   try {
@@ -165,17 +164,17 @@ const Meeting = ({ params }: MeetingProps) => {
           </div>
           {/* Meeting Controls */}
           <div className="relative flex grow shrink basis-1/4 items-center justify-center px-1.5 gap-3 ml-0">
-            {/* <ToggleAudioButton />
+            <ToggleAudioButton />
             <ToggleVideoButton />
             <CallControlButton
               icon={<ClosedCaptions />}
               title={"Turn on captions"}
-            /> */}
-            {/* <CallControlButton
+            />
+            <CallControlButton
               icon={<Mood />}
               title={"Send a reaction"}
               className="hidden sm:inline-flex"
-            /> */}
+            />
             {/* <CallControlButton
               onClick={toggleScreenShare}
               icon={<PresentToAll />}
@@ -202,7 +201,7 @@ const Meeting = ({ params }: MeetingProps) => {
           </div>
           {/* Meeting Info */}
           <div className="hidden sm:flex grow shrink basis-1/4 items-center justify-end mr-3">
-            {/* <CallInfoButton icon={<Info />} title="Meeting details" />
+            <CallInfoButton icon={<Info />} title="Meeting details" />
             <CallInfoButton icon={<Group />} title="People" />
             <CallInfoButton
               onClick={toggleChatPopup}
@@ -210,7 +209,7 @@ const Meeting = ({ params }: MeetingProps) => {
                 isChatOpen ? <ChatFilled color="var(--icon-blue)" /> : <Chat />
               }
               title="Chat with everyone"
-            /> */}
+            />
           </div>
         </div>
         {/* <ChatPopup

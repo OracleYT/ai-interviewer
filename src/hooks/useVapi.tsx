@@ -7,7 +7,6 @@ const useVapi = () => {
   const vapiRef = useRef<Vapi>();
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   const statusRef = useRef<"init" | "started">("init");
-  
 
   useEffect(() => {
     if (!vapiRef.current) {
@@ -20,8 +19,7 @@ const useVapi = () => {
     }
     vapiRef.current?.on("volume-level", (level) => {
       console.log("Volume Level: ", level);
-    }
-    );
+    });
     setVapiInstance(vapiRef.current);
     return () => {
       if (vapiRef.current) {
@@ -31,11 +29,14 @@ const useVapi = () => {
     };
   }, []);
 
-  const startVapiSession = async (assistantId: string) => {
+  const startVapiSession = async (assistantId?: string) => {
     if (!vapiRef.current) {
       throw new Error("Vapi not Initialize");
     }
-  
+    if (!assistantId) {
+      throw new Error("AssistantId is required!");
+    }
+
     return await vapiRef.current.start(assistantId);
     // return call;
   };
