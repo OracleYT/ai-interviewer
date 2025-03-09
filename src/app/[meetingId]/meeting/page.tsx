@@ -86,7 +86,7 @@ const Meeting = ({ params }: MeetingProps) => {
     const startup = async () => {
       if (!vapiInstance) {
         const call = await startVapiSession(
-          "b2e858df-8f72-48ce-aa89-2583acf51075"
+          "a66a8d70-c01a-45d1-b005-3df1f8dd1a47"
         );
 
         // if (isUnkownOrIdle) {
