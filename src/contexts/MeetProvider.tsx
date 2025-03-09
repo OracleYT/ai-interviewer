@@ -100,7 +100,7 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
       {children}
       </StreamCall>
     </StreamVideo>
-    //   </Chat>
+      </Chat>
   );
 };
 
