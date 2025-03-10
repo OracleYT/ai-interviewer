@@ -77,6 +77,7 @@ const Meeting = ({ params }: MeetingProps) => {
       setVolumeLevel(level);
     };
     vapiInstance?.on("volume-level", handleVolumeChange);
+    vapiInstance?.on("call-end", stopVapiSession);
     return () => {
       vapiInstance?.removeListener("volume-level", handleVolumeChange);
     };
