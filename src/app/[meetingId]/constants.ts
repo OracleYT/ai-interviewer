@@ -3,7 +3,7 @@ export const ai_interviwer = {
   role: "host",
   user: {
     id: "12345",
-    name: "Ai Interviewer",
+    name: "Abhinav Jain",
     banned: false,
     created_at: "2025-03-08T12:00:00Z",
     custom: {},
@@ -27,9 +27,9 @@ export const meeting_participant = [
     isSpeaking: false,
     isDominantSpeaker: false,
     audioLevel: 0,
-    name: "Ai Interviewer",
+    name: "Abhinav Jain",
     hasImage: true,
-    image: "https://i.ibb.co/hzGNkVs/sia-avtar.png",
+    image: "/image.png",
     roles: ["host", "user"],
     joinedAt: {
       seconds: "0",
