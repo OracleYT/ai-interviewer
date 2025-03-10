@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Vapi from "@vapi-ai/web";
+import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 
 const useVapi = () => {
   const vapiRef = useRef<Vapi>();
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
-  const statusRef = useRef<"init" | "started">("init");
-  
+  // const statusRef = useRef<"init" | "started">("init");
+  const { setVolumeLevel } = useContext(VolumeLevelContext);
 
   useEffect(() => {
     if (!vapiRef.current) {
@@ -18,10 +19,10 @@ const useVapi = () => {
         process.env.NEXT_PUBLIC_VAPI_KEY
       ));
     }
-    vapiRef.current?.on("volume-level", (level) => {
-      console.log("Volume Level: ", level);
-    }
-    );
+    vapiRef.current?.on("volume-level", (level: number) => {
+      setVolumeLevel(level);
+    });
+
     setVapiInstance(vapiRef.current);
     return () => {
       if (vapiRef.current) {
@@ -35,9 +36,7 @@ const useVapi = () => {
     if (!vapiRef.current) {
       throw new Error("Vapi not Initialize");
     }
-  
     return await vapiRef.current.start(assistantId);
-    // return call;
   };
 
   const stopVapiSession = () => {

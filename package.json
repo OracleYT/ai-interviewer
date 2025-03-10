@@ -22,7 +22,8 @@
     "react-dom": "^19.0.0-rc-e56f4ae3-20240830",
     "stream-chat": "^8.37.0",
     "stream-chat-react": "^11.23.5",
-    "svix": "^1.32.0"
+    "svix": "^1.32.0",
+    "classnames": "^2.5.1"
   },
   "devDependencies": {
     "@types/node": "^20",
