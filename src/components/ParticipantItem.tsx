@@ -3,10 +3,11 @@ import { useContext } from "react";
 import VolumeRipple from "./VolumeRipple";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+import clsx from "clsx";
 
 export const ParticipantItem = ({ participant }: any) => {
-  const firstNameLetter = participant.name.split(" ")[0][0];
-  const color = useUserColor();
+  const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
+  const color = useUserColor()(participant.name);
   const { volumeLevel } = useContext(VolumeLevelContext);
   const { videoRef, isCameraOn } = useContext(BrowserMediaContext);
 
@@ -31,15 +32,16 @@ export const ParticipantItem = ({ participant }: any) => {
           </VolumeRipple>
         ) : (
           <div
-            className={`${color(
-              participant?.name
-            )} w-24 h-24 text-white text-4xl font-extrabold flex items-center justify-center rounded-full`}
+            className={clsx(
+              `w-32 h-32 text-white text-6xl font-medium flex items-center justify-center rounded-full`,
+              `bg-[#1d1d1d]`
+            )}
           >
             {firstNameLetter}
           </div>
         )}
         <div className={`absolute inset-0 flex items-center justify-center `}>
-          <div className="absolute bottom-4 left-4 text-sm font-semibold text-white">
+          <div className="absolute bottom-4 left-4 text-sm font-semibold text-white ">
             {participant.name}
           </div>
         </div>
