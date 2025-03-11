@@ -1,25 +1,13 @@
-export const ai_interviwer = {
-  joined_at: "2025-03-08T12:00:00Z",
-  role: "host",
-  user: {
-    id: "12345",
-    name: "Abhinav Jain",
-    banned: false,
-    created_at: "2025-03-08T12:00:00Z",
-    custom: {},
-    language: "en",
-    last_active: "2025-03-08T12:00:00Z",
-    online: true,
-    role: "user",
-    updated_at: "2025-03-08T12:00:00Z",
-    teams: [],
-  },
-  user_session_id: "session-67890",
-};
 
-export const meeting_participant = [
+
+export const initialParticipants = [
   {
     userId: "user_2u1F7RFolSMguLpRStV5sdhmGsM",
+    user:{
+      name: "Abhinav Jain",
+      image: "/image.png",
+      id: 123
+    },
     sessionId: "b1cbb11b-cbad-4e8b-bd1b-8c8e87da6e94",
     publishedTracks: [1, 2],
     trackLookupPrefix: "f7469004d4328fa3",
@@ -30,7 +18,7 @@ export const meeting_participant = [
     name: "Abhinav Jain",
     hasImage: true,
     image: "/image.png",
-    roles: ["host", "user"],
+    roles: ["host"],
     joinedAt: {
       seconds: "0",
       nanos: 0,

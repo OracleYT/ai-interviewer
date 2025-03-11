@@ -21,7 +21,8 @@ import Header from "@/components/Header";
 import MeetingPreview from "@/components/MeetingPreview";
 import Spinner from "@/components/Spinner";
 import TextField from "@/components/TextField";
-import { ai_interviwer } from "./constants";
+import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 // import { SettingsOut } from "svix";
 
 interface LobbyProps {
@@ -29,12 +30,6 @@ interface LobbyProps {
     meetingId: string;
   };
 }
-// user: {
-//   name: "Ai Interviewer",
-//   : 123,
-//   image: "https://i.ibb.co/hzGNkVs/sia-avtar.png",
-//   role: "host",
-// },
 
 const Lobby = ({ params }: LobbyProps) => {
   const { meetingId } = params;
@@ -49,60 +44,29 @@ const Lobby = ({ params }: LobbyProps) => {
   // const callingState = useCallCallingState();
   const [guestName, setGuestName] = useState("");
   // const [errorFetchingMeeting, setErrorFetchingMeeting] = useState(false);
-  const [loading,  setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   // const [participants, setParticipants] = useState<CallParticipantResponse[]>([
   //   ai_interviwer,
   // ]);
   const isGuest = !isSignedIn;
+  const { isCameraOn, startCamera, stopCamera } =
+    useContext(BrowserMediaContext);
+  const { setUserName, participants } = useContext(ParticipantsContext);
+
+  useEffect(() => {
+    if (isCameraOn) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-    // const leavePreviousCall = async () => {
-    //   if (callingState === CallingState.JOINED) {
-    //     await call?.leave();
-    //   }
-    // };
-
-    // const getCurrentCall = async () => {
-    //   try {
-    //     // const callData = await call?.get();
-    //     setParticipants([ai_interviwer]);
-    //   } catch (e) {
-    //     const err = e as ErrorFromResponse<GetCallResponse>;
-    //     console.error(err.message);
-    //     setErrorFetchingMeeting(true);
-    //   }
-    //   setLoading(false);
-    // };
-
-    // const createCall = async () => {
-    //   await call?.create({
-    //     data: {
-    //       members: [
-    //         {
-    //           user_id: connectedUser?.id!,
-    //           role: "host",
-    //         },
-    //       ],
-    //     },
-    //   });
-    //   setLoading(false);
-    // };
-
-    // if (!joining && validMeetingId) {
-    //   // leavePreviousCall();
-    //   // if (!connectedUser) return;
-    //   // if (newMeeting) {
-    //   //   createCall();
-    //   // } else {
-    //   //   getCurrentCall();
-    //   // }
-    // }
   }, []);
-  // }, [call, callingState, connectedUser, joining, newMeeting, validMeetingId]);
 
   useEffect(() => {
     setNewMeeting(newMeeting);
@@ -127,7 +91,7 @@ const Lobby = ({ params }: LobbyProps) => {
       //   return "No one else is here";
       // case participants.length > 0:
       default:
-        return <CallParticipants participants={[ai_interviwer]} />;
+        return <CallParticipants participants={[participants[0]]} />;
       // return null;
     }
   }, [loading, joining]);
@@ -159,12 +123,7 @@ const Lobby = ({ params }: LobbyProps) => {
 
   const joinCall = async () => {
     setJoining(true);
-    // if (isGuest) {
-    //   await updateGuestName();
-    // }
-    // if (callingState !== CallingState.JOINED) {
-    //   await call?.join();
-    // }
+
     router.push(`/${meetingId}/meeting`);
   };
 
@@ -202,7 +161,10 @@ const Lobby = ({ params }: LobbyProps) => {
               name="name"
               placeholder="Your name"
               value={guestName}
-              onChange={(e) => setGuestName(e.target.value)}
+              onChange={(e) => {
+                localStorage.setItem("guest_name", e.target.value);
+                setGuestName(e.target.value);
+              }}
             />
           )}
           <span className="text-meet-black font-medium text-center text-sm cursor-default">

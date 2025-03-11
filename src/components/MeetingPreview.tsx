@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   VideoPreview,
   useCallStateHooks,
@@ -9,16 +9,17 @@ import {
   AudioInputDeviceSelector,
   AudioOutputDeviceSelector,
   VideoInputDeviceSelector,
-} from './DeviceSelector';
-import IconButton from './IconButton';
-import MoreVert from './icons/MoreVert';
-import Mic from './icons/Mic';
-import MicOff from './icons/MicOff';
-import SpeechIndicator from './SpeechIndicator';
-import Videocam from './icons/Videocam';
-import VideocamOff from './icons/VideocamOff';
-import VisualEffects from './icons/VisualEffects';
-import useSoundDetected from '../hooks/useSoundDetected';
+} from "./DeviceSelector";
+import IconButton from "./IconButton";
+import MoreVert from "./icons/MoreVert";
+import Mic from "./icons/Mic";
+import MicOff from "./icons/MicOff";
+import SpeechIndicator from "./SpeechIndicator";
+import Videocam from "./icons/Videocam";
+import VideocamOff from "./icons/VideocamOff";
+import VisualEffects from "./icons/VisualEffects";
+import useSoundDetected from "../hooks/useSoundDetected";
+import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 
 const MeetingPreview = () => {
   const user = useConnectedUser();
@@ -39,6 +40,8 @@ const MeetingPreview = () => {
     hasBrowserPermission: hasMicrophonePermission,
     status: microphoneStatus,
   } = useMicrophoneState();
+  const { videoRef, isCameraOn, startCamera, stopCamera } =
+    useContext(BrowserMediaContext);
 
   useEffect(() => {
     const enableMicAndCam = async () => {
@@ -69,21 +72,12 @@ const MeetingPreview = () => {
   }, [microphoneStatus, hasMicrophonePermission]);
 
   const toggleCamera = async () => {
-    try {
-      setVideoPreviewText((prev) =>
-        prev === "" || prev === "Camera is off"
-          ? "Camera is starting"
-          : "Camera is off"
-      );
-      await camera.toggle();
-      setVideoPreviewText((prev) =>
-        prev === "Camera is off" ? "Camera is starting" : "Camera is off"
-      );
-    } catch (error) {
-      console.error(error);
+    if (isCameraOn) {
+      stopCamera();
+    } else {
+      startCamera();
     }
   };
-
   const toggleMicrophone = async () => {
     try {
       await microphone.toggle();
@@ -101,9 +95,16 @@ const MeetingPreview = () => {
         <div className="absolute z-2 bg-gradient-overlay left-0 w-full h-full rounded-lg" />
         {/* Video preview */}
         <div className="absolute w-full h-full [&>div]:w-auto [&>div]:h-auto z-1 flex items-center justify-center rounded-lg overflow-hidden [&_video]:-scale-x-100">
-          <VideoPreview
-            DisabledVideoPreview={() => DisabledVideoPreview(videoPreviewText)}
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            style={{ objectFit: "cover" }}
           />
+          {/* <VideoPreview
+            DisabledVideoPreview={() => DisabledVideoPreview(videoPreviewText)}
+          /> */}
         </div>
         {devicesEnabled && (
           <div className="z-3 absolute bottom-4 left-1/2 -ml-17 flex items-center gap-6">
@@ -120,11 +121,11 @@ const MeetingPreview = () => {
             />
             {/* Camera control */}
             <IconButton
-              icon={isCameraMute ? <VideocamOff /> : <Videocam />}
-              title={isCameraMute ? "Turn on camera" : "Turn off camera"}
+              icon={isCameraOn ?   <Videocam /> : <VideocamOff />}
+              title={isCameraOn ?   "Turn off camera" :"Turn on camera"}
               onClick={toggleCamera}
-              active={isCameraMute}
-              alert={!hasCameraPermission}
+              active={isCameraOn}
+              // alert={!hasCameraPermission}
               variant="secondary"
             />
           </div>

@@ -1,41 +1,19 @@
 import useUserColor from "@/hooks/useUserColor";
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import VolumeRipple from "./VolumeRipple";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
+import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 
 export const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0];
-  const videoRef = useRef<HTMLVideoElement>(null);
   const color = useUserColor();
   const { volumeLevel } = useContext(VolumeLevelContext);
-
-  useEffect(() => {
-    let stream: MediaStream | null = null;
-
-    const startVideo = async () => {
-      if (participant.isVideoOn && videoRef.current) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          videoRef.current.srcObject = stream;
-        } catch (error) {
-          console.error("Error accessing camera:", error);
-        }
-      }
-    };
-
-    startVideo();
-
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [participant.isVideoOn]);
+  const { videoRef, isCameraOn } = useContext(BrowserMediaContext);
 
   return (
     <div className="flex flex-col items-center justify-center border rounded-lg bg-[#303030] w-full select-none h-100">
       <div className="relative w-full h-full flex items-center justify-center rounded-lg overflow-hidden bg-gray-300">
-        {participant.isVideoOn ? (
+        {participant.isVideoOn && isCameraOn ? (
           <video
             ref={videoRef}
             className="w-full h-full object-cover"

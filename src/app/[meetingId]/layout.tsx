@@ -1,7 +1,9 @@
-'use client';
-import { ReactNode } from 'react';
+"use client";
+import { ReactNode } from "react";
 
-import MeetProvider from '@/contexts/MeetProvider';
+import MeetProvider from "@/contexts/MeetProvider";
+import BrowserMediaProvider from "@/contexts/BrowserMediaProvider";
+import { ParticipantsProvider } from "@/contexts/ParticipantsProvider";
 
 type LayoutProps = {
   children: ReactNode;
@@ -11,5 +13,11 @@ type LayoutProps = {
 };
 
 export default function Layout({ children, params }: LayoutProps) {
-  return <MeetProvider meetingId={params.meetingId}>{children}</MeetProvider>;
+  return (
+    <ParticipantsProvider>
+      <BrowserMediaProvider>
+        <MeetProvider meetingId={params.meetingId}>{children}</MeetProvider>
+      </BrowserMediaProvider>
+    </ParticipantsProvider>
+  );
 }

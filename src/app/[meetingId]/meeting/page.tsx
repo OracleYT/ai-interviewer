@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CallingState,
@@ -33,8 +33,9 @@ import SpeakerLayout from "@/components/SpeakerLayout";
 import ToggleAudioButton from "@/components/ToggleAudioButton";
 import ToggleVideoButton from "@/components/ToggleVideoButton";
 import useTime from "@/hooks/useTime";
-import { ai_interviwer } from "../constants";
 import useVapi from "@/hooks/useVapi";
+import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 
 interface MeetingProps {
   params: {
@@ -53,10 +54,9 @@ const Meeting = ({ params }: MeetingProps) => {
   // const { useCallCallingState, useParticipants, useScreenShareState } =
   //   useCallStateHooks();
   // const participants = useParticipants();
-  const participants = [ai_interviwer];
   // const { screenShare } = useScreenShareState();
   // const callingState = useCallCallingState();
-
+  const { participants } = useContext(ParticipantsContext);
   // const [chatChannel, setChatChannel] =
   //   useState<Channel<DefaultStreamChatGenerics>>();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -64,13 +64,22 @@ const Meeting = ({ params }: MeetingProps) => {
   const [participantInSpotlight, _] = participants;
   const [prevParticipantsCount, setPrevParticipantsCount] = useState(0);
   const [volumeLevel, setVolumeLevel] = useState(0);
-
+  const { isCameraOn, startCamera, stopCamera } =
+    useContext(BrowserMediaContext);
   const { startVapiSession, stopVapiSession, vapiInstance } = useVapi();
 
   // const isCreator = call?.state.createdBy?.id === user?.id;
   // const isCreator = true;
   // const isUnkownOrIdle =
   //   callingState === CallingState.UNKNOWN || callingState === CallingState.IDLE;
+
+  useEffect(() => {
+    if (isCameraOn) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+  }, []);
 
   useEffect(() => {
     const handleVolumeChange = (level: number) => {
@@ -168,12 +177,12 @@ const Meeting = ({ params }: MeetingProps) => {
           </div>
           {/* Meeting Controls */}
           <div className="relative flex grow shrink basis-1/4 items-center justify-center px-1.5 gap-3 ml-0">
-            {/* <ToggleAudioButton />
+            <ToggleAudioButton />
             <ToggleVideoButton />
             <CallControlButton
               icon={<ClosedCaptions />}
               title={"Turn on captions"}
-            /> */}
+            />
             {/* <CallControlButton
               icon={<Mood />}
               title={"Send a reaction"}
