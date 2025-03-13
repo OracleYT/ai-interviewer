@@ -52,7 +52,7 @@ const Lobby = ({ params }: LobbyProps) => {
   const isGuest = !isSignedIn;
   const { isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
-  const { setUserName, participants } = useContext(ParticipantsContext);
+  const { participants } = useContext(ParticipantsContext);
 
   useEffect(() => {
     if (isCameraOn) {

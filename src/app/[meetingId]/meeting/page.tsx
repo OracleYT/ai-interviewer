@@ -82,13 +82,13 @@ const Meeting = ({ params }: MeetingProps) => {
   }, []);
 
   useEffect(() => {
-    const handleVolumeChange = (level: number) => {
-      setVolumeLevel(level);
-    };
-    vapiInstance?.on("volume-level", handleVolumeChange);
-    vapiInstance?.on("call-end", stopVapiSession);
+    vapiInstance?.on("call-end", ()=>{
+      stopCamera();
+      stopVapiSession();
+      router.push(`/${meetingId}/meeting-end`);
+    });
     return () => {
-      vapiInstance?.removeListener("volume-level", handleVolumeChange);
+      vapiInstance?.on("call-end",stopVapiSession);
     };
   }, [audioRef]);
 
@@ -139,6 +139,7 @@ const Meeting = ({ params }: MeetingProps) => {
     // end chat
     // await call?.leave();
     stopVapiSession();
+    stopCamera();
 
     router.push(`/${meetingId}/meeting-end`);
   };
@@ -151,9 +152,9 @@ const Meeting = ({ params }: MeetingProps) => {
   //   }
   // };
 
-  const toggleChatPopup = () => {
-    setIsChatOpen((prev) => !prev);
-  };
+  // const toggleChatPopup = () => {
+  //   setIsChatOpen((prev) => !prev);
+  // };
 
   // const toggleRecordingsList = () => {
   //   setIsRecordingListOpen((prev) => !prev);
