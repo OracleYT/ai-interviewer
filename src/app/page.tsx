@@ -1,49 +1,49 @@
-'use client';
-import { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { SignInButton, useUser } from '@clerk/nextjs';
-import { customAlphabet } from 'nanoid';
+"use client";
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import { customAlphabet } from "nanoid";
 import {
   ErrorFromResponse,
   GetCallResponse,
   StreamVideoClient,
   User,
-} from '@stream-io/video-react-sdk';
-import Image from 'next/image';
-import clsx from 'clsx';
+} from "@stream-io/video-react-sdk";
+import Image from "next/image";
+import clsx from "clsx";
 
-import { API_KEY, CALL_TYPE } from '@/contexts/MeetProvider';
-import { AppContext, MEETING_ID_REGEX } from '@/contexts/AppProvider';
-import Button from '@/components/Button';
-import ButtonWithIcon from '@/components/ButtonWithIcon';
-import Header from '@/components/Header';
-import KeyboardFilled from '@/components/icons/KeyboardFilled';
-import PlainButton from '@/components/PlainButton';
-import TextField from '@/components/TextField';
-import Videocall from '@/components/icons/Videocall';
+import { API_KEY, CALL_TYPE } from "@/contexts/MeetProvider";
+import { AppContext, MEETING_ID_REGEX } from "@/contexts/AppProvider";
+import Button from "@/components/Button";
+import ButtonWithIcon from "@/components/ButtonWithIcon";
+import Header from "@/components/Header";
+import KeyboardFilled from "@/components/icons/KeyboardFilled";
+import PlainButton from "@/components/PlainButton";
+import TextField from "@/components/TextField";
+import Videocall from "@/components/icons/Videocall";
 
 const generateMeetingId = () => {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
   const nanoid = customAlphabet(alphabet, 4);
 
   return `${nanoid(3)}-${nanoid(4)}-${nanoid(3)}`;
 };
 
-const GUEST_USER: User = { id: 'guest', type: 'guest' };
+const GUEST_USER: User = { id: "guest", type: "guest" };
 
 const Home = () => {
   const { setNewMeeting } = useContext(AppContext);
   const { isLoaded, isSignedIn } = useUser();
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [checkingCode, setCheckingCode] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (error) {
       timeout = setTimeout(() => {
-        setError('');
+        setError("");
       }, 3000);
     }
     return () => {
@@ -60,18 +60,18 @@ const Home = () => {
     if (!MEETING_ID_REGEX.test(code)) return;
     setCheckingCode(true);
 
-    const client = new StreamVideoClient({
-      apiKey: API_KEY,
-      user: GUEST_USER,
-    });
-    const call = client.call(CALL_TYPE, code);
+    // const client = new StreamVideoClient({
+    //   apiKey: API_KEY,
+    //   user: GUEST_USER,
+    // });
+    // const call = client.call(CALL_TYPE, code);
 
     try {
-      const response: GetCallResponse = await call.get();
-      if (response.call) {
-        router.push(`/${code}`);
-        return;
-      }
+      router.push(`/${code}`);
+      // const response: GetCallResponse = await call.get();
+      // if (response.call) {
+      //   return;
+      // }
     } catch (e: unknown) {
       let err = e as ErrorFromResponse<GetCallResponse>;
       console.error(err.message);
@@ -88,31 +88,31 @@ const Home = () => {
       <Header />
       <main
         className={clsx(
-          'flex flex-col items-center justify-center px-6',
-          isLoaded ? 'animate-fade-in' : 'opacity-0'
+          "flex flex-col items-center justify-center px-6",
+          isLoaded ? "animate-fade-in" : "opacity-0"
         )}
       >
         <div className="w-full max-w-2xl p-4 pt-7 text-center inline-flex flex-col items-center basis-auto shrink-0">
           <h1 className="text-5xl tracking-normal text-black pb-2">
-            Video calls and meetings for everyone
+            Invited only video calls and meetings
           </h1>
           <p className="text-1x text-gray pb-8">
-            Connect, collaborate, and celebrate from anywhere with Moogle Meet
+            Connect, collaborate, and stand out in your interview.
           </p>
         </div>
         <div className="w-full max-w-xl flex justify-center">
           <div className="flex flex-col items-start sm:flex-row gap-6 sm:gap-2 sm:items-center justify-center">
-            {isSignedIn && (
+            {/* {isSignedIn && (
               <ButtonWithIcon onClick={handleNewMeeting} icon={<Videocall />}>
                 New meeting
               </ButtonWithIcon>
-            )}
-            {!isSignedIn && (
+            )} */}
+            {/* {!isSignedIn && (
               <SignInButton>
                 <Button size="md">Sign in</Button>
               </SignInButton>
-            )}
-            <div className="flex items-center gap-2 sm:ml-4">
+            )} */}
+            {/* <div className="flex items-center gap-2 sm:ml-4">
               <TextField
                 label="Code or link"
                 name="code"
@@ -124,7 +124,7 @@ const Home = () => {
               <PlainButton onClick={handleCode} disabled={!code}>
                 Join
               </PlainButton>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="w-full max-w-xl mx-auto border-b border-b-border-gray self-stretch mt-8 mb-20" />
@@ -157,7 +157,7 @@ const Home = () => {
             </div>
           </div>
         )}
-        <footer className="w-full max-w-xl mt-20 pb-4 text-start">
+        {/* <footer className="w-full max-w-xl mt-20 pb-4 text-start">
           <div className="text-xs text-gray tracking-wider">
             <span className="cursor-pointer">
               <a className="text-meet-blue hover:underline" href="#">
@@ -166,7 +166,7 @@ const Home = () => {
               about Moogle Meet
             </span>
           </div>
-        </footer>
+        </footer> */}
       </main>
     </div>
   );

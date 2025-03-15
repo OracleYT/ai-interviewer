@@ -1,12 +1,11 @@
-
-
 export const initialParticipants = [
   {
+    id: 1,
     userId: "user_2u1F7RFolSMguLpRStV5sdhmGsM",
-    user:{
+    user: {
       name: "Abhinav Jain",
       image: "/image.png",
-      id: 123
+      id: 123,
     },
     sessionId: "b1cbb11b-cbad-4e8b-bd1b-8c8e87da6e94",
     publishedTracks: [1, 2],
@@ -36,6 +35,7 @@ export const initialParticipants = [
     videoStream: {},
   },
   {
+    id: 2,
     userId: "guest-44cbf886-63af-4ace-af40-b3ddc55f1a43-guest_Rz9cuDfPSoo7YcL",
     sessionId: "8207f7ef-f1f5-4164-8489-0bc51354bd67",
     publishedTracks: [1, 2],

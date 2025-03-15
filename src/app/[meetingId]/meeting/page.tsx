@@ -51,8 +51,8 @@ const Meeting = ({ params }: MeetingProps) => {
   // const user = useConnectedUser();
   const { currentTime } = useTime();
   // const { client: chatClient } = useChatContext();
-  // const { useCallCallingState, useParticipants, useScreenShareState } =
-  //   useCallStateHooks();
+  const { useCallCallingState, useParticipants, useScreenShareState } = useCallStateHooks();
+  
   // const participants = useParticipants();
   // const { screenShare } = useScreenShareState();
   // const callingState = useCallCallingState();
@@ -66,7 +66,8 @@ const Meeting = ({ params }: MeetingProps) => {
   const [volumeLevel, setVolumeLevel] = useState(0);
   const { isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
-  const { startVapiSession, stopVapiSession, vapiInstance } = useVapi();
+  const { startVapiSession, stopVapiSession, vapiInstance } =
+    useVapi(meetingId);
 
   // const isCreator = call?.state.createdBy?.id === user?.id;
   // const isCreator = true;
@@ -82,22 +83,9 @@ const Meeting = ({ params }: MeetingProps) => {
   }, []);
 
   useEffect(() => {
-    vapiInstance?.on("call-end", ()=>{
-      stopCamera();
-      stopVapiSession();
-      router.push(`/${meetingId}/meeting-end`);
-    });
-    return () => {
-      vapiInstance?.on("call-end",stopVapiSession);
-    };
-  }, [audioRef]);
-
-  useEffect(() => {
     const startup = async () => {
       if (!vapiInstance) {
-        const call = await startVapiSession(
-          "a66a8d70-c01a-45d1-b005-3df1f8dd1a47"
-        );
+        await startVapiSession("a66a8d70-c01a-45d1-b005-3df1f8dd1a47");
 
         // if (isUnkownOrIdle) {
         //   router.push(`/${meetingId}`);
@@ -114,7 +102,6 @@ const Meeting = ({ params }: MeetingProps) => {
       // if (call) {
       //   call.leave();
       // }
-      stopVapiSession();
     };
   }, [router, meetingId, vapiInstance]);
 

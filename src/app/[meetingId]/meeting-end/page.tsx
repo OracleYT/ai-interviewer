@@ -1,11 +1,11 @@
-'use client';
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { CallingState, useCallStateHooks } from '@stream-io/video-react-sdk';
+"use client";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { CallingState, useCallStateHooks } from "@stream-io/video-react-sdk";
 
-import Button from '@/components/Button';
-import PlainButton from '@/components/PlainButton';
+import Button from "@/components/Button";
+import PlainButton from "@/components/PlainButton";
 
 interface MeetingEndProps {
   params: {
@@ -13,6 +13,7 @@ interface MeetingEndProps {
   };
   searchParams?: {
     invalid: string;
+    endCall: string;
   };
 }
 
@@ -21,13 +22,17 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
   const router = useRouter();
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const [countdownNumber, setCountdownNumber] = useState(60);
-  const invalidMeeting = searchParams?.invalid === 'true';
-
+  const invalidMeeting = searchParams?.invalid === "true";
+  const endCall = searchParams?.endCall === "true";
   useEffect(() => {
-    if (!invalidMeeting && callingState !== CallingState.LEFT) {
-      router.push(`/`);
+    // if (!invalidMeeting && callingState !== CallingState.LEFT) {
+    //   router.push(`/`);
+    // }
+    if (!endCall) {
+      returnHome();
     }
     audioRef.current?.play();
     setCountdownNumber(59);
@@ -50,10 +55,10 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
   };
 
   const returnHome = () => {
-    router.push('/');
+    router.push("/");
   };
 
-  if (!invalidMeeting && callingState !== CallingState.LEFT) return null;
+  // if (!invalidMeeting && callingState !== CallingState.LEFT) return null;
 
   return (
     <div className="w-full">
@@ -64,7 +69,7 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
           </div>
           <svg
             style={{
-              transform: 'rotateY(-180deg) rotateZ(-90deg)',
+              transform: "rotateY(-180deg) rotateZ(-90deg)",
             }}
             className="absolute -top-[32px] -right-[12px] w-[100px] h-[100px]"
           >
@@ -87,13 +92,18 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
       </div>
       <div className="mt-6 px-4 flex flex-col items-center gap-8">
         <h1 className="text-4xl leading-[2.75rem] font-normal text-dark-gray tracking-normal">
-          {invalidMeeting ? 'Check your meeting code' : 'You left the meeting'}
+          {!invalidMeeting && "Interview completed! "}
         </h1>
+        <h2 className="text-2xl leading-[2.75rem] font-normal text-dark-gray tracking-normal">
+          {invalidMeeting
+            ? "Check your meeting code"
+            : "We will send your interview results to your email shortly."}
+        </h2>
         {invalidMeeting && (
           <div className="font-roboto text-base text-meet-gray text-center">
             <p>
               Make sure you entered the correct meeting code in the URL, for
-              example:{' '}
+              example:{" "}
             </p>
             <p>
               https://{window.location.host}/
@@ -106,7 +116,7 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
         )}
         <div className="flex flex-col items-center justify-center gap-3">
           <div className="flex items-center justify-center gap-2">
-            {!invalidMeeting && (
+            {/* {!invalidMeeting && (
               <PlainButton
                 size="sm"
                 className="border border-hairline-gray px-[23px] shadow-[border_.28s_cubic-bezier(.4,0,.2,1),box-shadow_.28s_cubic-bezier(.4,0,.2,1)]"
@@ -114,12 +124,12 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
               >
                 Rejoin
               </PlainButton>
-            )}
+            )} */}
             <Button size="sm" onClick={returnHome}>
               Return to home screen
             </Button>
           </div>
-          <PlainButton size="sm">Submit feedback</PlainButton>
+          {/* <PlainButton size="sm">Submit feedback</PlainButton> */}
         </div>
         <div className="max-w-100 flex flex-wrap flex-col rounded items-center pl-4 pr-3 pt-4 pb-1 border border-hairline-gray text-left">
           <div className="flex items-center">
