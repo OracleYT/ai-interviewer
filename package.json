@@ -22,6 +22,7 @@
     "next": "^15.0.0-rc.0",
     "react": "^19.0.0-rc-e56f4ae3-20240830",
     "react-dom": "^19.0.0-rc-e56f4ae3-20240830",
+    "react-hot-toast": "^2.5.2",
     "stream-chat": "^8.37.0",
     "stream-chat-react": "^11.23.5",
     "svix": "^1.32.0"
