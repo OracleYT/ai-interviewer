@@ -1,5 +1,11 @@
+"usec client";
 import type { Metadata } from "next";
-import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+
+import AppProvider from "../../../contexts/AppProvider";
+
+import "@stream-io/video-react-sdk/dist/css/styles.css";
+import "stream-chat-react/dist/css/v2/index.css";
 
 export const metadata: Metadata = {
   title: "Interview with Abhinav Jain",
@@ -13,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <AppProvider>
+        <ClerkProvider>{children}</ClerkProvider>
+      </AppProvider>
   );
 }

@@ -6,7 +6,7 @@ import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
-import {throttle} from "lodash";
+import { throttle } from "lodash";
 import { sendInterviewDataToBackend } from "@/action/server";
 
 const useVapi = (meetingId: string) => {

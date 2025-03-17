@@ -1,5 +1,5 @@
 "use client";
-import { initialParticipants } from "@/app/[meetingId]/constants";
+import { initialParticipants } from "@/app/(client-components)/(protected-routes)/[meetingId]/constants";
 import { createContext, useState } from "react";
 
 export const ParticipantsContext = createContext<any>(null);
