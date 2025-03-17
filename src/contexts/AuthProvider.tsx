@@ -30,6 +30,12 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    if (user && isAuthanticated) {
+      router.push("/");
+    }
+  }, [user, isAuthanticated, router]);
+
+  useEffect(() => {
     if (user) {
       setIsAuthanticated(true);
     } else {
