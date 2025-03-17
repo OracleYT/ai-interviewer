@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CallingState, useCallStateHooks } from "@stream-io/video-react-sdk";
+import { useCallStateHooks } from "@stream-io/video-react-sdk";
 
 import Button from "@/components/Button";
 import PlainButton from "@/components/PlainButton";

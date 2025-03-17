@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import Vapi from "@vapi-ai/web";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
-import useInterviewCall from "./useInterviewCall";
 import { Call } from "@vapi-ai/web/dist/api";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
 import {throttle} from "lodash";
+import { sendInterviewDataToBackend } from "@/action/server";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
@@ -17,7 +17,6 @@ const useVapi = (meetingId: string) => {
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   // const statusRef = useRef<"init" | "started">("init");
   const { setVolumeLevel } = useContext(VolumeLevelContext);
-  const { sendInterviewDataToBackend } = useInterviewCall();
   const { stopCamera } = useContext(BrowserMediaContext);
 
   const stopVapiSession = useCallback(async () => {
