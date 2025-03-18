@@ -19,7 +19,7 @@ const mockDatabase = [
 
 export async function authenticateUser({ data }: { data: any }) {
   const user = mockDatabase.find(
-    (user) => user.email === data?.email && user.password === data?.password
+    (user) => user?.email === data?.email && user?.password === data?.password
   );
 
   if (user) {

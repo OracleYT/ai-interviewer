@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React from "react";
 import Card from "@/components/Card";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,7 +29,7 @@ const about = [
 ];
 
 function Setting() {
-  const {user} = useAuth();
+  const { user } = useAuth();
   return (
     <Card
       background="#ffffff"
@@ -48,7 +48,7 @@ function Setting() {
               </h3>
             </div>
           </div>
-          <span className="text-[#101010]/50">{user.email}</span>
+          <span className="text-[#101010]/50">{user?.email}</span>
         </div>
         <div className="border-[0.5px] border-[#DEDEDE] mt-13"></div>
 
@@ -57,20 +57,24 @@ function Setting() {
             <div className="w-12 h-12 bg-[#32A7E2] rounded-full"></div>
             <div>
               <p className="text-[#273240] font-medium">Contact Us</p>
-              <span className="text-[#404852]/50 text-sm">mail: support@gmail.com</span>
+              <span className="text-[#404852]/50 text-sm">
+                mail: support@gmail.com
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-[#B548C6] rounded-full"></div>
             <div>
-              <p  className="text-[#273240] font-medium">Log Out</p>
-              <span className="text-[#404852]/50 text-sm">mail: support@gmail.com</span>
+              <p className="text-[#273240] font-medium">Log Out</p>
+              <span className="text-[#404852]/50 text-sm">
+                mail: support@gmail.com
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-[#FF8700] rounded-full"></div>
             <div>
-              <p  className="text-[#273240] font-medium">Privacy and T&C</p>
+              <p className="text-[#273240] font-medium">Privacy and T&C</p>
               <span className="text-[#404852]/50 text-sm">Click here</span>
             </div>
           </div>
@@ -82,7 +86,7 @@ function Setting() {
         height="100%"
         width="30%"
         className="rounded-r-[30px] flex flex-col justify-between items-center py-10"
-      > 
+      >
         <div className="flex flex-col gap-2 w-[250px]">
           <p className="text-[#262A41] text-[20px]">Things to Remember</p>
           {about.map((item, index) => (
