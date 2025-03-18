@@ -124,7 +124,7 @@ const Lobby = ({ params }: LobbyProps) => {
   const joinCall = async () => {
     setJoining(true);
 
-    router.push(`/${meetingId}/meeting`);
+    router.push(`/meeting/${meetingId}/meeting`);
   };
 
   if (!validMeetingId)

@@ -23,7 +23,7 @@ export async function authenticateUser({ data }: { data: any }) {
   );
 
   if (user) {
-    return { email: user.email };
+    return { email: user?.email };
   } else {
     throw new Error("Invalid credentials");
   }
@@ -39,7 +39,7 @@ export async function user_login({
   try {
     console.log({ username, password });
 
-    const user = mockDatabase.find((user) => user.email === username);
+    const user = mockDatabase.find((user) => user?.email === username);
     if (!user) throw new Error("User not found");
     if (user.password !== password) throw new Error("Invalid password");
     return Promise.resolve({

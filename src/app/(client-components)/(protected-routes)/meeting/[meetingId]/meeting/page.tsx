@@ -51,8 +51,9 @@ const Meeting = ({ params }: MeetingProps) => {
   // const user = useConnectedUser();
   const { currentTime } = useTime();
   // const { client: chatClient } = useChatContext();
-  const { useCallCallingState, useParticipants, useScreenShareState } = useCallStateHooks();
-  
+  const { useCallCallingState, useParticipants, useScreenShareState } =
+    useCallStateHooks();
+
   // const participants = useParticipants();
   // const { screenShare } = useScreenShareState();
   // const callingState = useCallCallingState();
@@ -128,7 +129,7 @@ const Meeting = ({ params }: MeetingProps) => {
     stopVapiSession();
     stopCamera();
 
-    router.push(`/${meetingId}/meeting-end`);
+    router.push(`/meeting/${meetingId}/meeting-end`);
   };
 
   // const toggleScreenShare = async () => {

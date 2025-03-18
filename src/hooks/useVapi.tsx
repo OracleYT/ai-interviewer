@@ -35,7 +35,7 @@ const useVapi = (meetingId: string) => {
       stopCamera();
       await handleCallEnd();
       vapiRef.current.stop();
-      router.push(`/${meetingId}/meeting-end?endCall=true`);
+      router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
     } else {
       throw new Error("Vapi not initialized");
     }
