@@ -17,6 +17,7 @@
     "axios": "^1.8.3",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
     "gsap": "^3.12.5",
     "nanoid": "^5.0.7",
     "next": "^15.0.0-rc.0",
@@ -28,6 +29,7 @@
     "svix": "^1.32.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20",
     "@types/react": "^18",
