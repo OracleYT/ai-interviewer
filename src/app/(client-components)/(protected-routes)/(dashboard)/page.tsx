@@ -74,7 +74,7 @@ function Screenpage() {
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
             <div className="flex flex-col gap-4">
               {steps?.map((step) => (
-                <div className="flex items-center gap-7">
+                <div className="flex items-center gap-7" key={step.step}>
                   <div
                     className={`h-12 w-12 rounded-full place-content-center text-center  text-[#ffffff] text-lg font-semibold ${step.colour}`}
                   >

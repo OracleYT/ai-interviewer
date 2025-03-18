@@ -28,7 +28,7 @@ const about = [
   },
 ];
 
-function setting() {
+function Setting() {
   const {user} = useAuth();
   return (
     <Card
@@ -99,4 +99,4 @@ function setting() {
   );
 }
 
-export default setting;
+export default Setting;

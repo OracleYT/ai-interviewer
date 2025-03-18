@@ -27,7 +27,7 @@ const about = [
   },
 ];
 
-function page() {
+function Learn() {
   return (
     <Card
       background="#ffffff"
@@ -108,4 +108,4 @@ function page() {
   );
 }
 
-export default page;
+export default Learn;

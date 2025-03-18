@@ -27,7 +27,7 @@ const about = [
   },
 ];
 
-function interview() {
+function Interview() {
   return (
     <Card
       background="#ffffff"
@@ -99,4 +99,4 @@ function interview() {
   );
 }
 
-export default interview;
+export default Interview;
