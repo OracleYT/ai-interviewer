@@ -20,8 +20,8 @@ interface MeetingEndProps {
 const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
   const { meetingId } = params;
   const router = useRouter();
-  const { useCallCallingState } = useCallStateHooks();
-  const callingState = useCallCallingState();
+  // const { useCallCallingState } = useCallStateHooks();
+  // const callingState = useCallCallingState();
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [countdownNumber, setCountdownNumber] = useState(60);

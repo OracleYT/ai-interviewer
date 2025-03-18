@@ -2,10 +2,9 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 
-import AppProvider from "../../../contexts/AppProvider";
-
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "stream-chat-react/dist/css/v2/index.css";
+import AppProvider from "@/contexts/AppProvider";
 
 export const metadata: Metadata = {
   title: "Interview with Abhinav Jain",
@@ -20,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <AppProvider>
-        <ClerkProvider>{children}</ClerkProvider>
-      </AppProvider>
+      <ClerkProvider>{children}</ClerkProvider>
+    </AppProvider>
   );
 }

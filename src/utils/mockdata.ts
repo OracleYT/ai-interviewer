@@ -1,8 +1,20 @@
 const mockDatabase = [
-  { email: "user@example.com", password: "password123" },
-  { email: "admin@example.com", password: "admin123" },
-  { email: "rahul@rahul.com", password: "123" },
-  { email: "x@x", password: "x" },
+  {
+    id: 1,
+    name: "Alice Johnson",
+    email: "alice.johnson@example.com",
+    password: "password123",
+    avatar_url:
+      "https://i.ibb.co/Vc3fv0Lw/Screenshot-2025-03-18-at-10-20-58-PM.png",
+  },
+  {
+    id: 3,
+    name: "Charlie Brown",
+    email: "charlie.brown@example.com",
+    password: "mypassword789",
+    avatar_url:
+      "https://i.ibb.co/6cBD7156/Screenshot-2025-03-18-at-10-22-55-PM.png",
+  },
 ];
 
 export async function authenticateUser({ data }: { data: any }) {
@@ -40,7 +52,7 @@ export async function user_login({
     return Promise.resolve({
       success: false,
       message: e.message,
-      data: null
+      data: null,
     });
   }
 }

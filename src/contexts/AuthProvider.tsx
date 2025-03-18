@@ -1,7 +1,7 @@
 "use client";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { user_login } from "@/utils/mockdata";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect } from "react";
 
 export type AuthContextType = {
@@ -28,26 +28,26 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     false
   );
   const router = useRouter();
-
-  useEffect(() => {
-    if (user && isAuthanticated) {
-      router.push("/");
-    }
-  }, [user, isAuthanticated, router]);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (user) {
       setIsAuthanticated(true);
+      if (pathname === "/login") {
+        router.push("/");
+      }
     } else {
       setIsAuthanticated(false);
+      if (pathname !== "/login") {
+        router.push("/login");
+      }
     }
-  }, [user, setIsAuthanticated]);
+  }, [user, pathname, router, setIsAuthanticated]);
 
   const login = async (creds: { username: string; password: string }) => {
     const response = await user_login(creds);
     if (response.success && response?.data) {
       setUser(response.data);
-      setIsAuthanticated(true);
       router.push("/");
     }
     return response;
@@ -66,10 +66,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
       message: "New password sent to your email",
     });
   };
-  const authanticated = user && isAuthanticated;
-  if (!authanticated) {
-    router.push("/login");
-  }
 
   return (
     <AuthContext.Provider
@@ -83,11 +79,7 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         resetPassword,
       }}
     >
-      {authanticated ? (
-        children
-      ) : (
-        <div>User not Authanticated Redirecting to login...</div>
-      )}
+      {children}
     </AuthContext.Provider>
   );
 }

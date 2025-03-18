@@ -8,13 +8,10 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    <div>
-      <AuthContextProvider>
-        <Toaster />
-        {children}
-      </AuthContextProvider>
-    </div>
+    <AuthContextProvider>
+      <Toaster />
+      {children}
+    </AuthContextProvider>
   );
 }

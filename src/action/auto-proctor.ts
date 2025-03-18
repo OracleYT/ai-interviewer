@@ -20,4 +20,4 @@ export async function fetchAutoProctorHashedTestAttemptId(
     console.log(`Error: ${err?.message}`);
     return null;
   }
-}
+} 
