@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  passwordHash String
+  phone       String?
+  resumeUrl   String?
+  cvUrl       String?
+  country     String?
+  university  String?
+  docs        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  interviews  Interview[]
+}
+
+model Upload {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  path      String
+  region    String
+  bucket    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Interview {
+  id          String   @id @default(uuid())
+  userId      String
+  interviewerId String?
+  title       String
+  callId      String?  @unique
+  startedAt   DateTime?
+  endedAt     DateTime?
+  status      InterviewStatus @default(PENDING)
+  result      InterviewResult @default(PENDING)
+  resultUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviewer Interviewer? @relation(fields: [interviewerId], references: [id], onDelete: SetNull)
+}
+
+enum InterviewStatus {
+  PENDING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum InterviewResult {
+  PASS
+  FAIL
+  PENDING
+}
+
+model Interviewer {
+  id         String   @id @default(uuid())
+  name       String
+  assistantID String
+  vendorName String
+  avatarUrl  String?
+  videoUrl   String?
+  gender     Gender
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  interviews Interview[]
+}
+
+enum Gender {
+  M
+  F
+}
