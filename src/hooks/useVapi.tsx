@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useContext, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useCallback,
+} from "react";
 import Vapi from "@vapi-ai/web";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
@@ -8,11 +14,13 @@ import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
 import { throttle } from "lodash";
 import { sendInterviewDataToBackend } from "@/action/server";
+import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
   const vapiCallRef = useRef<Call | null>();
   const router = useRouter();
+  const { initAutoProctor, isProctorStarted } = useAutoProctor();
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   // const statusRef = useRef<"init" | "started">("init");
@@ -41,7 +49,10 @@ const useVapi = (meetingId: string) => {
     }
   }, [sendInterviewDataToBackend, stopCamera]);
 
-  const throttledStopVapiSession = useCallback(throttle(stopVapiSession, 2000), [stopVapiSession]);
+  const throttledStopVapiSession = useCallback(
+    throttle(stopVapiSession, 2000),
+    [stopVapiSession]
+  );
 
   useEffect(() => {
     if (!vapiRef.current) {
@@ -73,11 +84,26 @@ const useVapi = (meetingId: string) => {
       throw new Error("Vapi not Initialize");
     }
     const call = await vapiRef.current.start(assistantId);
+    if (isProctorStarted && !isProctorStarted()) {
+      const callbackOnSpeak = (message: string, endSession: boolean) => {
+        if (endSession) {
+        }
+        vapiRef.current?.say(message, endSession);
+      };
+
+      //id here should be a test spesifc
+      typeof initAutoProctor === "function" &&
+        initAutoProctor(assistantId, callbackOnSpeak);
+    }
     vapiCallRef.current = call;
     return call;
   };
 
-  return { startVapiSession, stopVapiSession: throttledStopVapiSession, vapiInstance };
+  return {
+    startVapiSession,
+    stopVapiSession: throttledStopVapiSession,
+    vapiInstance,
+  };
 };
 
 export default useVapi;

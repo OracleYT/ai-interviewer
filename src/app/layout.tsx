@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Interview with Abhinav Jain",
@@ -14,6 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://cdn.autoproctor.co/ap-entry.js"
+          strategy="beforeInteractive"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

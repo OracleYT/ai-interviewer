@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import useCache from "../hooks/useCache";
 import {
@@ -14,15 +13,15 @@ import {
   PROCTORING_OPTIONS,
 } from "../constatnts/auto-procter-const";
 import { fetchAutoProctorHashedTestAttemptId } from "../action/auto-proctor";
-import { NEXT_AUTO_PROCTOR_CLIENT_ID, NEXT_AUTO_PROCTOR_ENABLE } from "@/constatnts/env-const";
+import {
+  NEXT_AUTO_PROCTOR_CLIENT_ID,
+  NEXT_AUTO_PROCTOR_ENABLE,
+} from "@/constatnts/env-const";
 
 /* eslint-disable no-unused-vars*/
 type ProcterContextType = {
-  initAutoProctor: (
-    testAttemptId: string,
-    onForceExitCallback: Function
-  ) => void;
-  startAutoProctor: (callback?: Function) => void;
+  initAutoProctor: (testAttemptId: string, callback?: any) => void;
+  // startAutoProctor: () => void;
   isProctorStarted?: () => boolean;
 };
 /* eslint-enable no-unused-vars*/
@@ -43,12 +42,11 @@ export enum ProctorState {
 }
 
 function ProcterContextProvider({ children }: { children: ReactNode }) {
-  const [proctorState, setProctorState] = useState<ProctorState>(
-    ProctorState.INIT
-  );
+  const proctorStateRef = useRef<ProctorState>(ProctorState.INIT);
   const instance = useRef<any>();
   const { addKey, hasKey } = useCache(10_000); // 10sec
-  const forceExitRef = useRef<Function>();
+  // const forceExitRef = useRef<Function>();
+  const speakFunRef = useRef<Function>();
 
   const isAutoProcterEnabled = () => {
     if (NEXT_AUTO_PROCTOR_ENABLE !== "true") {
@@ -89,9 +87,9 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     const apEvidenceEvent = (e: any) => {
       const testAttemptID = instance.current.testAttemptId;
       const endSessionCall = `${testAttemptID}-end-session`;
+      const onSpeakCallback = speakFunRef.current;
 
       const evidenceCode: string = e?.detail?.evidenceCode as string;
-      console.log(`[apEvidenceEvent] : ${evidenceCode}`);
       if (localStorage.getItem(endSessionCall) !== null) {
         return;
       }
@@ -118,8 +116,11 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         } else {
           message = evidence?.messages[messageIndex];
         }
-        // speak somthing through events
 
+        if (message && onSpeakCallback) {
+          // speak somthing through events
+          onSpeakCallback(message, endSession);
+        }
         localStorage.setItem(key, JSON.stringify(messageIndex + 1));
       }
     };
@@ -136,22 +137,22 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
 
   const initAutoProctor = async (
     testAttemptId: string,
-    onForceExitCallback: Function
+    onSpeakCallback: Function
   ) => {
     try {
       if (!isAutoProcterEnabled()) {
         return;
       }
-      console.log("initializing auto proctor... ", testAttemptId);
+      console.log("[initAutoProctor] initializing auto proctor... ");
       if (
-        proctorState !== ProctorState.INIT ||
+        proctorStateRef.current !== ProctorState.INIT ||
         !testAttemptId ||
         instance.current?.isApTestStarted
       ) {
         return Promise.resolve(false);
       }
 
-      setProctorState(ProctorState.STARTING);
+      proctorStateRef.current = ProctorState.STARTING;
 
       const clientId = NEXT_AUTO_PROCTOR_CLIENT_ID;
       const hashedTestAttemptId =
@@ -162,11 +163,13 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         clientId,
         hashedTestAttemptId,
       });
+      proctorStateRef.current = ProctorState.IN_PROGRESS;
       await apInst.setup(PROCTORING_OPTIONS);
       instance.current = apInst;
-      forceExitRef.current = onForceExitCallback;
+      speakFunRef.current = onSpeakCallback;
       await apInst.start();
-      setProctorState(ProctorState.IN_PROGRESS);
+      console.log("[initAutoProctor] Auto Proctor started...");
+
       // addResouceCleaner(async () => {
       //   if (isProctorStarted()) {
       //     await instance.current?.stop();
@@ -183,28 +186,31 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     return instance.current?.isApTestStarted;
   };
 
-  const startAutoProctor = async (onForceExitCallback?: Function) => {
-    try {
-      if (proctorState === ProctorState.INIT && instance.current) {
-        setProctorState(ProctorState.IN_PROGRESS);
-        forceExitRef.current = onForceExitCallback;
-        await instance.current?.start();
-        // addResouceCleaner(() => {
-        //   instance.current?.stop();
-        //   setProctorState(ProctorState.DONE);
-        //   // console.log('ending autoProctor Test: ', instance.current);
-        // });
-        // console.log('starting autoProctor Test: ', instance.current);
-      }
-    } catch (err) {
-      console.log("Error while stgartin auto proctor", err);
-    }
-  };
+  // const startAutoProctor = async () => {
+  //   try {
+  //     // if (!isAutoProcterEnabled()) {
+  //     //   return;
+  //     // }
+  //     if (proctorStateRef.current === ProctorState.INIT && instance.current) {
+  //       proctorStateRef.current = ProctorState.STARTING;
+
+  //       await instance.current?.start();
+  //       // addResouceCleaner(() => {
+  //       //   instance.current?.stop();
+  //       //   setProctorState(ProctorState.DONE);
+  //       //   // console.log('ending autoProctor Test: ', instance.current);
+  //       // });
+  //       // console.log('starting autoProctor Test: ', instance.current);
+  //     }
+  //   } catch (err) {
+  //     console.log("Error while stgartin auto proctor", err);
+  //   }
+  // };
 
   return (
     <ProcterContext.Provider
       value={{
-        startAutoProctor,
+        // startAutoProctor,
         isProctorStarted,
         initAutoProctor,
       }}
