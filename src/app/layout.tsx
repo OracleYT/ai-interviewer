@@ -3,9 +3,9 @@ import "./globals.css";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Interview with Abhinav Jain",
+  title: "CAS Interview for Ulster University",
   description:
-    "Real-time meetings by Moogle. Using your browser, share your video, desktop, and presentations with teammates and customers.",
+    "Start your journey to Ulster University with the CAS Interview"
 };
 
 export default function RootLayout({
@@ -20,6 +20,14 @@ export default function RootLayout({
           src="https://cdn.autoproctor.co/ap-entry.js"
           strategy="beforeInteractive"
         />
+        <meta charSet="utf-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta name="theme-color" content="#000000" />
+        <link rel="favicon" href="favicon.png" />
+        
       </head>
       <body>{children}</body>
     </html>
