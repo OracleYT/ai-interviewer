@@ -19,6 +19,7 @@ export default function Layout({ children, params }: LayoutProps) {
   const { meetingId } = params;
 
   const [meetingData, setMeetingData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,12 +35,13 @@ export default function Layout({ children, params }: LayoutProps) {
         } else {
           router.push(`/meeting/${meetingId}/meeting-end?invalid=true`);
         }
+        setLoading(false);
       });
     }
   }, [pathname]);
 
   return (
-    <ParticipantsProvider meetingData={meetingData}>
+    <ParticipantsProvider meetingData={meetingData} loading={loading}>
       <BrowserMediaProvider>
         <MeetProvider meetingId={params.meetingId}>{children}</MeetProvider>
       </BrowserMediaProvider>

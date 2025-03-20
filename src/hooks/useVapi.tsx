@@ -1,58 +1,46 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-  useCallback,
-} from "react";
+import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import Vapi from "@vapi-ai/web";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
-import { throttle } from "lodash";
 import { sendInterviewDataToBackend } from "@/action/server";
-import { useAutoProctor } from "@/contexts/ProcterContextProvider";
+import {
+  ProctorState,
+  useAutoProctor,
+} from "@/contexts/ProcterContextProvider";
+import { VapiDomEvents } from "@/constatnts/vapi-const";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
   const vapiCallRef = useRef<Call | null>();
   const router = useRouter();
-  const { initAutoProctor, isProctorStarted } = useAutoProctor();
+  const { procterState, stopProctering } = useAutoProctor();
+  const useCallStatus = useRef<"init" | "started" | "ended">("init");
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   // const statusRef = useRef<"init" | "started">("init");
   const { setVolumeLevel } = useContext(VolumeLevelContext);
   const { stopCamera } = useContext(BrowserMediaContext);
 
-  const stopVapiSession = useCallback(async () => {
-    const handleCallEnd = async () => {
-      await sendInterviewDataToBackend({
-        data: {
-          name: localStorage.getItem("guest_name"),
-          meetingId,
-          vapiCallData: vapiCallRef.current,
-        },
-      });
-    };
-
-    if (vapiRef.current) {
-      vapiRef.current.emit("call-end");
-      stopCamera();
-      await handleCallEnd();
-      vapiRef.current.stop();
+  useEffect(() => {
+    if (procterState === ProctorState.PROCTING_STOPED) {
       router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
+    }
+  }, [procterState, router]);
+
+  const stopVapiSession = useCallback(async () => {
+    if (vapiRef.current) {
+      stopCamera();
+      if (useCallStatus.current === "ended") return;
+      useCallStatus.current = "ended";
+      vapiRef.current.stop();
     } else {
       throw new Error("Vapi not initialized");
     }
   }, [sendInterviewDataToBackend, stopCamera]);
-
-  const throttledStopVapiSession = useCallback(
-    throttle(stopVapiSession, 2000),
-    [stopVapiSession]
-  );
 
   useEffect(() => {
     if (!vapiRef.current) {
@@ -67,41 +55,48 @@ const useVapi = (meetingId: string) => {
       setVolumeLevel(level);
     };
 
+    const speakAssistantHandler = (e: any) => {
+      const { detail } = e;
+      const { message, endSession } = detail;
+      vapiRef.current?.say(message, endSession);
+    };
+
     vapiRef.current?.on("volume-level", volumeLevelHandler);
     vapiRef.current?.on("call-end", () => {
-      console.log("recived end call event from vapi");
-      throttledStopVapiSession();
+      stopVapiSession();
+      //TODO: uncomment this line
+      // stopProctering();
     });
+    document.addEventListener(
+      VapiDomEvents.SPEAK_ASSISTANT,
+      speakAssistantHandler
+    );
+
     setVapiInstance(vapiRef.current);
     return () => {
       vapiRef.current?.removeAllListeners("volume-level");
       vapiRef.current?.removeAllListeners("call-end");
+      document.removeEventListener(
+        VapiDomEvents.SPEAK_ASSISTANT,
+        speakAssistantHandler
+      );
     };
-  }, [throttledStopVapiSession, setVolumeLevel]);
+  }, [stopVapiSession, setVolumeLevel]);
 
   const startVapiSession = async (assistantId: string) => {
     if (!vapiRef.current) {
       throw new Error("Vapi not Initialize");
     }
-    const call = await vapiRef.current.start(assistantId);
-    if (isProctorStarted && !isProctorStarted()) {
-      const callbackOnSpeak = (message: string, endSession: boolean) => {
-        if (endSession) {
-        }
-        vapiRef.current?.say(message, endSession);
-      };
-
-      //id here should be a test spesifc
-      typeof initAutoProctor === "function" &&
-        initAutoProctor(assistantId, callbackOnSpeak);
+    if (useCallStatus.current === "started") {
+      return;
     }
-    vapiCallRef.current = call;
-    return call;
+    useCallStatus.current = "started";
+    await vapiRef.current.start(assistantId);
   };
 
   return {
     startVapiSession,
-    stopVapiSession: throttledStopVapiSession,
+    stopVapiSession,
     vapiInstance,
   };
 };

@@ -4,16 +4,19 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "stream-chat-react/dist/css/v2/index.css";
 import AppProvider from "@/contexts/AppProvider";
+import ProcterContextProvider from "@/contexts/ProcterContextProvider";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    <AppProvider>
-      <ClerkProvider>{children}</ClerkProvider>
-    </AppProvider>
+    <ProcterContextProvider>
+      <AppProvider>
+        <div id="test-container" />
+        <ClerkProvider>{children}</ClerkProvider>
+      </AppProvider>
+    </ProcterContextProvider>
   );
 }

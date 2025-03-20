@@ -28,10 +28,10 @@ export default function RootLayout({
       href: "/interview",
       text: "Interview",
     },
-    {
-      href: "/setting",
-      text: "Setting",
-    },
+    // {
+    //   href: "/setting",
+    //   text: "Setting",
+    // },
   ];
 
   return (

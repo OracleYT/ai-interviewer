@@ -51,8 +51,8 @@ const Meeting = ({ params }: MeetingProps) => {
   // const user = useConnectedUser();
   const { currentTime } = useTime();
   // const { client: chatClient } = useChatContext();
-  const { useCallCallingState, useParticipants, useScreenShareState } =
-    useCallStateHooks();
+  // const { useCallCallingState, useParticipants, useScreenShareState } =
+  //   useCallStateHooks();
 
   // const participants = useParticipants();
   // const { screenShare } = useScreenShareState();
@@ -86,25 +86,11 @@ const Meeting = ({ params }: MeetingProps) => {
   useEffect(() => {
     const startup = async () => {
       if (!vapiInstance) {
-        await startVapiSession("a66a8d70-c01a-45d1-b005-3df1f8dd1a47");
-
-        // if (isUnkownOrIdle) {
-        //   router.push(`/${meetingId}`);
-        // } else if (chatClient) {
-        //   const channel = chatClient.channel("messaging", meetingId);
-        //   setChatChannel(channel);
-        // }
+        await startVapiSession(meetingData.interviewer?.assistantID);
       }
     };
     startup();
-
-    // }, [router, meetingId, isUnkownOrIdle, chatClient]);
-    return () => {
-      // if (call) {
-      //   call.leave();
-      // }
-    };
-  }, [router, meetingId, vapiInstance]);
+  }, [vapiInstance]);
 
   useEffect(() => {
     if (participants.length > prevParticipantsCount) {
@@ -128,8 +114,6 @@ const Meeting = ({ params }: MeetingProps) => {
     // await call?.leave();
     stopVapiSession();
     stopCamera();
-
-    router.push(`/meeting/${meetingId}/meeting-end`);
   };
 
   // const toggleScreenShare = async () => {
@@ -161,7 +145,9 @@ const Meeting = ({ params }: MeetingProps) => {
             <div className="flex items-center overflow-hidden mx-3 h-20 gap-3 select-none">
               <span className="font-medium">{currentTime}</span>
               <span>{"|"}</span>
-              <span className="font-medium truncate">{meetingData?.title || meetingId}</span>
+              <span className="font-medium truncate">
+                {meetingData?.title || meetingId}
+              </span>
             </div>
           </div>
           {/* Meeting Controls */}

@@ -7,9 +7,11 @@ export const ParticipantsContext = createContext<any>(null);
 export const ParticipantsProvider = ({
   children,
   meetingData,
+  loading,
 }: {
   children: React.ReactNode;
   meetingData: any;
+  loading: boolean;
 }) => {
   const participants = useMemo(() => {
     return [
@@ -25,7 +27,9 @@ export const ParticipantsProvider = ({
   }, [meetingData]);
 
   return (
-    <ParticipantsContext.Provider value={{ participants, meetingData }}>
+    <ParticipantsContext.Provider
+      value={{ participants, meetingData, loading }}
+    >
       {children}
     </ParticipantsContext.Provider>
   );

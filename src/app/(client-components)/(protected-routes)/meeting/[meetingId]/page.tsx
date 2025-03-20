@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 //   useConnectedUser,
 // } from "@stream-io/video-react-sdk";
 // import { useChatContext } from "stream-chat-react";
-import { useUser } from "@clerk/nextjs";
+// import { useUser } from "@clerk/nextjs";
 
 import { AppContext, MEETING_ID_REGEX } from "@/contexts/AppProvider";
 // import { GUEST_ID, tokenProvider } from "@/contexts/MeetProvider";
@@ -20,10 +20,13 @@ import CallParticipants from "@/components/CallParticipants";
 import Header from "@/components/Header";
 import MeetingPreview from "@/components/MeetingPreview";
 import Spinner from "@/components/Spinner";
-import TextField from "@/components/TextField";
+// import TextField from "@/components/TextField";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
-import { getInterviewDetails } from "@/action/interview-action";
+import {
+  ProctorState,
+  useAutoProctor,
+} from "@/contexts/ProcterContextProvider";
 // import { SettingsOut } from "svix";
 
 interface LobbyProps {
@@ -39,7 +42,7 @@ const Lobby = ({ params }: LobbyProps) => {
   // const [meetingData, setMeetingData] = useState<any>();
 
   // const { client: chatClient } = useChatContext();
-  const { isSignedIn } = useUser();
+  // const { isSignedIn } = useUser();
   const router = useRouter();
   // const connectedUser = useConnectedUser();
   // const call = useCall();
@@ -47,15 +50,16 @@ const Lobby = ({ params }: LobbyProps) => {
   // const callingState = useCallCallingState();
   // const [guestName, setGuestName] = useState("");
   // const [errorFetchingMeeting, setErrorFetchingMeeting] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   // const [participants, setParticipants] = useState<CallParticipantResponse[]>([
   //   ai_interviwer,
   // ]);
-  const isGuest = !isSignedIn;
+  // const isGuest = !isSignedIn;
   const { isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
-  const { participants, meetingData } = useContext(ParticipantsContext);
+  const { participants, meetingData, loading } =
+    useContext(ParticipantsContext);
+  const { procterState, initAutoProctor } = useAutoProctor();
 
   useEffect(() => {
     if (isCameraOn) {
@@ -63,23 +67,6 @@ const Lobby = ({ params }: LobbyProps) => {
     } else {
       stopCamera();
     }
-  }, []);
-
-  useEffect(() => {
-    // if (meetingId) {
-    //   getInterviewDetails(meetingId).then((response) => {
-    //     if (!response.success) {
-    //       // setErrorFetchingMeeting(true);
-    //       router.push(`/meeting/${meetingId}/meeting-end?invalid=true`);
-    //       return;
-    //     } else {
-    //       setMeetingData(response.data);
-    //     }
-    //   });
-    // }
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
   }, []);
 
   useEffect(() => {
@@ -110,7 +97,7 @@ const Lobby = ({ params }: LobbyProps) => {
     }
   }, [loading, joining]);
 
-  // const updateGuestName = async () => {
+    // const updateGuestName = async () => {
   //   try {
   //     // await fetch("/api/user", {
   //     //   method: "POST",
@@ -135,10 +122,16 @@ const Lobby = ({ params }: LobbyProps) => {
   //   }
   // };
 
+  useEffect(() => {
+    if (procterState === ProctorState.PROCTING_STARTED) {
+      router.push(`/meeting/${meetingId}/meeting`);
+    }
+  }, [procterState]);
+
+
   const joinCall = async () => {
     setJoining(true);
-
-    router.push(`/meeting/${meetingId}/meeting`);
+    initAutoProctor(meetingId);
   };
 
   if (!validMeetingId)
@@ -162,7 +155,7 @@ const Lobby = ({ params }: LobbyProps) => {
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
         <MeetingPreview />
         <div className="flex flex-col items-center lg:justify-center gap-4 grow-0 shrink-0 basis-112 h-135 mr-2 lg:mb-13">
-        <h2 className="text-black text-3xl text-center truncate">
+          <h2 className="text-black text-3xl text-center truncate">
             {meetingData?.title}
           </h2>
           <h2 className="text-black text-2xl text-center truncate">
@@ -185,11 +178,7 @@ const Lobby = ({ params }: LobbyProps) => {
           </span>
           <div>
             {!joining && !loading && (
-              <Button
-                className="w-60 text-sm"
-                onClick={joinCall}
-                rounding="lg"
-              >
+              <Button className="w-60 text-sm" onClick={joinCall} rounding="lg">
                 Join now
               </Button>
             )}
