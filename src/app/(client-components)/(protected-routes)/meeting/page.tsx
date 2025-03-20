@@ -29,7 +29,7 @@ const generateMeetingId = () => {
   return `${nanoid(3)}-${nanoid(4)}-${nanoid(3)}`;
 };
 
-const GUEST_USER: User = { id: "guest", type: "guest" };
+// const GUEST_USER: User = { id: "guest", type: "guest" };
 
 const Home = () => {
   const { setNewMeeting } = useContext(AppContext);

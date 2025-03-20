@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { nanoid } from "nanoid";
 import {
@@ -12,6 +12,7 @@ import { User as ChatUser, StreamChat } from "stream-chat";
 import { Chat } from "stream-chat-react";
 
 import LoadingOverlay from "../components/LoadingOverlay";
+import { ParticipantsContext } from "./ParticipantsProvider";
 
 type MeetProviderProps = {
   meetingId: string;
@@ -22,11 +23,11 @@ export const CALL_TYPE = "default";
 export const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY as string;
 export const GUEST_ID = `guest_${nanoid(15)}`;
 
-export const tokenProvider = async (userId: string = '') => {
-  const response = await fetch('/api/token', {
-    method: 'POST',
+export const tokenProvider = async (userId: string = "") => {
+  const response = await fetch("/api/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ userId: userId || GUEST_ID }),
   });
@@ -40,6 +41,7 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
   const [chatClient, setChatClient] = useState<StreamChat>();
   const [videoClient, setVideoClient] = useState<StreamVideoClient>();
   const [call, setCall] = useState<Call>();
+  const { meetingData } = useContext(ParticipantsContext);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -66,24 +68,24 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
         },
       };
     } else {
-    user = {
-      id: GUEST_ID,
-      type: "guest",
-      name: "Guest",
-    };
+      // user = {
+      //   id: GUEST_ID,
+      //   type: "guest",
+      //   name: "Guest",
+      // };
     }
 
     const _chatClient = StreamChat.getInstance(API_KEY);
     const _videoClient = new StreamVideoClient({
       apiKey: API_KEY,
-      user,
+      user: meetingData?.user,
       tokenProvider: customProvider,
     });
     const call = _videoClient.call(CALL_TYPE, meetingId);
 
     setVideoClient(_videoClient);
     setCall(call);
-    setUpChat(user);
+    setUpChat(meetingData?.user);
 
     return () => {
       _videoClient.disconnectUser();
@@ -94,13 +96,11 @@ const MeetProvider = ({ meetingId, children }: MeetProviderProps) => {
   if (loading) return <LoadingOverlay />;
 
   return (
-      <Chat client={chatClient!}>
-    <StreamVideo client={videoClient!}>
-      <StreamCall call={call}>
-      {children}
-      </StreamCall>
-    </StreamVideo>
-      </Chat>
+    <Chat client={chatClient!}>
+      <StreamVideo client={videoClient!}>
+        <StreamCall call={call}>{children}</StreamCall>
+      </StreamVideo>
+    </Chat>
   );
 };
 
