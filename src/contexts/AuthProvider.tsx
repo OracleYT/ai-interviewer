@@ -1,8 +1,8 @@
 "use client";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { user_login } from "@/utils/mockdata";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, ReactNode, useEffect } from "react";
+import { verifyCredentials } from "@/action/auth-action";
 
 export type AuthContextType = {
   user: any;
@@ -45,9 +45,11 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   }, [user, pathname, router, setIsAuthanticated]);
 
   const login = async (creds: { username: string; password: string }) => {
-    const response = await user_login(creds);
+
+    const response = await verifyCredentials(creds.username, creds.password);
     if (response.success && response?.data) {
       setUser(response.data);
+      setIsAuthanticated(true);
       router.push("/");
     }
     return response;

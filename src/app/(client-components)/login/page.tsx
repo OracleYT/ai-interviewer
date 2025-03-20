@@ -17,8 +17,6 @@ export default function Login() {
     try {
       const data = { username: email, password };
 
-      console.log("login in clicked", data);
-      console.log("auth", auth);
       const res = await auth.login(data);
       console.log("res", res);
       if (!res.success) {
