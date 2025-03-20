@@ -23,6 +23,7 @@ import Spinner from "@/components/Spinner";
 import TextField from "@/components/TextField";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
+import { getInterviewDetails } from "@/action/interview-action";
 // import { SettingsOut } from "svix";
 
 interface LobbyProps {
@@ -35,6 +36,8 @@ const Lobby = ({ params }: LobbyProps) => {
   const { meetingId } = params;
   const validMeetingId = MEETING_ID_REGEX.test(meetingId);
   const { newMeeting, setNewMeeting } = useContext(AppContext);
+  const [meetingData, setMeetingData] = useState<any>();
+
   // const { client: chatClient } = useChatContext();
   const { isSignedIn } = useUser();
   const router = useRouter();
@@ -63,6 +66,17 @@ const Lobby = ({ params }: LobbyProps) => {
   }, []);
 
   useEffect(() => {
+    if (meetingId) {
+      getInterviewDetails(meetingId).then((response) => {
+        if (!response.success) {
+          // setErrorFetchingMeeting(true);
+          router.push(`/${meetingId}/meeting-end?invalid=true`);
+          return;
+        } else {
+          setMeetingData(response.data);
+        }
+      });
+    }
     setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -78,8 +92,8 @@ const Lobby = ({ params }: LobbyProps) => {
 
   const heading = useMemo(() => {
     if (loading) return "Getting ready...";
-    return isGuest ? "What's your name?" : "Ready to join?";
-  }, [loading, isGuest]);
+    return "Ready to join?";
+  }, [loading]);
 
   const participantsUI = useMemo(() => {
     switch (true) {
@@ -148,14 +162,14 @@ const Lobby = ({ params }: LobbyProps) => {
 
   return (
     <div>
-      <Header navItems={false} />
+      <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
         <MeetingPreview />
         <div className="flex flex-col items-center lg:justify-center gap-4 grow-0 shrink-0 basis-112 h-135 mr-2 lg:mb-13">
           <h2 className="text-black text-3xl text-center truncate">
             {heading}
           </h2>
-          {isGuest && !loading && (
+          {/* {isGuest && !loading && (
             <TextField
               label="Name"
               name="name"
@@ -166,7 +180,7 @@ const Lobby = ({ params }: LobbyProps) => {
                 setGuestName(e.target.value);
               }}
             />
-          )}
+          )} */}
           <span className="text-meet-black font-medium text-center text-sm cursor-default">
             {participantsUI}
           </span>
@@ -175,7 +189,6 @@ const Lobby = ({ params }: LobbyProps) => {
               <Button
                 className="w-60 text-sm"
                 onClick={joinCall}
-                disabled={isGuest && !guestName}
                 rounding="lg"
               >
                 Join now

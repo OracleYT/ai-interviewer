@@ -70,39 +70,29 @@ export async function updateInterviewStatus({ userId, status }: UpdateProp) {
   };
 }
 
-export async function getInterviewer(userId: string) {
-
+export async function getInterviewDetails(interviewId: string) {
   // find the interviewerId for the user
-  const interviewerId = await prisma.interview.findFirst({
+  const interview = await prisma.interview.findFirst({
     where: {
-      userId,
+      id: interviewId,
     },
     select: {
       interviewerId: true,
+      interviewer: true,
+      user: true,
+      title: true,
+      status: true,
+      expiryDate: true,
+      createdAt: true,
     },
   });
+  console.log(interview);
 
-  if (!interviewerId || !interviewerId.interviewerId) {
+  if (!interview) {
     return {
       status: 404,
       success: false,
-      message: "Interviewer not found",
-      data: null,
-    };
-  }
-
-  // find the interviewer details using the interviewerId
-  const interviewer = await prisma.interviewer.findFirst({
-    where: {
-      id: interviewerId.interviewerId,
-    },
-  });
-
-  if (!interviewer) {
-    return {
-      status: 404,
-      success: false,
-      message: "Interviewer not found",
+      message: "Interview not found",
       data: null,
     };
   }
@@ -110,7 +100,6 @@ export async function getInterviewer(userId: string) {
   return {
     status: 200,
     success: true,
-    message: "Interviewer found",
-    data: interviewer,
+    data: interview,
   };
 }

@@ -10,14 +10,15 @@ import IconButton from "./IconButton";
 // import Videocam from "./icons/Videocam";
 import Settings from "./icons/Settings";
 import useTime from "../hooks/useTime";
-import { useState } from "react";
-import AiIcon from "./icons/AiIcon";
+// import AiIcon from "./icons/AiIcon";
+import { Avatar } from "stream-chat-react";
 
 interface HeaderProps {
   navItems?: boolean;
+  user?: any;
 }
 
-const Header = ({ navItems = true }: HeaderProps) => {
+const Header = ({ navItems = true, user }: HeaderProps) => {
   // const { isLoaded, isSignedIn, user } = useUser();
   // const { isLoaded } = useUser();
   // const [isLoaded, setIsLoaded] = useState<boolean>(false)
@@ -26,20 +27,24 @@ const Header = ({ navItems = true }: HeaderProps) => {
   // const email = user?.primaryEmailAddress?.emailAddress;
 
   return (
-    <header className="w-full px-4 pt-4 flex items-center justify-between bg-white">
+    <header className="w-full px-4 flex items-center justify-between bg-white select-none">
       <div className="w-60 max-w-full">
-        <a href="/#" className="flex items-center gap-2 w-full">
-          <AiIcon />
-          <div className="font-product-sans text-2xl leading-6 text-meet-gray select-none">
-            <span className="font-medium">Ai </span>
+        <div className="flex items-center gap-2 w-full">
+          <img
+            src="/assets/ulster-university.svg"
+            alt="logo"
+            className="w-20 h-20"
+          />
+          <div className="font-product-sans text-2xl leading-6 text-meet-gray">
+            <span className="font-medium">CAS </span>
             <span>Interview</span>
           </div>
-        </a>
+        </div>
       </div>
       <div className="flex items-center cursor-default">
         {navItems && (
           <>
-            <div className="hidden md:block mr-2 text-lg leading-4.5 text-meet-gray select-none">
+            <div className="hidden md:block mr-2 text-lg leading-4.5 text-meet-gray">
               {currentDateTime}
             </div>
             <div className="hidden sm:contents [&>button]:mx-2.5">
@@ -50,6 +55,21 @@ const Header = ({ navItems = true }: HeaderProps) => {
           </>
         )}
       </div>
+      {user && (
+        <div className="flex items-end gap-2 select-none">
+          <div className="text-end">
+            <div className="text-sm">{user?.name}</div>
+            <div className="text-xs">{user?.email}</div>
+          </div>
+          <Avatar
+            // image="/assets/profile-picture.png"
+            name={user?.name}
+            size={36}
+            user={user}
+            shape="circle"
+          />
+        </div>
+      )}
     </header>
   );
 };
