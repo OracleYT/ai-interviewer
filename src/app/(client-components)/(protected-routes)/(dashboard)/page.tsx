@@ -63,7 +63,7 @@ function Page() {
 
             if (
               interview?.status === "PENDING" &&
-              dayjs().add(3, "day").isAfter(dayjs(interview?.expiryDate))
+              dayjs().isAfter(dayjs(interview?.expiryDate).add(1, "day"))
             ) {
               interview["status"] = "EXPIRED";
             }
