@@ -33,7 +33,7 @@ function StartInterviewCard({
         </span>
         {showCta && (
           <Link
-            href={ctaHref}
+            href={ctaHref!}
             className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg"
           >
             {cta ?? "Start Interview"}
