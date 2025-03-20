@@ -20,6 +20,11 @@ const nextConfig = {
     NEXT_INTERVIEW_END_URI: process.env.NEXT_INTERVIEW_END_URI,
     NEXT_AUTO_PROCTOR_CLIENT_ID: process.env.NEXT_AUTO_PROCTOR_CLIENT_ID,
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb', // Adjust the limit as needed
+    },
+  },
 };
 
 export default nextConfig;
