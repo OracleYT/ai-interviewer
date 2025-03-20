@@ -46,6 +46,7 @@ model Interview {
   status      InterviewStatus @default(PENDING)
   result      InterviewResult @default(PENDING)
   resultUrl   String?
+  expiryDate  DateTime? @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -1,5 +1,4 @@
 import Card from "@/components/Card";
-import StartInterviewCard from "@/components/StartInterviewCard";
 import React from "react";
 
 const about = [
@@ -31,13 +30,12 @@ function Interview() {
   return (
     <Card
       background="#ffffff"
-      height="100%"
       width="100%"
       borderRadius="30px"
-      className="flex"
+      className="flex overflow-scroll element"
     >
       {/*left container */}
-      <div className="p-[80px] w-[70%]">
+      <div className="pt-5 px-[64px] w-[70%] h-full">
         <div className="flex flex-col gap-4 my-3">
           <div>
             <div className="flex justify-between">
@@ -62,7 +60,7 @@ function Interview() {
             </ul>
           </div>
           {/* steps */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 pb-10">
             <p className="text-lg text-[#262A41]">Things to Remember</p>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
             <ul className="flex flex-col gap-2">
@@ -80,7 +78,8 @@ function Interview() {
         background="#F9FAFC"
         height="100%"
         width="30%"
-        className="rounded-r-[30px] flex flex-col justify-between items-center py-10 "
+        padding="40px"
+        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-scroll element min-h-[700px]"
       >
         <div className="flex flex-col gap-2 w-[250px]">
           <p className="text-[#262A41] text-[20px]">Things to Remember</p>
@@ -93,7 +92,6 @@ function Interview() {
             </li>
           ))}
         </div>
-        <StartInterviewCard />
       </Card>
     </Card>
   );

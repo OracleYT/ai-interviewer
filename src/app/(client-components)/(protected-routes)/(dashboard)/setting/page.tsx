@@ -32,14 +32,13 @@ function Setting() {
   const { user } = useAuth();
   return (
     <Card
-      background="#ffffff"
-      height="100%"
-      width="100%"
-      borderRadius="30px"
-      className="flex"
+    background="#ffffff"
+    width="100%"
+    borderRadius="30px"
+    className="flex overflow-y-scroll element border" 
     >
       {/*left container */}
-      <div className="p-[80px] w-[70%]">
+      <div className="pt-5 px-[64px] w-[70%] h-full">
         <div className="flex flex-col gap-4 my-3">
           <div>
             <div className="flex justify-between">
@@ -82,10 +81,10 @@ function Setting() {
       </div>
       {/* right container */}
       <Card
-        background="#F9FAFC"
-        height="100%"
-        width="30%"
-        className="rounded-r-[30px] flex flex-col justify-between items-center py-10"
+         background="#F9FAFC"
+         width="30%"
+         padding="40px"
+         className="rounded-r-[30px] flex flex-col justify-between items-center"
       >
         <div className="flex flex-col gap-2 w-[250px]">
           <p className="text-[#262A41] text-[20px]">Things to Remember</p>

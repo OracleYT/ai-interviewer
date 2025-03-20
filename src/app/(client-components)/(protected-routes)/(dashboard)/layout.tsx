@@ -40,8 +40,8 @@ export default function RootLayout({
         background="#000000"
         height="100vh"
         width="100vw"
-        padding="30px"
-        className="overflow-hidden flex gap-20"
+        padding="24px"
+        className="flex overflow-scroll gap-20 element"
       >
         <div className="flex flex-col justify-center gap-36 p-6 h-full">
           <div className="flex flex-col">

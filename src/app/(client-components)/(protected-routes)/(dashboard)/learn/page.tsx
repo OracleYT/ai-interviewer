@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "@/components/Card";
-import StartInterviewCard from "@/components/StartInterviewCard";
 
 const about = [
   {
@@ -30,14 +29,13 @@ const about = [
 function Learn() {
   return (
     <Card
-      background="#ffffff"
-      height="100%"
-      width="100%"
-      borderRadius="30px"
-      className="flex"
+    background="#ffffff"
+    width="100%"
+    borderRadius="30px"
+    className="flex overflow-y-scroll element border" 
     >
       {/*left container */}
-      <div className="p-[80px] w-[70%]">
+      <div className="pt-5 px-[64px] w-[70%] h-full">
         <div className="flex flex-col gap-4 my-3">
           <div>
             <div className="flex justify-between">
@@ -72,12 +70,11 @@ function Learn() {
       {/* right container */}
       <Card
         background="#F9FAFC"
-        height="100%"
         width="30%"
-        className="rounded-r-[30px] flex flex-col justify-between items-center py-10 "
+        padding="40px"
+        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px]"
       >
-        <div>
-          <div className="flex flex-col items-center gap-4 my-10">
+          <div className="flex flex-col items-center gap-4">
             <p className="text-[20px] text-[#262A41]">
               Prepare for CAS Round 1
             </p>
@@ -85,11 +82,10 @@ function Learn() {
               <Card
                 background="#EDF0F6"
                 borderRadius="15px"
-                height="70px"
-                width="245px"
                 padding="15px"
+                className="mt-8"
               >
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center gap-7">
                   <p className="text-[#273240] text-[13px] font-medium">
                     Interview Question Bank
                   </p>
@@ -101,8 +97,6 @@ function Learn() {
               </Card>
             </div>
           </div>
-        </div>
-        <StartInterviewCard />
       </Card>
     </Card>
   );

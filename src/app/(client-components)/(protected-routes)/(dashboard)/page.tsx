@@ -1,6 +1,12 @@
+"use client";
+
+import { getInterviews } from "@/action/interview-action";
 import Card from "@/components/Card";
 import StartInterviewCard from "@/components/StartInterviewCard";
-import React from "react";
+import { useAuth } from "@/hooks/useAuth";
+import clsx from "clsx";
+import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 
 const steps = [
   {
@@ -29,29 +35,88 @@ const steps = [
   },
 ];
 
-function Screenpage() {
+const colorMap: any = {
+  COMPLETED: "bg-[#31BA96]",
+  PENDING: "bg-[#FF8700]",
+  ONGOING: "bg-[#FF8700]",
+  CANCELLED: "bg-[#DC3434]",
+  EXPIRED: "bg-[#777777]",
+};
+function Page() {
+  const { user } = useAuth();
+
+  const [interview, setInterview] = useState<any>({
+    title: "N/A",
+    expiryDate: "N/A",
+    status: "N/A",
+  });
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      getInterviews(user.id)
+        .then((response) => {
+          if (response.success) {
+            const interview: any = response?.data?.at(0) || {};
+            interview["status"] = interview?.status || "N/A";
+
+            if (
+              interview?.status === "PENDING" &&
+              dayjs().add(3, "day").isAfter(dayjs(interview?.expiryDate))
+            ) {
+              interview["status"] = "EXPIRED";
+            }
+
+            interview["status_color"] =
+              (interview?.status && colorMap[interview?.status]) ||
+              "bg-[#FF8700]";
+
+            interview["expiryDate"] =
+              dayjs(interview?.expiryDate).format("DD-MM-YYYY hh:mm:a") ||
+              "N/A";
+            setInterview(interview);
+          } else {
+            console.error(response.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching interviews:", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [user?.id]);
+
   return (
     <Card
       background="#ffffff"
-      height="100%"
       width="100%"
       borderRadius="30px"
-      className="flex"
+      className="flex overflow-y-scroll element border"
     >
       {/*left container */}
-      <div className="p-[80px] w-[70%]">
+      <div className="pt-5 px-[64px] w-[70%] h-full">
         <div className="flex flex-col gap-4 my-3">
-          <div>
-            <div className="flex justify-between">
-              <h3 className="text-[40px] text-[#262A41] font-semibold">
-                CAS Round 1
-              </h3>
-              <span className="bg-[#31BA96] px-4 place-content-center h-[31px] rounded-full text-[#ffffff] text-xs font-semibold">
-                Completed
+          <div className="flex justify-between">
+            <h3 className="text-4xl text-[#262A41] font-semibold">
+              {interview?.title}
+            </h3>
+            {interview?.status !== "N/A" && (
+              <span
+                className={clsx(
+                  "bg-[#31BA96] px-4 place-content-center h-[31px] rounded-full text-[#ffffff] text-xs font-semibold",
+                  interview?.status_color
+                )}
+              >
+                {interview?.status}
               </span>
-            </div>
+            )}
           </div>
-          <span className="text-[#101010]/50">01 - 25 March, 2025</span>
+          <span className="text-[#101010]/50">
+            Interview deadline: {interview?.expiryDate}
+          </span>
         </div>
         <div>
           {/* About */}
@@ -72,7 +137,7 @@ function Screenpage() {
           <div className="flex flex-col gap-4">
             <p className="text-lg text-[#262A41]">Steps</p>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 pb-2">
               {steps?.map((step) => (
                 <div className="flex items-center gap-7" key={step.step}>
                   <div
@@ -96,42 +161,50 @@ function Screenpage() {
       </div>
       {/* right container */}
       <Card
-         background="#F9FAFC"
-         height="100%"
-         width="30%"
-         className="rounded-r-[30px] flex flex-col justify-between items-center py-10 "
+        background="#F9FAFC"
+        width="30%"
+        padding="40px"
+        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px]"
       >
-        <div>
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-[20px] text-[#262A41]">
-              Prepare for CAS Round 1
-            </p>
-            <div>
-              <Card
-                background="#EDF0F6"
-                borderRadius="15px"
-                height="70px"
-                width="245px"
-                padding="15px"
-                className="mt-8"
-              >
-                <div className="flex justify-between">
-                  <p className="text-[#273240] text-[13px] font-medium">
-                    Interview Question Bank
-                  </p>
-                  <span className="text-[#273240] text-[11px]">PDF</span>
-                </div>
-                <span className="text-[#273240] text-[11px]">
-                  Click here &gt;
-                </span>
-              </Card>
-            </div>
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-[20px] text-[#262A41]">Prepare for CAS Round 1</p>
+          <div>
+            <Card
+              background="#EDF0F6"
+              borderRadius="15px"
+              padding="15px"
+              className="mt-8"
+            >
+              <div className="flex justify-between items-center gap-7">
+                <p className="text-[#273240] text-[13px] font-medium">
+                  Interview Question Bank
+                </p>
+                <span className="text-[#273240] text-[11px]">PDF</span>
+              </div>
+              <span className="text-[#273240] text-[11px]">
+                Click here &gt;
+              </span>
+            </Card>
           </div>
         </div>
-            <StartInterviewCard/>
+        {interview?.id && (
+          <StartInterviewCard
+            ctaHref={`/meeting/${interview?.id}`}
+            showCta={interview?.id}
+          />
+        )}
       </Card>
     </Card>
   );
 }
 
-export default Screenpage;
+export default Page;
+
+/// enable button only for ongoing or pending interview
+// button click should redirect to the interview page
+/// /meeting/{interview-id}/meeting
+
+// interview lobby
+// candidate data
+// interviewer data
+// interview data

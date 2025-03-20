@@ -61,7 +61,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = (email: string) => {
-    console.log("resetPassword", email);
     // make an api call
     return Promise.resolve({
       success: true,
