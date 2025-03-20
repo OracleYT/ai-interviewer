@@ -2,33 +2,33 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  CallingState,
-  hasScreenShare,
-  isPinned,
-  RecordCallButton,
+  // CallingState,
+  // hasScreenShare,
+  // isPinned,
+  // RecordCallButton,
   StreamTheme,
-  useCall,
+  // useCall,
   useCallStateHooks,
-  useConnectedUser,
+  // useConnectedUser,
 } from "@stream-io/video-react-sdk";
-import { Channel } from "stream-chat";
-import { DefaultStreamChatGenerics, useChatContext } from "stream-chat-react";
+// import { Channel } from "stream-chat";
+// import { DefaultStreamChatGenerics, useChatContext } from "stream-chat-react";
 
 import CallControlButton from "@/components/CallControlButton";
-import CallInfoButton from "@/components/CallInfoButton";
+// import CallInfoButton from "@/components/CallInfoButton";
 import CallEndFilled from "@/components/icons/CallEndFilled";
-import Chat from "@/components/icons/Chat";
-import ChatFilled from "@/components/icons/ChatFilled";
-import ChatPopup from "@/components/ChatPopup";
+// import Chat from "@/components/icons/Chat";
+// import ChatFilled from "@/components/icons/ChatFilled";
+// import ChatPopup from "@/components/ChatPopup";
 import ClosedCaptions from "@/components/icons/ClosedCaptions";
 import GridLayout from "@/components/GridLayout";
-import Group from "@/components/icons/Group";
-import Info from "@/components/icons/Info";
-import Mood from "@/components/icons/Mood";
-import PresentToAll from "@/components/icons/PresentToAll";
-import MeetingPopup from "@/components/MeetingPopup";
-import MoreVert from "@/components/icons/MoreVert";
-import RecordingsPopup from "@/components/RecordingsPopup";
+// import Group from "@/components/icons/Group";
+// import Info from "@/components/icons/Info";
+// import Mood from "@/components/icons/Mood";
+// import PresentToAll from "@/components/icons/PresentToAll";
+// import MeetingPopup from "@/components/MeetingPopup";
+// import MoreVert from "@/components/icons/MoreVert";
+// import RecordingsPopup from "@/components/RecordingsPopup";
 import SpeakerLayout from "@/components/SpeakerLayout";
 import ToggleAudioButton from "@/components/ToggleAudioButton";
 import ToggleVideoButton from "@/components/ToggleVideoButton";
@@ -57,14 +57,14 @@ const Meeting = ({ params }: MeetingProps) => {
   // const participants = useParticipants();
   // const { screenShare } = useScreenShareState();
   // const callingState = useCallCallingState();
-  const { participants } = useContext(ParticipantsContext);
+  const { participants, meetingData } = useContext(ParticipantsContext);
   // const [chatChannel, setChatChannel] =
   //   useState<Channel<DefaultStreamChatGenerics>>();
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isRecordingListOpen, setIsRecordingListOpen] = useState(false);
+  // const [isChatOpen, setIsChatOpen] = useState(false);
+  // const [isRecordingListOpen, setIsRecordingListOpen] = useState(false);
   const [participantInSpotlight, _] = participants;
   const [prevParticipantsCount, setPrevParticipantsCount] = useState(0);
-  const [volumeLevel, setVolumeLevel] = useState(0);
+  // const [volumeLevel, setVolumeLevel] = useState(0);
   const { isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
   const { startVapiSession, stopVapiSession, vapiInstance } =
@@ -161,7 +161,7 @@ const Meeting = ({ params }: MeetingProps) => {
             <div className="flex items-center overflow-hidden mx-3 h-20 gap-3 select-none">
               <span className="font-medium">{currentTime}</span>
               <span>{"|"}</span>
-              <span className="font-medium truncate">{meetingId}</span>
+              <span className="font-medium truncate">{meetingData?.title || meetingId}</span>
             </div>
           </div>
           {/* Meeting Controls */}

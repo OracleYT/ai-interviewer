@@ -36,7 +36,7 @@ const Lobby = ({ params }: LobbyProps) => {
   const { meetingId } = params;
   const validMeetingId = MEETING_ID_REGEX.test(meetingId);
   const { newMeeting, setNewMeeting } = useContext(AppContext);
-  const [meetingData, setMeetingData] = useState<any>();
+  // const [meetingData, setMeetingData] = useState<any>();
 
   // const { client: chatClient } = useChatContext();
   const { isSignedIn } = useUser();
@@ -45,7 +45,7 @@ const Lobby = ({ params }: LobbyProps) => {
   // const call = useCall();
   // const { useCallCallingState } = useCallStateHooks();
   // const callingState = useCallCallingState();
-  const [guestName, setGuestName] = useState("");
+  // const [guestName, setGuestName] = useState("");
   // const [errorFetchingMeeting, setErrorFetchingMeeting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
@@ -55,7 +55,7 @@ const Lobby = ({ params }: LobbyProps) => {
   const isGuest = !isSignedIn;
   const { isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
-  const { participants } = useContext(ParticipantsContext);
+  const { participants, meetingData } = useContext(ParticipantsContext);
 
   useEffect(() => {
     if (isCameraOn) {
@@ -66,17 +66,17 @@ const Lobby = ({ params }: LobbyProps) => {
   }, []);
 
   useEffect(() => {
-    if (meetingId) {
-      getInterviewDetails(meetingId).then((response) => {
-        if (!response.success) {
-          // setErrorFetchingMeeting(true);
-          router.push(`/${meetingId}/meeting-end?invalid=true`);
-          return;
-        } else {
-          setMeetingData(response.data);
-        }
-      });
-    }
+    // if (meetingId) {
+    //   getInterviewDetails(meetingId).then((response) => {
+    //     if (!response.success) {
+    //       // setErrorFetchingMeeting(true);
+    //       router.push(`/meeting/${meetingId}/meeting-end?invalid=true`);
+    //       return;
+    //     } else {
+    //       setMeetingData(response.data);
+    //     }
+    //   });
+    // }
     setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -156,17 +156,16 @@ const Lobby = ({ params }: LobbyProps) => {
       </div>
     );
 
-  // if (errorFetchingMeeting) {
-  //   router.push(`/${meetingId}/meeting-end?invalid=true`);
-  // }
-
   return (
     <div>
       <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
         <MeetingPreview />
         <div className="flex flex-col items-center lg:justify-center gap-4 grow-0 shrink-0 basis-112 h-135 mr-2 lg:mb-13">
-          <h2 className="text-black text-3xl text-center truncate">
+        <h2 className="text-black text-3xl text-center truncate">
+            {meetingData?.title}
+          </h2>
+          <h2 className="text-black text-2xl text-center truncate">
             {heading}
           </h2>
           {/* {isGuest && !loading && (

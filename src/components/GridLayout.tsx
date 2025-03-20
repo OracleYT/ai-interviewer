@@ -7,19 +7,7 @@ import { ParticipantItem } from "./ParticipantItem";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 
 const GridLayout = () => {
-  const { participants: pList } = useContext(ParticipantsContext);
-  const participants = useMemo(() => {
-    return pList.map((p: any) => {
-      if (p.roles?.includes("user")) {
-        return {
-          ...p,
-          name: localStorage.getItem("guest_name") || "Guest",
-        };
-      }
-      return p;
-    });
-  }, [pList]);
-
+  const { participants } = useContext(ParticipantsContext);
   const { ref } = useAnimateVideoLayout(false);
 
   return (
