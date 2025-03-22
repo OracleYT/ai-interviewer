@@ -129,9 +129,9 @@ function Page() {
               </p>
               <p>
                 Don&rsquo;t worry—it&rsquo;s not meant to be stressful. This is
-                your chance to show us why you`&apos;re excited about studying in the
-                UK and why you&apos;re a great fit for the program. We&rsquo;re here
-                to support you every step of the way!
+                your chance to show us why you`&apos;re excited about studying
+                in the UK and why you&apos;re a great fit for the program.
+                We&rsquo;re here to support you every step of the way!
               </p>
             </div>
           </div>

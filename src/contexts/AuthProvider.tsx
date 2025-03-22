@@ -48,8 +48,8 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   );
   const isDocUploaded = useMemo(() => {
     return (
-      user?.docs?.some((doc: any) => doc.status === "passport") &&
-      user?.docs?.some((doc: any) => doc.status === "bank-statement")
+      user?.docs?.some((doc: any) => doc.name === "passport") &&
+      user?.docs?.some((doc: any) => doc.name === "bank-statement")
     );
   }, [user?.docs]);
   const router = useRouter();
