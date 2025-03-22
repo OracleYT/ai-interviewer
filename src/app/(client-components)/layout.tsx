@@ -1,6 +1,7 @@
 "use client";
 
 import AuthContextProvider from "@/contexts/AuthProvider";
+import { InterviewContextProvider } from "@/contexts/InterviewContextProvider";
 import { Toaster } from "react-hot-toast";
 
 export default function Layout({
@@ -10,8 +11,10 @@ export default function Layout({
 }>) {
   return (
     <AuthContextProvider>
-      <Toaster />
-      {children}
+      <InterviewContextProvider>
+        <Toaster />
+        {children}
+      </InterviewContextProvider>
     </AuthContextProvider>
   );
 }

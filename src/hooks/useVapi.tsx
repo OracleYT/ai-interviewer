@@ -12,6 +12,7 @@ import {
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
+import { updateInterviewStatusById } from "@/action/interview-action";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
@@ -54,6 +55,15 @@ const useVapi = (meetingId: string) => {
     const volumeLevelHandler = (level: number) => {
       setVolumeLevel(level);
     };
+    const endCallHandler = () => {
+      stopVapiSession();
+      updateInterviewStatusById({
+        interviewId: meetingId,
+        callId: vapiCallRef.current?.id!,
+        status: "COMPLETED",
+      });
+      stopProctering();
+    };
 
     const speakAssistantHandler = (e: any) => {
       const { detail } = e;
@@ -62,11 +72,8 @@ const useVapi = (meetingId: string) => {
     };
 
     vapiRef.current?.on("volume-level", volumeLevelHandler);
-    vapiRef.current?.on("call-end", () => {
-      stopVapiSession();
-      //TODO: uncomment this line
-      // stopProctering();
-    });
+    vapiRef.current?.on("call-end", endCallHandler);
+
     document.addEventListener(
       VapiDomEvents.SPEAK_ASSISTANT,
       speakAssistantHandler
@@ -91,7 +98,13 @@ const useVapi = (meetingId: string) => {
       return;
     }
     useCallStatus.current = "started";
-    await vapiRef.current.start(assistantId);
+    vapiCallRef.current = await vapiRef.current.start(assistantId);
+    updateInterviewStatusById({
+      interviewId: meetingId,
+      callId: vapiCallRef.current?.id!,
+      status: "ONGOING",
+    });
+    return vapiCallRef.current;
   };
 
   return {

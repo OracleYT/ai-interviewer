@@ -12,6 +12,7 @@ import Settings from "./icons/Settings";
 import useTime from "../hooks/useTime";
 // import AiIcon from "./icons/AiIcon";
 import { Avatar } from "stream-chat-react";
+import Link from "next/link";
 
 interface HeaderProps {
   navItems?: boolean;
@@ -28,7 +29,7 @@ const Header = ({ navItems = true, user }: HeaderProps) => {
 
   return (
     <header className="w-full px-4 flex items-center justify-between bg-white select-none">
-      <div className="w-60 max-w-full">
+      <Link href="/" className="w-60 max-w-full">
         <div className="flex items-center gap-2 w-full">
           <img
             src="/assets/ulster-university.svg"
@@ -40,7 +41,7 @@ const Header = ({ navItems = true, user }: HeaderProps) => {
             <span>Interview</span>
           </div>
         </div>
-      </div>
+      </Link>
       <div className="flex items-center cursor-default">
         {navItems && (
           <>

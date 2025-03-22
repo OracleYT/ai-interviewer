@@ -1,14 +1,15 @@
 "use client";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   // CallingState,
   // hasScreenShare,
   // isPinned,
   // RecordCallButton,
   StreamTheme,
-  // useCall,
+  useCall,
   useCallStateHooks,
+  useConnectedUser,
   // useConnectedUser,
 } from "@stream-io/video-react-sdk";
 // import { Channel } from "stream-chat";
@@ -37,18 +38,15 @@ import useVapi from "@/hooks/useVapi";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 
-interface MeetingProps {
-  params: {
-    meetingId: string;
-  };
-}
 
-const Meeting = ({ params }: MeetingProps) => {
-  const { meetingId } = params;
+const Meeting = () => {
+    const params = useParams<{ meetingId: string }>();
+    const meetingId = params.meetingId;
+  
   const audioRef = useRef<HTMLAudioElement>(null);
   const router = useRouter();
-  // const call = useCall();
-  // const user = useConnectedUser();
+  const call = useCall();
+  const user = useConnectedUser();
   const { currentTime } = useTime();
   // const { client: chatClient } = useChatContext();
   // const { useCallCallingState, useParticipants, useScreenShareState } =

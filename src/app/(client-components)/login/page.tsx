@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
+import { resetPassword } from "@/action/auth-action";
+import toast from "react-hot-toast";
+import { useAuth } from "@/contexts/AuthProvider";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,9 +18,8 @@ export default function Login() {
 
     try {
       const data = { username: email, password };
-
       const res = await auth.login(data);
-      console.log("res", res);
+
       if (!res.success) {
         setError(res.message);
       }
@@ -27,9 +28,19 @@ export default function Login() {
     }
   };
 
-  const resetPassword = async (e: React.FormEvent) => {
+  const resetPasswordHandler = async (e: React.FormEvent) => {
+    setError(null);
     e.preventDefault();
-    // api call to send email
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+    const response = await resetPassword(email);
+    if (!response.success) {
+      setError(response.message);
+    } else {
+      toast.success(response.message);
+    }
   };
 
   return (
@@ -55,7 +66,7 @@ export default function Login() {
         borderRadius="30px"
         className="flex flex-col justify-center items-center gap-2 relative"
       >
-        <div className="w-[250px] flex flex-col gap-2">
+        <div className="w-[320px] flex flex-col gap-2">
           <h3 className="text-4xl text-[#262A41] font-semibold">Hello! 👋</h3>
           <p className="text-sm text-[#101010]/50">
             Please enter your email and password you received on your respected
@@ -74,8 +85,8 @@ export default function Login() {
             >
               <g opacity="0.6">
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M1.375 4.8125L2.0625 4.125H19.9375L20.625 4.8125V17.1875L19.9375 17.875H2.0625L1.375 17.1875V4.8125ZM2.75 6.23562V16.5H19.25V6.237L11.4263 12.2375H10.5875L2.75 6.23562ZM17.9163 5.5H4.08375L11 10.8199L17.9163 5.5Z"
                   fill="#333333"
                 />
@@ -88,7 +99,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="border py-2 px-12 w-[250px] border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
+              className="border py-2 px-12 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
             />
           </div>
           <div className="relative flex items-center">
@@ -115,7 +126,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border py-2 px-12 w-[250px] border-[#EEEEEE] rounded-lg bg-transparent text-black  focus:outline-slate-400"
+              className="border py-2 px-12 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black  focus:outline-slate-400"
             />
           </div>
           {error && <div className="text-red-500">{error}</div>}
@@ -124,7 +135,7 @@ export default function Login() {
           </Button>
         </form>
         <span
-          onClick={resetPassword}
+          onClick={resetPasswordHandler}
           className="text-[#101010]/50 text-xs cursor-pointer"
         >
           Reset password ?

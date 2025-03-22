@@ -212,7 +212,8 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       instance.current.stop &&
       proctorStateRef.current === ProctorState.PROCTING_STARTED
     ) {
-      instance.current.stop();
+      console.log("[stopProctering] Stopping Auto Proctor...");
+      // instance.current.stop();
     }
   }, []);
 

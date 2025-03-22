@@ -1,6 +1,6 @@
 "use client";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // import {
 //   CallingState,
 //   CallParticipantResponse,
@@ -29,14 +29,9 @@ import {
 } from "@/contexts/ProcterContextProvider";
 // import { SettingsOut } from "svix";
 
-interface LobbyProps {
-  params: {
-    meetingId: string;
-  };
-}
-
-const Lobby = ({ params }: LobbyProps) => {
-  const { meetingId } = params;
+const Lobby = () => {
+  const params = useParams<{ meetingId: string }>();
+  const meetingId = params.meetingId;
   const validMeetingId = MEETING_ID_REGEX.test(meetingId);
   const { newMeeting, setNewMeeting } = useContext(AppContext);
   // const [meetingData, setMeetingData] = useState<any>();
@@ -149,7 +144,8 @@ const Lobby = ({ params }: LobbyProps) => {
       </div>
     );
 
-  return (
+
+    return (
     <div>
       <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">

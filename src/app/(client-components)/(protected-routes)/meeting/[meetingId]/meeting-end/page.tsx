@@ -17,8 +17,9 @@ interface MeetingEndProps {
   };
 }
 
-const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
-  const { meetingId } = params;
+const MeetingEnd = ({ searchParams }: MeetingEndProps) => {
+  // const params = useParams<{ meetingId: string }>();
+  // const meetingId = params.meetingId;
   const router = useRouter();
   // const { useCallCallingState } = useCallStateHooks();
   // const callingState = useCallCallingState();
@@ -50,9 +51,9 @@ const MeetingEnd = ({ params, searchParams }: MeetingEndProps) => {
     }
   }, [countdownNumber]);
 
-  const rejoinMeeting = () => {
-    router.push(`/${meetingId}`);
-  };
+  // const rejoinMeeting = () => {
+  //   router.push(`/${meetingId}`);
+  // };
 
   const returnHome = () => {
     router.push("/");

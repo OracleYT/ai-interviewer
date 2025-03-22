@@ -1,49 +1,28 @@
 "use client";
 
 import Card from "@/components/Card";
-import { useAuth } from "@/hooks/useAuth";
+import { DASHBOARD_SIDE_NAV_ITEMS } from "@/constatnts/content-const";
+import { useAuth } from "@/contexts/AuthProvider";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const { user, logout } = useAuth();
-
   const pathname = usePathname();
-
-  const linkPath = [
-    {
-      href: "/",
-      text: "Dashboard",
-    },
-    {
-      href: "/learn",
-      text: "Learn",
-    },
-    {
-      href: "/interview",
-      text: "Interview",
-    },
-    // {
-    //   href: "/setting",
-    //   text: "Setting",
-    // },
-  ];
 
   return (
     <>
       <Card
         background="#000000"
-        height="100vh"
-        width="100vw"
         padding="24px"
-        className="flex overflow-scroll gap-20 element"
+        className="flex overflow-scroll gap-20 element min-h-screen max-h-full element"
       >
-        <div className="flex flex-col justify-center gap-36 p-6 h-full">
+        <div className="flex flex-col justify-center gap-36 p-6">
           <div className="flex flex-col">
             <img
               src="/assets/profile-picture.png"
@@ -56,7 +35,7 @@ export default function RootLayout({
             <p className="text-[#ffffff]/60">{user?.email}</p>
           </div>
           <div className="flex flex-col gap-3 text-lg font-medium h-full">
-            {linkPath.map((link) => (
+            {DASHBOARD_SIDE_NAV_ITEMS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

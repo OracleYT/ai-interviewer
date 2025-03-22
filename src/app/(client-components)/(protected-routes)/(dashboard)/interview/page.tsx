@@ -1,38 +1,20 @@
-import Card from "@/components/Card";
-import React from "react";
+"use client";
 
-const about = [
-  {
-    description:
-      "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.eiusmod tempor incididunt ut labore et dolore",
-  },
-  {
-    description:
-      " magna aliqua. Ut enim ad minim.eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ",
-  },
-  {
-    description:
-      "ad minim.eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi",
-  },
-  {
-    description: "nim.eiusmod",
-  },
-  {
-    description:
-      "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.eiusmod tempor incididunt ut l",
-  },
-  {
-    description: "abore et dolore.",
-  },
-];
+import React from "react";
+import Card from "@/components/Card";
+import StartInterviewCard from "@/components/StartInterviewCard";
+import { INTERVIEW_ABOUT_MAP } from "@/constatnts/content-const";
+import { useInterview } from "@/contexts/InterviewContextProvider";
 
 function Interview() {
+  const { interview, fetchingInterview: loading } = useInterview();
+
   return (
     <Card
       background="#ffffff"
       width="100%"
       borderRadius="30px"
-      className="flex overflow-scroll element"
+      className="flex overflow-y-scroll element"
     >
       {/*left container */}
       <div className="pt-5 px-[64px] w-[70%] h-full">
@@ -52,7 +34,7 @@ function Interview() {
             <p className="text-lg text-[#262A41]">About the Interview</p>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
             <ul className="flex flex-col gap-2">
-              {about.map((item, index) => (
+              {INTERVIEW_ABOUT_MAP.map((item, index) => (
                 <li key={index} className="text-[#404852]/70 text-xs list-disc">
                   {item.description}
                 </li>
@@ -60,11 +42,11 @@ function Interview() {
             </ul>
           </div>
           {/* steps */}
-          <div className="flex flex-col gap-4 pb-10">
+          <div className="flex flex-col gap-4">
             <p className="text-lg text-[#262A41]">Things to Remember</p>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
             <ul className="flex flex-col gap-2">
-              {about.map((item, index) => (
+              {INTERVIEW_ABOUT_MAP.map((item, index) => (
                 <li key={index} className="text-[#404852]/70 text-xs list-disc">
                   {item.description}
                 </li>
@@ -76,22 +58,26 @@ function Interview() {
       {/* right container */}
       <Card
         background="#F9FAFC"
-        height="100%"
         width="30%"
         padding="40px"
-        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-scroll element min-h-[700px]"
+        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px]"
       >
-        <div className="flex flex-col gap-2 w-[250px]">
-          <p className="text-[#262A41] text-[20px]">Things to Remember</p>
-          {about.map((item, index) => (
-            <li
-              key={index}
-              className="text-[#273240] text-[13px] font-medium list-disc"
-            >
-              {item.description}
-            </li>
-          ))}
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-[20px] text-[#262A41]">Strict Rules</p>
+          <ul className="flex flex-col gap-2">
+            {INTERVIEW_ABOUT_MAP.map((item, index) => (
+              <li key={index} className="text-[#273240] text-xs list-disc">
+                {item.description}
+              </li>
+            ))}
+          </ul>
         </div>
+        {!loading && interview?.id && (
+          <StartInterviewCard
+            ctaHref={`/meeting/${interview?.id}`}
+            showCta={interview?.id}
+          />
+        )}
       </Card>
     </Card>
   );

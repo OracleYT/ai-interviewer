@@ -1,7 +1,8 @@
 "use client";
+
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, ReactNode, useEffect } from "react";
+import React, { createContext, ReactNode, useEffect } from "react";
 import { verifyCredentials } from "@/action/auth-action";
 
 export type AuthContextType = {
@@ -12,6 +13,17 @@ export type AuthContextType = {
   login: (creds: { username: string; password: string }) => Promise<any>;
   logout: () => void;
   resetPassword: (email: string) => Promise<any>;
+  userId?: string;
+};
+
+export type InterviewDataContextType = {
+  interview: any;
+  fetchingInterview: boolean;
+};
+
+export type InterviewDetailsDataContextType = {
+  interviewDetails: any;
+  fetchingInterviewDetails: boolean;
 };
 
 const StoreKeys = {
@@ -20,6 +32,8 @@ const StoreKeys = {
 };
 
 export const AuthContext = createContext<AuthContextType | {}>({});
+export const InterviewDataContext = createContext<InterviewDataContextType | {}>({});
+export const InterviewDetailsDataContext = createContext<InterviewDetailsDataContextType | {}>({});
 
 function AuthContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useLocalStorage<any>(StoreKeys.user_data, null);
@@ -27,8 +41,12 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     StoreKeys.user_authanticated,
     false
   );
+  
+  
   const router = useRouter();
   const pathname = usePathname();
+
+
 
   useEffect(() => {
     if (user) {
@@ -45,7 +63,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   }, [user, pathname, router, setIsAuthanticated]);
 
   const login = async (creds: { username: string; password: string }) => {
-
     const response = await verifyCredentials(creds.username, creds.password);
     if (response.success && response?.data) {
       setUser(response.data);
@@ -78,11 +95,20 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         resetPassword,
+        userId: user?.id,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
+}
+
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within a AuthProvider");
+  }
+  return context as AuthContextType;
 }
 
 export default AuthContextProvider;

@@ -1,12 +1,10 @@
 "use client";
 
-import { getInterviews } from "@/action/interview-action";
 import Card from "@/components/Card";
 import StartInterviewCard from "@/components/StartInterviewCard";
-import { useAuth } from "@/hooks/useAuth";
+import { useInterview } from "@/contexts/InterviewContextProvider";
 import clsx from "clsx";
-import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 const steps = [
   {
@@ -35,64 +33,14 @@ const steps = [
   },
 ];
 
-const colorMap: any = {
-  COMPLETED: "bg-[#31BA96]",
-  PENDING: "bg-[#FF8700]",
-  ONGOING: "bg-[#FF8700]",
-  CANCELLED: "bg-[#DC3434]",
-  EXPIRED: "bg-[#777777]",
-};
 function Page() {
-  const { user } = useAuth();
-
-  const [interview, setInterview] = useState<any>({
-    title: "N/A",
-    expiryDate: "N/A",
-    status: "N/A",
-  });
-
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (user?.id) {
-      getInterviews(user.id)
-        .then((response) => {
-          if (response.success) {
-            const interview: any = response?.data?.at(0) || {};
-            interview["status"] = interview?.status || "N/A";
-
-            if (
-              interview?.status === "PENDING" &&
-              dayjs().isAfter(dayjs(interview?.expiryDate).add(1, "day"))
-            ) {
-              interview["status"] = "EXPIRED";
-            }
-
-            interview["status_color"] =
-              (interview?.status && colorMap[interview?.status]) ||
-              "bg-[#FF8700]";
-
-            interview["expiryDate"] =
-              dayjs(interview?.expiryDate).format("DD-MM-YYYY hh:mm:a") ||
-              "N/A";
-            setInterview(interview);
-          } else {
-            console.error(response.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching interviews:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [user?.id]);
+  const { interview } = useInterview();
 
   return (
     <Card
       background="#ffffff"
       width="100%"
+      // height="100%"
       borderRadius="30px"
       className="flex overflow-y-scroll element border"
     >
@@ -103,7 +51,7 @@ function Page() {
             <h3 className="text-4xl text-[#262A41] font-semibold">
               {interview?.title}
             </h3>
-            {interview?.status !== "N/A" && (
+            {interview?.status && (
               <span
                 className={clsx(
                   "bg-[#31BA96] px-4 place-content-center h-[31px] rounded-full text-[#ffffff] text-xs font-semibold",
@@ -164,7 +112,7 @@ function Page() {
         background="#F9FAFC"
         width="30%"
         padding="40px"
-        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px]"
+        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px] max-h-full"
       >
         <div className="flex flex-col items-center gap-4">
           <p className="text-[20px] text-[#262A41]">Prepare for CAS Round 1</p>
@@ -199,12 +147,3 @@ function Page() {
 }
 
 export default Page;
-
-/// enable button only for ongoing or pending interview
-// button click should redirect to the interview page
-/// /meeting/{interview-id}/meeting
-
-// interview lobby
-// candidate data
-// interviewer data
-// interview data

@@ -29,7 +29,7 @@ const generateMeetingId = () => {
   return `${nanoid(3)}-${nanoid(4)}-${nanoid(3)}`;
 };
 
-// const GUEST_USER: User = { id: "guest", type: "guest" };
+const GUEST_USER: User = { id: "guest", type: "guest" };
 
 const Home = () => {
   const { setNewMeeting } = useContext(AppContext);
@@ -94,7 +94,7 @@ const Home = () => {
       >
         <div className="w-full max-w-2xl p-4 pt-7 text-center inline-flex flex-col items-center basis-auto shrink-0">
           <h1 className="text-5xl tracking-normal text-black pb-2">
-            Invited only video calls and meetings
+            Check you interviews in dashboard
           </h1>
           <p className="text-1x text-gray pb-8">
             Connect, collaborate, and stand out in your interview.
@@ -135,7 +135,7 @@ const Home = () => {
             width={248}
             height={248}
           />
-          <div className="flex flex-col gap-2 text-center max-w-sm">
+          {/* <div className="flex flex-col gap-2 text-center max-w-sm">
             <h2 className="text-2xl tracking-normal text-black">
               Get a link you can share
             </h2>
@@ -143,13 +143,13 @@ const Home = () => {
               Click <span className="font-bold">New meeting</span> to get a link
               you can send to people you want to meet with
             </p>
-          </div>
+          </div> */}
         </div>
-        {checkingCode && (
+        {/* { (
           <div className="z-50 fixed top-0 left-0 w-full h-full flex items-center justify-center text-white text-3xl bg-[#000] animate-transition-overlay-fade-in">
             Joining...
           </div>
-        )}
+        )} */}
         {error && (
           <div className="z-50 fixed bottom-0 left-0 pointer-events-none m-6 flex items-center justify-start">
             <div className="rounded p-4 font-roboto text-white text-sm bg-dark-gray shadow-[0_3px_5px_-1px_rgba(0,0,0,.2),0_6px_10px_0_rgba(0,0,0,.14),0_1px_18px_0_rgba(0,0,0,.12)]">

@@ -86,9 +86,52 @@ export async function getInterviewDetails(interviewId: string) {
       createdAt: true,
     },
   });
-  console.log(interview);
 
   if (!interview) {
+    return {
+      status: 404,
+      success: false,
+      message: "Interview not found",
+      data: null,
+    };
+  }
+  if (interview.user && interview.user.passwordHash)
+    interview.user.passwordHash = "";
+
+  return {
+    status: 200,
+    success: true,
+    data: interview,
+  };
+}
+
+export async function updateInterviewStatusById({
+  interviewId,
+  callId,
+  status,
+}: {
+  interviewId: string;
+  status: "COMPLETED" | "ONGOING";
+  callId: string;
+}) {
+  
+  console.log("updateInterviewStatusById",JSON.stringify({ interviewId, callId, status }));
+  const update: any = { status, callId };
+  if (status === "ONGOING") {
+    update.startedAt = new Date();
+    
+  } else if (status === "COMPLETED") {
+    update.endedAt = new Date();
+  }
+
+  const updatedInterview = await prisma.interview.update({
+    where: {
+      id: interviewId,
+    },
+    data: update,
+  });
+
+  if (!updatedInterview) {
     return {
       status: 404,
       success: false,
@@ -100,6 +143,8 @@ export async function getInterviewDetails(interviewId: string) {
   return {
     status: 200,
     success: true,
-    data: interview,
+    message: "Interview status updated",
+    data: updatedInterview,
   };
 }
+
