@@ -5,6 +5,8 @@ import axios from "axios";
 
 const resetPasswordUrl = process.env.NEXT_RESET_PASSWORD_API || "";
 
+const onboardingComplete = process.env.NEXT_ONBOARDING_COMPLETE_API || "";
+
 export async function verifyCredentials(email: string, password: string) {
   try {
     if (!email || !password) {
@@ -86,4 +88,146 @@ export async function resetPassword(
     message: "Error resetting password",
     data: null,
   };
+}
+
+export async function fetchUserById(
+  userId: string
+): Promise<{ success: boolean; message: string; data: any }> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+        data: null,
+      };
+    }
+    return {
+      success: true,
+      message: "User found",
+      data: user,
+    };
+  } catch (error) {
+    console.error("Error fetching user by id:", error);
+    return {
+      success: false,
+      message: "Error fetching user by id",
+      data: null,
+    };
+  }
+}
+
+export async function updateUserDocs(
+  userId: string,
+  docs: {
+    url: string;
+    name: string;
+  }
+): Promise<{ success: boolean; message: string; data: any }> {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        docs: true,
+      },
+    });
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+        data: null,
+      };
+    }
+    //@ts-ignore
+    const newDocs: any[] = Array(...(user?.docs || []));
+
+    if (newDocs.some((doc) => doc.name === docs.name)) {
+      newDocs.forEach((doc) => {
+        if (doc.name === docs.name) {
+          doc.url = docs.url;
+        }
+      });
+    } else {
+      newDocs.push(docs);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        docs: newDocs,
+      },
+    });
+    return {
+      success: true,
+      message: "User docs updated",
+      data: updatedUser.docs,
+    };
+  } catch (error) {
+    console.error("Error updating user docs:", error);
+    return {
+      success: false,
+      message: "Error updating user docs",
+      data: null,
+    };
+  }
+}
+
+export async function updateUserDetails(
+  userId: string,
+  data: {
+    name: string;
+    course: string;
+    university: string;
+  }
+): Promise<{ success: boolean; message: string; data: any }> {
+  try {
+    console.log("updateUserDetails");
+
+    console.log("userId", userId);
+    console.log("data", data);
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data,
+    });
+
+    return {
+      success: true,
+      message: "User details updated",
+      data: updatedUser,
+    };
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    return {
+      success: false,
+      message: "Error updating user details",
+      data: null,
+    };
+  }
+}
+
+export async function completeOnboarding(
+  userId: string
+): Promise<{ success: boolean }> {
+  try {
+    const res = await axios.post(onboardingComplete, { userId });
+    console.log("onboardingComplete registered");
+    return {
+      success: res.status === 200,
+    };
+  } catch (error) {
+    console.error("Error completing onboarding:", error);
+    return {
+      success: false,
+    };
+  }
 }

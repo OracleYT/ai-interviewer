@@ -2,8 +2,8 @@
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { usePathname, useRouter } from "next/navigation";
-import React, { createContext, ReactNode, useEffect } from "react";
-import { verifyCredentials } from "@/action/auth-action";
+import React, { createContext, ReactNode, useEffect, useMemo } from "react";
+import { fetchUserById, verifyCredentials } from "@/action/auth-action";
 
 export type AuthContextType = {
   user: any;
@@ -12,8 +12,9 @@ export type AuthContextType = {
   setIsAuthanticated: (isAuthanticated: boolean) => void;
   login: (creds: { username: string; password: string }) => Promise<any>;
   logout: () => void;
-  resetPassword: (email: string) => Promise<any>;
   userId?: string;
+  reloadUserData: () => Promise<void>;
+  isDocUploaded: boolean;
 };
 
 export type InterviewDataContextType = {
@@ -32,8 +33,12 @@ const StoreKeys = {
 };
 
 export const AuthContext = createContext<AuthContextType | {}>({});
-export const InterviewDataContext = createContext<InterviewDataContextType | {}>({});
-export const InterviewDetailsDataContext = createContext<InterviewDetailsDataContextType | {}>({});
+export const InterviewDataContext = createContext<
+  InterviewDataContextType | {}
+>({});
+export const InterviewDetailsDataContext = createContext<
+  InterviewDetailsDataContextType | {}
+>({});
 
 function AuthContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useLocalStorage<any>(StoreKeys.user_data, null);
@@ -41,7 +46,12 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     StoreKeys.user_authanticated,
     false
   );
-  
+  const isDocUploaded = useMemo(() => {
+    return (
+      user?.docs?.some((doc: any) => doc.status === "passport") &&
+      user?.docs?.some((doc: any) => doc.status === "bank-statement")
+    );
+  }, [user?.docs]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -74,12 +84,10 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     setIsAuthanticated(false);
   };
 
-  const resetPassword = (email: string) => {
-    // make an api call
-    return Promise.resolve({
-      success: true,
-      message: "New password sent to your email",
-    });
+  const reloadUserData = async () => {
+    const data = await fetchUserById(user.id);
+    data.success && data.data && setUser(data.data);
+    return data.success;
   };
 
   return (
@@ -91,8 +99,9 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         setIsAuthanticated,
         login,
         logout,
-        resetPassword,
         userId: user?.id,
+        reloadUserData,
+        isDocUploaded,
       }}
     >
       {children}
@@ -106,6 +115,6 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within a AuthProvider");
   }
   return context as AuthContextType;
-}
+};
 
 export default AuthContextProvider;

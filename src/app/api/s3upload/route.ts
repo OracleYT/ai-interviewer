@@ -26,7 +26,12 @@ export async function POST(req: NextRequest) {
         url: response.url,
       },
     });
-    return NextResponse.json({ message: "File uploaded successfully" });
+    return NextResponse.json({
+      message: "File uploaded successfully",
+      path: response.path,
+      name: response.name,
+      url: response.url,
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

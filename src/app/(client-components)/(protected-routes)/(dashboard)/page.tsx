@@ -1,56 +1,101 @@
 "use client";
 
+import { updateUserDocs } from "@/action/auth-action";
 import Card from "@/components/Card";
 import StartInterviewCard from "@/components/StartInterviewCard";
+import {
+  DAHSBOARD_SUCCESS_STEPS,
+  DocuemntType,
+  DOCUMENTS_UPLOADS,
+} from "@/constatnts/content-const";
+import { useAuth } from "@/contexts/AuthProvider";
 import { useInterview } from "@/contexts/InterviewContextProvider";
 import clsx from "clsx";
-import React from "react";
-
-const steps = [
-  {
-    step: "1",
-    title: "Verify your Documents",
-    description: "Submit and Verify your documents",
-    colour: "bg-[#32A7E2]",
-  },
-  {
-    step: "2",
-    title: "Prepare for Round 1",
-    description: "Go to Learn Section to Start preparation",
-    colour: "bg-[#B548C6]",
-  },
-  {
-    step: "3",
-    title: "Give Online CAS Round 1",
-    description: "Be confident, and Legitimate",
-    colour: "bg-[#FF8700]",
-  },
-  {
-    step: "4",
-    title: "Repeat for Round 2",
-    description: "Be confident, and Legitimate",
-    colour: "bg-[#DC3434]",
-  },
-];
+import React, { useMemo } from "react";
+import toast from "react-hot-toast";
 
 function Page() {
   const { interview } = useInterview();
+  const { userId, reloadUserData, user, isDocUploaded } = useAuth();
+  const [uploadingStatusMap, setUploadingStatusMap] = React.useState<
+    Record<DocuemntType, boolean>
+  >({
+    passport: false,
+    "academic-transcript": false,
+    "bank-statement": false,
+    "english-proficiency": false,
+  });
+
+  const fileLinkMap = useMemo(() => {
+    return (
+      user?.docs?.reduce((acc: any, doc: any) => {
+        acc[doc.name] = doc.url;
+        return acc;
+      }, {}) || {}
+    );
+  }, [user]);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: DocuemntType
+  ) => {
+    if (!event.target.files || !event.target.files[0]) {
+      return;
+    }
+    const file = event.target.files[0];
+    try {
+      setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/s3upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        toast.error("Error uploading file:");
+        return;
+      }
+      const upload_response = await res.json();
+
+      const update_response = await updateUserDocs(userId!, {
+        url: upload_response.url,
+        name: type,
+      });
+
+      if (update_response.success) {
+        toast.success("File uploaded successfully!");
+        reloadUserData();
+      } else {
+        toast.error("Error uploading file:");
+      }
+    } catch (error) {
+      toast.error("Error uploading file:");
+    } finally {
+      setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
+    }
+  };
 
   return (
     <Card
       background="#ffffff"
       width="100%"
-      // height="100%"
       borderRadius="30px"
-      className="flex overflow-y-scroll element border"
+      className="flex"
     >
-      {/*left container */}
-      <div className="pt-5 px-[64px] w-[70%] h-full">
+      {/* Left Container */}
+      <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[92vh]">
         <div className="flex flex-col gap-4 my-3">
           <div className="flex justify-between">
-            <h3 className="text-4xl text-[#262A41] font-semibold">
-              {interview?.title}
-            </h3>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-2xl text-[#262A41] font-bold">
+                Your PRE-CAS Interview: Ready to Begin?
+              </h2>
+              <h4 className="text-xl text-[#262A41]/90 font-semibold">
+                {interview?.title}
+              </h4>
+            </div>
             {interview?.status && (
               <span
                 className={clsx(
@@ -62,34 +107,97 @@ function Page() {
               </span>
             )}
           </div>
-          <span className="text-[#101010]/50">
-            Interview deadline: {interview?.expiryDate}
-          </span>
+          {interview?.expiryDate && (
+            <span className="text-[#101010]/50">
+              Countdown to Your Interview : {interview?.expiryDate}
+            </span>
+          )}
         </div>
         <div>
           {/* About */}
-          <div className="my-6">
-            <p className="text-lg text-[#262A41]">About</p>
+          <div className="flex flex-col gap-2 my-6">
+            <h4 className="text-lg text-[#262A41]">
+              About Your PRE-CAS Interview
+            </h4>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
-            <p className="text-xs text-[#404852]/70">
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim.eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. Ut enim ad minim.eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim.eiusmod tempor incididunt ut
-              labore et dolore magna aliqua. Ut enim ad minim.eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad
-              minim.eiusmod tempor incididunt ut labore et dolore.
-            </p>
+            <div className="flex flex-col gap-3 text-sm text-[#404852]/70">
+              <p>
+                The PRE-CAS interview is an important step in your journey to
+                study at the ULSTER UNIVERSITY. It helps us understand if
+                you&rsquo;re ready for studying abroad and makes sure you meet
+                the requirements for your student visa.
+              </p>
+              <p>
+                Don&rsquo;t worry—it&rsquo;s not meant to be stressful. This is
+                your chance to show us why you`&apos;re excited about studying in the
+                UK and why you&apos;re a great fit for the program. We&rsquo;re here
+                to support you every step of the way!
+              </p>
+            </div>
           </div>
-          {/* steps */}
-          <div className="flex flex-col gap-4">
-            <p className="text-lg text-[#262A41]">Steps</p>
+          {/* Verify Documents */}
+          <div className="flex flex-col gap-2 my-6">
+            <h4 className="text-lg text-[#262A41]">Verify your documents</h4>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
-            <div className="flex flex-col gap-4 pb-2">
-              {steps?.map((step) => (
+            <div className="grid grid-cols-2 gap-4">
+              {DOCUMENTS_UPLOADS.map(({ title, type }) => (
+                <Card
+                  key={type}
+                  height="100px"
+                  borderRadius="15px"
+                  padding="15px"
+                  className={clsx(
+                    "flex flex-col justify-between border-2 border-[#979797] bg-red",
+                    {
+                      "bg-green-200": Boolean(fileLinkMap[type]),
+                      "bg-[#EDF0F6]": !Boolean(fileLinkMap[type]),
+                    }
+                  )}
+                >
+                  <div className="flex justify-between items-center gap-7">
+                    <span className="text-[#273240] text-[13px] font-medium">
+                      {title}
+                    </span>
+                    <span className="text-[#273240] text-[11px]">PDF/DOC</span>
+                  </div>
+                  <span className="text-[#273240] text-[11px] underline flex justify-between">
+                    <label
+                      htmlFor={`file-upload-${type}`}
+                      className="cursor-pointer text-[#273240] hover:text-[#000000] text-[11px] underline"
+                    >
+                      Upload Here
+                      <input
+                        id={`file-upload-${type}`}
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(e, type)}
+                      />
+                    </label>
+                    <div>
+                      {uploadingStatusMap[type] && "Uploading..."}
+                      {!uploadingStatusMap[type] && fileLinkMap[type] && (
+                        <a
+                          target="_blank"
+                          href={fileLinkMap[type]}
+                        >{`download`}</a>
+                      )}
+                    </div>
+                  </span>
+                </Card>
+              ))}
+            </div>
+          </div>
+          {/* Steps */}
+          <div className="flex flex-col gap-4 ">
+            <h5 className="text-lg text-[#262A41]">
+              Your Path to Success: Follow These Steps
+            </h5>
+            <div className="border-[0.5px] border-[#DEDEDE]"></div>
+            <div className="flex flex-col gap-4 pb-2 w-full max-h-[220px]">
+              {DAHSBOARD_SUCCESS_STEPS?.map((step) => (
                 <div className="flex items-center gap-7" key={step.step}>
                   <div
-                    className={`h-12 w-12 rounded-full place-content-center text-center  text-[#ffffff] text-lg font-semibold ${step.colour}`}
+                    className={`h-12 min-w-12 max-w-12 rounded-full place-content-center text-center text-[#ffffff] text-lg font-semibold ${step.colour}`}
                   >
                     {step.step}
                   </div>
@@ -97,6 +205,9 @@ function Page() {
                     <p className="text-[#273240] text-base font-medium">
                       {step.title}
                     </p>
+                    <span className="text-[#404852]/50 text-sm">
+                      {step.note}
+                    </span>
                     <span className="text-[#404852]/50 text-sm">
                       {step.description}
                     </span>
@@ -107,40 +218,45 @@ function Page() {
           </div>
         </div>
       </div>
-      {/* right container */}
+
+      {/* Right Container */}
       <Card
         background="#F9FAFC"
         width="30%"
         padding="40px"
-        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px] max-h-full"
+        className="rounded-r-[30px] flex flex-col justify-between gap-10 items-center overflow-y-auto element max-h-screen"
       >
         <div className="flex flex-col items-center gap-4">
           <p className="text-[20px] text-[#262A41]">Prepare for CAS Round 1</p>
-          <div>
-            <Card
-              background="#EDF0F6"
-              borderRadius="15px"
-              padding="15px"
-              className="mt-8"
-            >
-              <div className="flex justify-between items-center gap-7">
-                <p className="text-[#273240] text-[13px] font-medium">
-                  Interview Question Bank
-                </p>
-                <span className="text-[#273240] text-[11px]">PDF</span>
-              </div>
-              <span className="text-[#273240] text-[11px]">
-                Click here &gt;
-              </span>
-            </Card>
-          </div>
+          <Card
+            background="#EDF0F6"
+            borderRadius="15px"
+            padding="15px"
+            className="mt-8 flex flex-col gap-2 border"
+          >
+            <div className="flex justify-between items-center gap-7">
+              <p className="text-[#273240] font-medium">
+                Interview Question Bank
+              </p>
+              <span className="text-[#273240] text-[11px]">PDF</span>
+            </div>
+            <p className="text-[#273240] text-[11px]">
+              To help you prepare, we&rsquo; ve compiled a list of common
+              interview questions that may come up during your PRE-CAS
+              interview. Be sure to review these and practice your answers to
+              feel more confident and ready for your interview.
+            </p>
+            <span className="text-[#273240] text-[12px] font-medium">
+              Click here &gt;
+            </span>
+          </Card>
         </div>
-        {interview?.id && (
+        {
           <StartInterviewCard
             ctaHref={`/meeting/${interview?.id}`}
-            showCta={interview?.id}
+            showCta={interview?.id && isDocUploaded}
           />
-        )}
+        }
       </Card>
     </Card>
   );

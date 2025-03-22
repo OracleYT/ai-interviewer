@@ -29,7 +29,7 @@ export default function RootLayout({
         <link rel="favicon" href="favicon.png" />
         
       </head>
-      <body>{children}</body>
+      <body className="element">{children}</body>
     </html>
   );
 }
