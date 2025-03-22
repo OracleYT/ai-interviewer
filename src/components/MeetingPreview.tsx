@@ -40,6 +40,7 @@ const MeetingPreview = () => {
     hasBrowserPermission: hasMicrophonePermission,
     status: microphoneStatus,
   } = useMicrophoneState();
+  
   const { videoRef, isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
 

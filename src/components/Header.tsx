@@ -12,7 +12,6 @@ import Settings from "./icons/Settings";
 import useTime from "../hooks/useTime";
 // import AiIcon from "./icons/AiIcon";
 import { Avatar } from "stream-chat-react";
-import Link from "next/link";
 
 interface HeaderProps {
   navItems?: boolean;
@@ -20,16 +19,14 @@ interface HeaderProps {
 }
 
 const Header = ({ navItems = true, user }: HeaderProps) => {
-  // const { isLoaded, isSignedIn, user } = useUser();
-  // const { isLoaded } = useUser();
-  // const [isLoaded, setIsLoaded] = useState<boolean>(false)
-
   const { currentDateTime } = useTime();
-  // const email = user?.primaryEmailAddress?.emailAddress;
+  const onLogoClick = () => {
+    document.location.href = "/";
+  };
 
   return (
     <header className="w-full px-4 flex items-center justify-between bg-white select-none">
-      <Link href="/" className="w-60 max-w-full">
+      <div className="w-60 max-w-full" onClick={onLogoClick}>
         <div className="flex items-center gap-2 w-full">
           <img
             src="/assets/ulster-university.svg"
@@ -41,7 +38,7 @@ const Header = ({ navItems = true, user }: HeaderProps) => {
             <span>Interview</span>
           </div>
         </div>
-      </Link>
+      </div>
       <div className="flex items-center cursor-default">
         {navItems && (
           <>

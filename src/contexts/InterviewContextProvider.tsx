@@ -7,17 +7,17 @@ import { STATUS_COLOR_MAP } from "@/constatnts/interview-const";
 
 type InterviewContextType =
   | {
-      interview: any;
-      errMessage: string;
-      message: string;
-      fetchingInterview: boolean;
+      interview?: any;
+      errMessage?: string;
+      message?: string;
+      fetchingInterview?: boolean;
     };
 
 type InterviewDetailsContextType =
   | {
-      interviewDetails: any;
-      errMessage: string;
-      fetchingInterviewDetails: boolean;
+      interviewDetails?: any;
+      errMessage?: string;
+      fetchingInterviewDetails?: boolean;
     };
 //@ts-ignore
 const InterviewContext = createContext<InterviewContextType>();
@@ -55,7 +55,7 @@ export const InterviewContextProvider = ({
   const [errMessage, setErrMessage] = useState<string>();
 
   const [errMessage2, setErrMessage2] = useState<string>();
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<string>("");
   const [fetchingInterview, setFetchingInterview] = useState<boolean>();
   const [fetchingInterviewDetails, setFetchingInterviewDeatils] =
     useState<boolean>();
