@@ -276,17 +276,17 @@
 .swal2-html-container,
 .aptw-bg-white {
   ::selection {
-    color: white;
-    background-color: black;
+    color: black;
+    background-color: white;
   }
-  @apply shadow-2xl px-[40px] py-[20px] rounded-[20px] bg-[#171717ee] z-50;
+  @apply shadow-2xl px-[40px] py-[20px] rounded-[20px] z-50;
 
   .swal2-title.apjssw-swal2-title {
-    @apply text-white text-2xl;
+    @apply text-black text-2xl;
   }
 
   a {
-    @apply text-white;
+    @apply text-gray;
   }
   button {
     @apply px-5 py-3 text-white rounded-full;

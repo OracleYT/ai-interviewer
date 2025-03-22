@@ -42,11 +42,8 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     false
   );
   
-  
   const router = useRouter();
   const pathname = usePathname();
-
-
 
   useEffect(() => {
     if (user) {

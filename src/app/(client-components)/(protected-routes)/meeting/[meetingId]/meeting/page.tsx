@@ -38,11 +38,10 @@ import useVapi from "@/hooks/useVapi";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 
-
 const Meeting = () => {
-    const params = useParams<{ meetingId: string }>();
-    const meetingId = params.meetingId;
-  
+  const params = useParams<{ meetingId: string }>();
+  const meetingId = params.meetingId;
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const router = useRouter();
   const call = useCall();
@@ -74,11 +73,10 @@ const Meeting = () => {
   //   callingState === CallingState.UNKNOWN || callingState === CallingState.IDLE;
 
   useEffect(() => {
-    if (isCameraOn) {
-      startCamera();
-    } else {
+    startCamera();
+    return () => {
       stopCamera();
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -108,10 +106,7 @@ const Meeting = () => {
   }, [participantInSpotlight]);
 
   const leaveCall = async () => {
-    // end chat
-    // await call?.leave();
     stopVapiSession();
-    stopCamera();
   };
 
   // const toggleScreenShare = async () => {
