@@ -1,11 +1,14 @@
 "use server";
 
 import prisma from "@/libs/db/prisma";
+import axios from "axios";
 
 type UpdateProp = {
   userId: string;
   status: "COMPLETED" | "PENDING" | "ONGOING" | "CANCELLED";
 };
+
+const interviewCompletionApi = process.env.NEXT_INTERVIEW_COMPLETION_API || "";
 
 export async function getInterviews(userId: string) {
   const interviews = await prisma.interview.findMany({
@@ -114,12 +117,13 @@ export async function updateInterviewStatusById({
   status: "COMPLETED" | "ONGOING";
   callId: string;
 }) {
-  
-  console.log("updateInterviewStatusById",JSON.stringify({ interviewId, callId, status }));
+  console.log(
+    "updateInterviewStatusById",
+    JSON.stringify({ interviewId, callId, status })
+  );
   const update: any = { status, callId };
   if (status === "ONGOING") {
     update.startedAt = new Date();
-    
   } else if (status === "COMPLETED") {
     update.endedAt = new Date();
   }
@@ -148,3 +152,12 @@ export async function updateInterviewStatusById({
   };
 }
 
+export async function sendInterviewDoneEvent(meetingId: string) {
+  try {
+    const response = await axios.post(interviewCompletionApi, { meetingId });
+    response.status === 200;
+  } catch (error) {
+    console.error(error);
+  }
+  return false;
+}

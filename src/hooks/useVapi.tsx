@@ -12,7 +12,8 @@ import {
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import { updateInterviewStatusById } from "@/action/interview-action";
+import { sendInterviewDoneEvent, updateInterviewStatusById } from "@/action/interview-action";
+import axios from "axios";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
@@ -55,13 +56,14 @@ const useVapi = (meetingId: string) => {
     const volumeLevelHandler = (level: number) => {
       setVolumeLevel(level);
     };
-    const endCallHandler = () => {
-      stopVapiSession();
-      updateInterviewStatusById({
+    const endCallHandler = async () => {
+      await stopVapiSession();
+      await updateInterviewStatusById({
         interviewId: meetingId,
         callId: vapiCallRef.current?.id!,
         status: "COMPLETED",
       });
+      await sendInterviewDoneEvent(meetingId)
       stopProctering();
     };
 
