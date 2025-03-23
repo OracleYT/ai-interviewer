@@ -7,6 +7,9 @@ const resetPasswordUrl = process.env.NEXT_RESET_PASSWORD_API || "";
 
 const onboardingComplete = process.env.NEXT_ONBOARDING_COMPLETE_API || "";
 
+const documentVerificationUrl =
+  process.env.NEXT_DOCUMENT_VERIFICATION_API || "";
+
 export async function verifyCredentials(email: string, password: string) {
   try {
     if (!email || !password) {
@@ -125,10 +128,12 @@ export async function updateUserDocs(
   userId: string,
   docs: {
     url: string;
+    status?: string;
     name: string;
   }
 ): Promise<{ success: boolean; message: string; data: any }> {
   try {
+    if(!docs.status) docs.status = "uploaded";
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
@@ -151,6 +156,7 @@ export async function updateUserDocs(
       newDocs.forEach((doc) => {
         if (doc.name === docs.name) {
           doc.url = docs.url;
+          doc.status = docs.status;
         }
       });
     } else {
@@ -228,6 +234,27 @@ export async function completeOnboarding(
     console.error("Error completing onboarding:", error);
     return {
       success: false,
+    };
+  }
+}
+
+export async function verifyDocument(data: {
+  docName: string;
+  userId: string;
+  docUrl: string;
+}): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await axios.post(documentVerificationUrl, data);
+    console.log("documentVerification registered");
+    return {
+      success: res.status === 200,
+      message: "Document verification registered",
+    };
+  } catch (error) {
+    console.error("Error verifying document:", error);
+    return {
+      success: false,
+      message: "Error verifying document",
     };
   }
 }

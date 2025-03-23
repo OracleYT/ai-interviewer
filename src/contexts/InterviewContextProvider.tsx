@@ -3,7 +3,6 @@ import React, { createContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { getInterviewDetails, getInterviews } from "@/action/interview-action";
 import dayjs from "dayjs";
-import { STATUS_COLOR_MAP } from "@/constatnts/interview-const";
 
 type InterviewContextType =
   | {
@@ -158,10 +157,6 @@ function parseInterviewData(interviews: any[]) {
   ) {
     interview["status"] = "EXPIRED";
   }
-
-  interview["status_color"] =
-    (interview?.status && STATUS_COLOR_MAP[interview?.status]) ||
-    "bg-[#FF8700]";
 
   interview["expiryDate"] =
     dayjs(interview?.expiryDate).format("DD-MM-YYYY hh:mm:a") || "N/A";

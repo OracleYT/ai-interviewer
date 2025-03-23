@@ -1,8 +1,9 @@
 "use client";
 
-import { updateUserDocs } from "@/action/auth-action";
+import { updateUserDocs, verifyDocument } from "@/action/user-action";
 import Card from "@/components/Card";
-import StartInterviewCard from "@/components/StartInterviewCard";
+import RightSidePannel from "@/components/RightSidePannel";
+import StatusBadge from "@/components/StatusBadge";
 import {
   DAHSBOARD_SUCCESS_STEPS,
   DocuemntType,
@@ -16,11 +17,9 @@ import { Upload } from "lucide-react";
 import React, { useMemo } from "react";
 import toast from "react-hot-toast";
 
-
-
 function Page() {
   const { interview } = useInterview();
-  const { userId, reloadUserData, user, isDocUploaded } = useAuth();
+  const { userId, reloadUserData, user } = useAuth();
   const [uploadingStatusMap, setUploadingStatusMap] = React.useState<
     Record<DocuemntType, boolean>
   >({
@@ -32,7 +31,7 @@ function Page() {
 
   const fileLinkMap = useMemo(() => {
     const view_size = 20;
-    return  buildFileLinkMap(user?.docs, view_size);
+    return buildFileLinkMap(user?.docs, view_size);
   }, [user]);
 
   const handleFileChange = async (
@@ -47,20 +46,21 @@ function Page() {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
       const formData = new FormData();
       formData.append("file", file);
-
+      // uploading to s3
       const res = await fetch("/api/s3upload", {
         method: "POST",
         body: formData,
       });
 
       if (!res.ok) {
-        toast.error("Error uploading file:");
+        toast.error("Error uploading file");
         return;
       }
       const upload_response = await res.json();
-
+      /// update docs to database
       const update_response = await updateUserDocs(userId!, {
         url: upload_response.url,
+        status: "uploaded",
         name: type,
       });
 
@@ -68,10 +68,34 @@ function Page() {
         toast.success("File uploaded successfully!");
         reloadUserData();
       } else {
-        toast.error("Error uploading file:");
+        toast.error("Error uploading file");
+        return;
       }
-    } catch (error) {
-      toast.error("Error uploading file:");
+
+      // verify docs with agent
+
+      const verificationResponse = await verifyDocument({
+        userId: userId!,
+        docName: type,
+        docUrl: upload_response.url,
+      });
+
+      if (verificationResponse.success) {
+        toast.success("Document verified successfully!");
+      } else {
+        toast.error("Failed to verify document, pleaes try again later");
+      }
+      const update_response_2 = await updateUserDocs(userId!, {
+        url: upload_response.url,
+        status: verificationResponse.success ? "verified" : "failed",
+        name: type,
+      });
+      if (update_response_2.success) {
+        reloadUserData();
+      }
+    } catch (error: any) {
+      toast.error("Error uploading file");
+      console.error(error);
     } finally {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
     }
@@ -87,29 +111,27 @@ function Page() {
       {/* Left Container */}
       <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[92vh]">
         <div className="flex flex-col gap-4 my-3">
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-2xl text-[#262A41] font-bold">
+          <div className="flex justify-between w-full">
+            <div className="flex flex-col gap-2 w-full">
+              <h4 className="text-xl text-[#262A41] font-bold">
                 Your PRE-CAS Interview: Ready to Begin?
-              </h2>
-              <h4 className="text-xl text-[#262A41]/90 font-semibold">
-                {interview?.title}
               </h4>
+              <div>
+                <div className="w-full flex justify-between">
+                  {" "}
+                  <h2 className="text-2xl text-[#262A41]/90 font-semibold">
+                    {interview?.title}
+                  </h2>
+                  {interview?.status && (
+                    <StatusBadge status={interview?.status} />
+                  )}
+                </div>
+              </div>
             </div>
-            {interview?.status && (
-              <span
-                className={clsx(
-                  "bg-[#31BA96] px-4 place-content-center h-[31px] rounded-full text-[#ffffff] text-xs font-semibold",
-                  interview?.status_color
-                )}
-              >
-                {interview?.status}
-              </span>
-            )}
           </div>
           {interview?.expiryDate && (
             <span className="text-[#101010]/50">
-              Countdown to Your Interview : {interview?.expiryDate}
+              Interview Expiry date : {interview?.expiryDate}
             </span>
           )}
         </div>
@@ -149,8 +171,8 @@ function Page() {
                   className={clsx(
                     "flex flex-col justify-between border-2 border-[#979797] bg-red",
                     {
-                      "bg-green-200": Boolean(fileLinkMap[type]?.url),
-                      "bg-[#EDF0F6]": !Boolean(fileLinkMap[type]?.url),
+                      "bg-green-200": fileLinkMap[type]?.status === "verified",
+                      "bg-[#ff6060]": fileLinkMap[type]?.status === "failed",
                     }
                   )}
                 >
@@ -201,24 +223,7 @@ function Page() {
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
             <div className="flex flex-col gap-4 pb-2 w-full max-h-[220px]">
               {DAHSBOARD_SUCCESS_STEPS?.map((step) => (
-                <div className="flex items-center gap-7" key={step.step}>
-                  <div
-                    className={`h-12 min-w-12 max-w-12 rounded-full place-content-center text-center text-[#ffffff] text-lg font-semibold ${step.colour}`}
-                  >
-                    {step.step}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-[#273240] text-base font-medium">
-                      {step.title}
-                    </p>
-                    <span className="text-[#404852]/50 text-sm">
-                      {step.note}
-                    </span>
-                    <span className="text-[#404852]/50 text-sm">
-                      {step.description}
-                    </span>
-                  </div>
-                </div>
+                <InterviewReadySteps key={step.title} step={step} />
               ))}
             </div>
           </div>
@@ -226,46 +231,31 @@ function Page() {
       </div>
 
       {/* Right Container */}
-      <Card
-        background="#F9FAFC"
-        width="30%"
-        padding="40px"
-        className="rounded-r-[30px] flex flex-col justify-between gap-10 items-center overflow-y-auto element max-h-screen"
-      >
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-[20px] text-[#262A41]">Prepare for CAS Round 1</p>
-          <Card
-            background="#EDF0F6"
-            borderRadius="15px"
-            padding="15px"
-            className="mt-8 flex flex-col gap-2 border"
-          >
-            <div className="flex justify-between items-center gap-7">
-              <p className="text-[#273240] font-medium">
-                Interview Question Bank
-              </p>
-              <span className="text-[#273240] text-[11px]">PDF</span>
-            </div>
-            <p className="text-[#273240] text-[11px]">
-              To help you prepare, we&rsquo; ve compiled a list of common
-              interview questions that may come up during your PRE-CAS
-              interview. Be sure to review these and practice your answers to
-              feel more confident and ready for your interview.
-            </p>
-            <span className="text-[#273240] text-[12px] font-medium">
-              Click here &gt;
-            </span>
-          </Card>
-        </div>
-        {
-          <StartInterviewCard
-            ctaHref={`/meeting/${interview?.id}`}
-            showCta={interview?.id && isDocUploaded}
-          />
-        }
-      </Card>
+      <RightSidePannel />
     </Card>
   );
 }
 
 export default Page;
+
+function InterviewReadySteps({ step }: any) {
+  return (
+    <div className="flex items-center gap-7" id={`step-${step.step}`}>
+      <div
+        className={
+          "h-12 min-w-12 max-w-12 rounded-full place-content-center text-center text-[#ffffff] text-lg font-semibold border "
+        }
+        style={{
+          backgroundColor: step.bgColor,
+        }}
+      >
+        {step.step}
+      </div>
+      <div className="flex flex-col gap-1">
+        <p className="text-[#273240] text-base font-medium">{step.title}</p>
+        <span className="text-[#404852]/50 text-sm">{step.note}</span>
+        <span className="text-[#404852]/50 text-sm">{step.description}</span>
+      </div>
+    </div>
+  );
+}

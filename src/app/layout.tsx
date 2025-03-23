@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
+import { MobileMessageProvider } from "@/contexts/MobileMessageProvider";
 
 export const metadata: Metadata = {
   title: "CAS Interview for Ulster University",
-  description:
-    "Start your journey to Ulster University with the CAS Interview"
+  description: "Start your journey to Ulster University with the CAS Interview",
 };
 
 export default function RootLayout({
@@ -27,9 +27,10 @@ export default function RootLayout({
         />
         <meta name="theme-color" content="#000000" />
         <link rel="favicon" href="favicon.png" />
-        
       </head>
-      <body className="element">{children}</body>
+      <body className="element h-screen">
+        <MobileMessageProvider>{children}</MobileMessageProvider>
+      </body>
     </html>
   );
 }

@@ -116,7 +116,7 @@ const MeetingPreview = () => {
                 isMicrophoneMute ? "Turn on microphone" : "Turn off microphone"
               }
               onClick={toggleMicrophone}
-              active={isMicrophoneMute}
+              active={!isMicrophoneMute}
               alert={!hasMicrophonePermission}
               variant="secondary"
             />
@@ -143,7 +143,7 @@ const MeetingPreview = () => {
             {user?.name}
           </div>
         )}
-        {devicesEnabled && (
+        {/* {devicesEnabled && (
           <>
             <div className="z-2 absolute top-2.5 right-1 [&>button]:w-12 [&>button]:h-12 [&>button]:border-none [&>button]:transition-none [&>button]:hover:bg-[rgba(255,255,255,.2)] [&>button]:hover:shadow-none">
               <IconButton
@@ -160,7 +160,7 @@ const MeetingPreview = () => {
               />
             </div>
           </>
-        )}
+        )} */}
       </div>
       <div className="hidden lg:flex h-17 items-center gap-1 mt-4 ml-2">
         {displaySelectors && (

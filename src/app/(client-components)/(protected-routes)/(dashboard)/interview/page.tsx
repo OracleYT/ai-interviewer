@@ -2,17 +2,10 @@
 
 import React from "react";
 import Card from "@/components/Card";
-import StartInterviewCard from "@/components/StartInterviewCard";
-import {
-  INTERVIEW_ABOUT_MAP,
-  INTERVIEW_INSTRUCTIONS,
-} from "@/constatnts/content-const";
-import { useInterview } from "@/contexts/InterviewContextProvider";
-import { useAuth } from "@/contexts/AuthProvider";
+import { INTERVIEW_INSTRUCTIONS } from "@/constatnts/content-const";
+import RightSidePannel from "@/components/RightSidePannel";
 
 function Interview() {
-  const { interview, fetchingInterview: loading } = useInterview();
-  const { isDocUploaded } = useAuth();
 
   return (
     <Card
@@ -22,7 +15,7 @@ function Interview() {
       className="flex overflow-y-scroll element border"
     >
       {/*left container */}
-      <div className="pt-5 px-[64px] w-[70%] h-full">
+      <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[92vh]">
         <div className="flex flex-col gap-4 my-3">
           <div className="flex flex-col gap-2">
             <h3 className="text-2xl text-[#262A41] font-bold">
@@ -41,7 +34,7 @@ function Interview() {
               Important Instructions for Your PRE-CAS Interview
             </p>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2 pl-3">
               {INTERVIEW_INSTRUCTIONS.map((item, index) => (
                 <li
                   key={index}
@@ -52,7 +45,29 @@ function Interview() {
               ))}
             </ul>
           </div>
-          <p className="mt-10 text-base font-semibold text-[#262A41]">
+
+          <p className="text-lg text-[#262A41]">Mock Interview</p>
+          <div className="border-[0.5px] border-[#DEDEDE]"></div>
+          <p className="text-[14px] text-[#404852] mt-2">
+            The best way to prepare for the interview is by practicing. Try
+            doing a mock interview with a friend, family member, or mentor. You
+            can also record yourself to analyze how you&rsquo; re doing. Here
+            are a few tips for your mock interview:
+          </p>
+          <div className="border-[0.5px] my-2 border-[#DEDEDE]"></div>
+          <ol className="flex flex-col gap-2 pl-3">
+            <li className="text-[#404852]/90 text-sm font-medium list-disc">
+              Speak clearly and confidently.
+            </li>
+            <li className="text-[#404852]/90 text-sm font-medium list-disc">
+              Be mindful of your body language.
+            </li>
+            <li className="text-[#404852]/90 text-sm font-medium list-disc">
+              Take your time to think before answering.
+            </li>
+          </ol>
+
+          <p className="mt-10 text-sm text-[#262A41]">
             You are all set for your PRE-CAS interview. Please tap the button
             below to begin your interview and take the next step towards
             securing your place at Ulster University.
@@ -60,7 +75,7 @@ function Interview() {
         </div>
       </div>
       {/* right container */}
-      <Card
+      {/* <Card
         background="#F9FAFC"
         width="30%"
         padding="40px"
@@ -93,7 +108,8 @@ function Interview() {
             showCta={interview?.id && isDocUploaded}
           />
         )}
-      </Card>
+      </Card> */}
+      <RightSidePannel />
     </Card>
   );
 }

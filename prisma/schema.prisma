@@ -8,21 +8,21 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  name        String
-  email       String   @unique
+  id           String      @id @default(uuid())
+  name         String
+  email        String      @unique
   passwordHash String
-  phone       String?
-  resumeUrl   String?
-  cvUrl       String?
-  country     String? @default("India")
-  university  String?
-  course  String?
-  docs        Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  interviews  Interview[]
+  phone        String?
+  resumeUrl    String?
+  cvUrl        String?
+  country      String?     @default("India")
+  university   String?
+  docs         Json?       @default("[]")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  course       String?
+  userSummary  String?
+  interviews   Interview[]
 }
 
 model Upload {
@@ -37,22 +37,35 @@ model Upload {
 }
 
 model Interview {
-  id          String   @id @default(uuid())
-  userId      String
+  id            String          @id @default(uuid())
+  userId        String
+  title         String
+  callId        String?         @unique
+  startedAt     DateTime?
+  endedAt       DateTime?
+  status        InterviewStatus @default(PENDING)
+  result        InterviewResult @default(PENDING)
+  resultUrl     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   interviewerId String?
-  title       String
-  callId      String?  @unique
-  startedAt   DateTime?
-  endedAt     DateTime?
-  status      InterviewStatus @default(PENDING)
-  result      InterviewResult @default(PENDING)
-  resultUrl   String?
-  expiryDate  DateTime? @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  expiryDate    DateTime?       @default(now())
+  procterReport Json?           @default("{}")
+  interviewer   Interviewer?    @relation(fields: [interviewerId], references: [id])
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interviewer Interviewer? @relation(fields: [interviewerId], references: [id], onDelete: SetNull)
+model Interviewer {
+  id          String      @id @default(uuid())
+  name        String
+  assistantID String
+  vendorName  String
+  avatarUrl   String?
+  videoUrl    String?
+  gender      Gender
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  interviews  Interview[]
 }
 
 enum InterviewStatus {
@@ -66,20 +79,6 @@ enum InterviewResult {
   PASS
   FAIL
   PENDING
-}
-
-model Interviewer {
-  id         String   @id @default(uuid())
-  name       String
-  assistantID String
-  vendorName String
-  avatarUrl  String?
-  videoUrl   String?
-  gender     Gender
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  interviews Interview[]
 }
 
 enum Gender {

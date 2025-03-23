@@ -3,7 +3,7 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, ReactNode, useEffect, useMemo } from "react";
-import { fetchUserById, verifyCredentials } from "@/action/auth-action";
+import { fetchUserById, verifyCredentials } from "@/action/user-action";
 
 export type AuthContextType = {
   user: any;
@@ -15,6 +15,8 @@ export type AuthContextType = {
   userId?: string;
   reloadUserData: () => Promise<void>;
   isDocUploaded: boolean;
+  questionBankLink: string;
+  isDocumentVerified: boolean;
 };
 
 export type InterviewDataContextType = {
@@ -52,6 +54,22 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
       user?.docs?.some((doc: any) => doc.name === "bank-statement")
     );
   }, [user?.docs]);
+
+  const isDocumentVerified = useMemo(() => {
+    return (
+      user?.docs?.some(
+        (doc: any) => doc.name === "passport" && doc.status === "verified"
+      ) &&
+      user?.docs?.some(
+        (doc: any) => doc.name === "bank-statement" && doc.status === "verified"
+      )
+    );
+  }, [user?.docs]);
+
+  const questionBankLink = useMemo(() => {
+    return user?.docs?.find((doc: any) => doc.name === "question-bank")?.url;
+  }, [user?.docs]);
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -102,6 +120,8 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         userId: user?.id,
         reloadUserData,
         isDocUploaded,
+        isDocumentVerified,
+        questionBankLink,
       }}
     >
       {children}

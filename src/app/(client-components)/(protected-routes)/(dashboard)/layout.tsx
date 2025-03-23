@@ -23,7 +23,7 @@ export default function Layout({
         padding="24px"
         className="flex overflow-scroll gap-20 element min-h-screen max-h-full element"
       >
-        <div className="flex flex-col justify-center gap-36 p-6">
+        <div className="flex flex-col justify-center gap-36 p-6 w-[20%]">
           <div className="flex flex-col">
             <img
               src="/assets/profile-picture.png"

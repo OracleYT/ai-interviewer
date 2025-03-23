@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
-import { resetPassword } from "@/action/auth-action";
+import { resetPassword } from "@/action/user-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
 
@@ -99,7 +99,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="border py-2 px-12 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
+              className="border py-2 pl-12 pr-4 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
             />
           </div>
           <div className="relative flex items-center">
@@ -126,7 +126,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border py-2 px-12 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black  focus:outline-slate-400"
+              className="border py-2 pl-12 pr-4 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black  focus:outline-slate-400"
             />
           </div>
           {error && <div className="text-red-500">{error}</div>}

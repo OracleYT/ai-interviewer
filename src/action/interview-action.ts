@@ -108,21 +108,18 @@ export async function getInterviewDetails(interviewId: string) {
   };
 }
 
-export async function updateInterviewStatusById({
-  interviewId,
-  callId,
-  status,
-}: {
+export async function updateInterviewStatusById(data: {
   interviewId: string;
   status: "COMPLETED" | "ONGOING";
   callId: string;
+  procterReport?: any;
 }) {
-  console.log(
-    "updateInterviewStatusById",
-    JSON.stringify({ interviewId, callId, status })
-  );
-  const update: any = { status, callId };
-  if (status === "ONGOING") {
+  const update: any = {
+    status: data.status,
+    callId: data.callId,
+    procterReport: data.procterReport,
+  };
+  if (data.status === "ONGOING") {
     update.startedAt = new Date();
   } else if (status === "COMPLETED") {
     update.endedAt = new Date();
@@ -130,7 +127,7 @@ export async function updateInterviewStatusById({
 
   const updatedInterview = await prisma.interview.update({
     where: {
-      id: interviewId,
+      id: data.interviewId,
     },
     data: update,
   });

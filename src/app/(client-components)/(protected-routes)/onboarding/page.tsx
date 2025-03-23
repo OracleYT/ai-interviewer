@@ -7,7 +7,7 @@ import {
   completeOnboarding,
   updateUserDetails,
   updateUserDocs,
-} from "@/action/auth-action";
+} from "@/action/user-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
 import { User, Book, University, Upload } from "lucide-react";
@@ -223,7 +223,7 @@ export default function Login() {
                 "border-2 border-[#333333] rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
                   "bg-green-200": uploaded.cv,
-                  "bg-gray-200": uploadingStatusMap["cv/resume"],
+                  "bg-gray-200": !uploaded.cv,
                 }
               )}
             >
@@ -244,14 +244,18 @@ export default function Login() {
                   onChange={(e) => handleFileChange(e, "cv/resume")}
                 />
               </label>
-              <a
-                className="text-[10px] text-black underline"
-                href={fileLinkMap["cv/resume"]?.url}
-                title={fileLinkMap["cv/resume"]?.file_name}
-                target="_blank"
-              >
-                {fileLinkMap["cv/resume"]?.view_file_name}
-              </a>
+              {uploadingStatusMap["cv/resume"] ? (
+                <span>{"Uploading..."}</span>
+              ) : (
+                <a
+                  className="text-[10px] text-black underline"
+                  href={fileLinkMap["cv/resume"]?.url}
+                  title={fileLinkMap["cv/resume"]?.file_name}
+                  target="_blank"
+                >
+                  {fileLinkMap["cv/resume"]?.view_file_name}
+                </a>
+              )}
             </div>
             {/* Offer Letter */}
             <div
@@ -280,14 +284,16 @@ export default function Login() {
                   onChange={(e) => handleFileChange(e, "offer-letter")}
                 />
               </label>
-              <a
+             { (uploadingStatusMap["offer-letter"] ? (
+                <span>{"Uploading..."}</span>
+              ) :<a
                 className="text-[10px] text-black underline"
                 href={fileLinkMap["offer-letter"]?.url}
                 title={fileLinkMap["offer-letter"]?.file_name}
                 target="_blank"
               >
                 {fileLinkMap["offer-letter"]?.view_file_name}
-              </a>
+              </a>)}
             </div>
           </div>
           <Button
