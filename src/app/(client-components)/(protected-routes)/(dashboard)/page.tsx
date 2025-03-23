@@ -19,8 +19,7 @@ import toast from "react-hot-toast";
 
 function Page() {
   const { interview } = useInterview();
-  const { userId, reloadUserData, user, isDocUploaded, questionBankLink } =
-    useAuth();
+  const { userId, reloadUserData, user } = useAuth();
   const [uploadingStatusMap, setUploadingStatusMap] = React.useState<
     Record<DocuemntType, boolean>
   >({
@@ -231,11 +230,7 @@ function Page() {
       </div>
 
       {/* Right Container */}
-      <RightSidePannel
-        interview={interview}
-        questionBankLink={questionBankLink}
-        isDocUploaded={isDocUploaded}
-      />
+      <RightSidePannel />
     </Card>
   );
 }

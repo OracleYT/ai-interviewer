@@ -1,16 +1,13 @@
 import React from "react";
 import StartInterviewCard from "./StartInterviewCard";
 import Card from "./Card";
+import { useInterview } from "@/contexts/InterviewContextProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 
-function RightSidePannel({
-  interview,
-  isDocUploaded,
-  questionBankLink,
-}: {
-  interview: any;
-  isDocUploaded: boolean;
-  questionBankLink: string;
-}) {
+function RightSidePannel() {
+  const { isDocumentVerified, questionBankLink } = useAuth();
+  const { interview } = useInterview();
+
   return (
     <Card
       background="#F9FAFC"
@@ -55,8 +52,13 @@ function RightSidePannel({
             "Once you feel prepared and confident, you can proceed to the next step—your PRE-CAS interview. Click below to access the interview portal and begin the process:"
           }
           ctaHref={`/meeting/${interview?.id}`}
+          isDocumentVerified={isDocumentVerified}
+          interviewStatus={interview?.status}
+          isInterviewExpired={interview?.status === "EXPIRED"}
           showCta={
-            interview?.status !== "EXPIRED" && interview?.id && isDocUploaded
+            interview?.status !== "EXPIRED" &&
+            interview?.id &&
+            isDocumentVerified
           }
         />
       </div>

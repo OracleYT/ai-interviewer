@@ -16,6 +16,7 @@ export type AuthContextType = {
   reloadUserData: () => Promise<void>;
   isDocUploaded: boolean;
   questionBankLink: string;
+  isDocumentVerified: boolean;
 };
 
 export type InterviewDataContextType = {
@@ -51,6 +52,17 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     return (
       user?.docs?.some((doc: any) => doc.name === "passport") &&
       user?.docs?.some((doc: any) => doc.name === "bank-statement")
+    );
+  }, [user?.docs]);
+
+  const isDocumentVerified = useMemo(() => {
+    return (
+      user?.docs?.some(
+        (doc: any) => doc.name === "passport" && doc.status === "verified"
+      ) &&
+      user?.docs?.some(
+        (doc: any) => doc.name === "bank-statement" && doc.status === "verified"
+      )
     );
   }, [user?.docs]);
 
@@ -108,7 +120,8 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         userId: user?.id,
         reloadUserData,
         isDocUploaded,
-        questionBankLink
+        isDocumentVerified,
+        questionBankLink,
       }}
     >
       {children}

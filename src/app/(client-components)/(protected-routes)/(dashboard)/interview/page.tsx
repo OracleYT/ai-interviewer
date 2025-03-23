@@ -3,13 +3,9 @@
 import React from "react";
 import Card from "@/components/Card";
 import { INTERVIEW_INSTRUCTIONS } from "@/constatnts/content-const";
-import { useInterview } from "@/contexts/InterviewContextProvider";
-import { useAuth } from "@/contexts/AuthProvider";
 import RightSidePannel from "@/components/RightSidePannel";
 
 function Interview() {
-  const { interview, fetchingInterview: loading } = useInterview();
-  const { isDocUploaded, questionBankLink } = useAuth();
 
   return (
     <Card
@@ -113,11 +109,7 @@ function Interview() {
           />
         )}
       </Card> */}
-      <RightSidePannel
-        interview={interview}
-        questionBankLink={questionBankLink}
-        isDocUploaded={isDocUploaded}
-      />
+      <RightSidePannel />
     </Card>
   );
 }

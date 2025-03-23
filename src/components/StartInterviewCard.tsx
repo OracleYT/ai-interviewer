@@ -8,7 +8,10 @@ function StartInterviewCard({
   description,
   showCta,
   ctaHref,
+  interviewStatus,
   className,
+  isDocumentVerified,
+  isInterviewExpired,
 }: {
   title?: string;
   cta?: string;
@@ -16,7 +19,11 @@ function StartInterviewCard({
   showCta?: boolean;
   ctaHref?: string;
   className?: string;
+  isDocumentVerified?: boolean;
+  isInterviewExpired?: boolean;
+  interviewStatus?: string;
 }) {
+
   return (
     <Card
       background="#EDF0F6"
@@ -37,18 +44,29 @@ function StartInterviewCard({
           {description ??
             "Once you're prepared and feel confident about your interview, click on the 'Start Interview' button below and take the next step toward making your dream of studying abroad a reality."}
         </span>
-        {!showCta ? (
-          <span className="border text-[#ffffff] text-center py-1 bg-[#101010]/50 rounded-lg cursor-not-allowed">
-            Start Interview
-          </span>
-        ) : (
-          <Link
-            href={ctaHref!}
-            className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg"
-          >
-            {cta ?? "Start Interview"}
-          </Link>
-        )}
+        {["PENDING", "ONGOING"].includes(interviewStatus!) ? (
+          <div>
+            {!showCta ? (
+              <span
+                className="border text-[#ffffff] text-center py-1 bg-[#101010]/50 rounded-lg cursor-not-allowed"
+                title={
+                  isDocumentVerified
+                    ? "Interview Expired"
+                    : "Document not verified"
+                }
+              >
+                Start Interview
+              </span>
+            ) : (
+              <Link
+                href={ctaHref!}
+                className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg"
+              >
+                {cta ?? "Start Interview"}
+              </Link>
+            )}
+          </div>
+        ):(<span className="text-[#404852] text-xs leading-5">No Active Interview</span>)}
       </div>
     </Card>
   );

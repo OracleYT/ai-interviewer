@@ -2,15 +2,9 @@
 
 import React from "react";
 import Card from "@/components/Card";
-import StartInterviewCard from "@/components/StartInterviewCard";
-import { useInterview } from "@/contexts/InterviewContextProvider";
-import { useAuth } from "@/contexts/AuthProvider";
 import RightSidePannel from "@/components/RightSidePannel";
 
 function Page() {
-  const { interview } = useInterview();
-  const { isDocUploaded, questionBankLink } = useAuth();
-
   return (
     <Card
       background="#ffffff"
@@ -117,11 +111,7 @@ function Page() {
         </div>
       </div>
       {/* right container */}
-      <RightSidePannel
-        interview={interview}
-        questionBankLink={questionBankLink}
-        isDocUploaded={isDocUploaded}
-      />
+      <RightSidePannel />
     </Card>
   );
 }
