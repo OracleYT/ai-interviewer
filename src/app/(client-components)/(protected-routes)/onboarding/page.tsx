@@ -7,7 +7,7 @@ import {
   completeOnboarding,
   updateUserDetails,
   updateUserDocs,
-} from "@/action/auth-action";
+} from "@/action/user-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
 import { User, Book, University, Upload } from "lucide-react";

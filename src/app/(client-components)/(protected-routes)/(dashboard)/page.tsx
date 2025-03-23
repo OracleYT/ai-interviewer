@@ -1,6 +1,6 @@
 "use client";
 
-import { updateUserDocs } from "@/action/auth-action";
+import { updateUserDocs, verifyDocument } from "@/action/user-action";
 import Card from "@/components/Card";
 import RightSidePannel from "@/components/RightSidePannel";
 import StatusBadge from "@/components/StatusBadge";
@@ -47,7 +47,7 @@ function Page() {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
       const formData = new FormData();
       formData.append("file", file);
-
+      // uploading to s3
       const res = await fetch("/api/s3upload", {
         method: "POST",
         body: formData,
@@ -58,9 +58,10 @@ function Page() {
         return;
       }
       const upload_response = await res.json();
-
+      /// update docs to database
       const update_response = await updateUserDocs(userId!, {
         url: upload_response.url,
+        status: "uploaded",
         name: type,
       });
 
@@ -68,7 +69,30 @@ function Page() {
         toast.success("File uploaded successfully!");
         reloadUserData();
       } else {
-        toast.error("Error uploading file:");
+        toast.error("Error uploading file");
+        return;
+      }
+
+      // verify docs with agent
+
+      const verificationResponse = await verifyDocument({
+        userId: userId!,
+        docName: type,
+        docUrl: upload_response.url,
+      });
+
+      if (verificationResponse.success) {
+        toast.success("Document verified successfully!");
+      } else {
+        toast.error("Failed to verify document, pleaes try again later");
+      }
+      const update_response_2 = await updateUserDocs(userId!, {
+        url: upload_response.url,
+        status: verificationResponse.success ? "verified" : "failed",
+        name: type,
+      });
+      if (update_response_2.success) {
+        reloadUserData();
       }
     } catch (error) {
       toast.error("Error uploading file:");
@@ -147,8 +171,8 @@ function Page() {
                   className={clsx(
                     "flex flex-col justify-between border-2 border-[#979797] bg-red",
                     {
-                      "bg-green-200": Boolean(fileLinkMap[type]?.url),
-                      "bg-[#EDF0F6]": !Boolean(fileLinkMap[type]?.url),
+                      "bg-green-200": fileLinkMap[type]?.status === "verified",
+                      "bg-[#ff6060]": fileLinkMap[type]?.status === "failed",
                     }
                   )}
                 >

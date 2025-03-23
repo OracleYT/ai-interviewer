@@ -3,7 +3,7 @@
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { usePathname, useRouter } from "next/navigation";
 import React, { createContext, ReactNode, useEffect, useMemo } from "react";
-import { fetchUserById, verifyCredentials } from "@/action/auth-action";
+import { fetchUserById, verifyCredentials } from "@/action/user-action";
 
 export type AuthContextType = {
   user: any;

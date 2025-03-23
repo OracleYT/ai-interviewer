@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
-import { resetPassword } from "@/action/auth-action";
+import { resetPassword } from "@/action/user-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
 

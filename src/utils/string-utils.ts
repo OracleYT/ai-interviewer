@@ -20,6 +20,7 @@ export const buildFileLinkMap = (docs: any, view_size = 20) => {
       acc[doc.name] = {
         url: doc.url,
         file_name: extractFileName(doc.url),
+        status: doc.status,
       };
       if (acc[doc.name]?.file_name?.length > view_size) {
         acc[doc.name].view_file_name =
