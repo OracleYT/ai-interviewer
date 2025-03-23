@@ -38,7 +38,7 @@ const Home = () => {
       if (res.ok) {
         setUploadSuccess(data);
       } else {
-        setUploadSuccess({ message: 'Error uploading file jj' });
+        setUploadSuccess({ message: 'Error uploading file' });
       }
     } catch (err) {
       setUploadSuccess({ message: 'Error uploading file' });

@@ -53,7 +53,7 @@ function Page() {
       });
 
       if (!res.ok) {
-        toast.error("Error uploading file:");
+        toast.error("Error uploading file");
         return;
       }
       const upload_response = await res.json();
@@ -93,8 +93,9 @@ function Page() {
       if (update_response_2.success) {
         reloadUserData();
       }
-    } catch (error) {
-      toast.error("Error uploading file:");
+    } catch (error: any) {
+      toast.error("Error uploading file");
+      console.error(error);
     } finally {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
     }

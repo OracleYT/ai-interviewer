@@ -23,7 +23,6 @@ function StartInterviewCard({
   isInterviewExpired?: boolean;
   interviewStatus?: string;
 }) {
-
   return (
     <Card
       background="#EDF0F6"
@@ -38,7 +37,7 @@ function StartInterviewCard({
       </div>
       <div className="flex flex-col justify-end gap-3 h-full p-5">
         <p className="text-[#273240] text-base font-semibold">
-          {title ? `Ready for ${title}?` : "Ready to Begin?"}
+          {title ?? "Ready to Begin?"}
         </p>
         <span className="text-[#404852] text-xs leading-5">
           {description ??
@@ -66,7 +65,11 @@ function StartInterviewCard({
               </Link>
             )}
           </div>
-        ):(<span className="text-[#404852] text-xs leading-5">No Active Interview</span>)}
+        ) : (
+          <span className="text-[#404852] text-xs leading-5">
+            No Active Interview
+          </span>
+        )}
       </div>
     </Card>
   );

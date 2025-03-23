@@ -12,9 +12,7 @@ import {
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import {
-  updateInterviewStatusById,
-} from "@/action/interview-action";
+import { updateInterviewStatusById } from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
 
 const useVapi = (meetingId: string) => {
@@ -23,7 +21,8 @@ const useVapi = (meetingId: string) => {
   const router = useRouter();
   const { user } = useAuth();
 
-  const { procterState, stopProctering } = useAutoProctor();
+  const { procterState, stopProctering, getProcteringReport } =
+    useAutoProctor();
   const useCallStatus = useRef<"init" | "started" | "ended">("init");
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
@@ -32,9 +31,23 @@ const useVapi = (meetingId: string) => {
   const { stopCamera } = useContext(BrowserMediaContext);
 
   useEffect(() => {
-    if (procterState === ProctorState.PROCTING_STOPED) {
-      router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
-    }
+    const handleProctoringStop = async () => {
+      if (procterState === ProctorState.PROCTING_STOPED) {
+        try {
+          const report = await getProcteringReport();
+          await updateInterviewStatusById({
+            interviewId: meetingId,
+            callId: vapiCallRef.current?.id!,
+            status: "COMPLETED",
+            procterReport: report,
+          });
+        } catch (error) {
+          console.error("Error while updating interview status", error);
+        }
+        router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
+      }
+    };
+    handleProctoringStop();
   }, [procterState, router]);
 
   const stopVapiSession = useCallback(async () => {

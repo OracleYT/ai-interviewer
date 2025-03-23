@@ -50,6 +50,7 @@ model Interview {
   updatedAt     DateTime        @updatedAt
   interviewerId String?
   expiryDate    DateTime?       @default(now())
+  procterReport Json?           @default("{}")
   interviewer   Interviewer?    @relation(fields: [interviewerId], references: [id])
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

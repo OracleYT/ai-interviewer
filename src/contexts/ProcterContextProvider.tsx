@@ -28,6 +28,7 @@ type ProcterContextType = {
   isProctorStarted?: () => boolean;
   procterState?: ProctorState;
   stopProctering: () => void;
+  getProcteringReport: () => Promise<any>;
 };
 /* eslint-enable no-unused-vars*/
 
@@ -100,7 +101,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     const apEvidenceEvent = (e: any) => {
       const testAttemptID = instance.current.testAttemptId;
       const endSessionCall = `${testAttemptID}-end-session`;
-
       const evidenceCode: string = e?.detail?.evidenceCode as string;
       if (localStorage.getItem(endSessionCall) !== null) {
         return;
@@ -161,6 +161,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     window.addEventListener("apEvidenceEvent", apEvidenceEvent);
     window.addEventListener("apMonitoringStopped", apMonitoringStopped);
 
+
     return () => {
       window.removeEventListener("apEvidenceEvent", apEvidenceEvent);
       window.removeEventListener("apMonitoringStarted", apMonitoringStarted);
@@ -206,7 +207,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     [updateProctorState, isAutoProcterEnabled]
   );
 
-  const stopProctering = useCallback(() => {
+  const stopProctering = useCallback(async () => {
     if (
       instance.current &&
       instance.current.stop &&
@@ -215,6 +216,13 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       console.log("[stopProctering] Stopping Auto Proctor...");
       instance.current.stop();
     }
+  }, []);
+
+  const getProcteringReport = useCallback(async () => {
+    if (instance.current && instance.current.getReport) {
+      return await instance.current.getReport();
+    }
+    return null;
   }, []);
 
   const isProctorStarted = () => {
@@ -228,6 +236,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         initAutoProctor,
         procterState,
         stopProctering,
+        getProcteringReport
       }}
     >
       {children}

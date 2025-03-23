@@ -73,8 +73,8 @@ function Page() {
                 </h6>
                 <li className="list-none text-sm">
                   Authenticity matters—always answer{" "}
-                  <span className="font-bold">truthfully</span>
-                  and and stay true to yourself. Genuine responses leave a
+                  <span className="font-bold">truthfully</span>&nbsp;
+                   and stay true to yourself. Genuine responses leave a
                   lasting impression.
                 </li>
               </div>
@@ -84,7 +84,7 @@ function Page() {
                 </h6>
                 <li className="list-none text-sm">
                   Take a deep breath,
-                  <span className="font-bold">stay calm</span>, and{" "}
+                  <span className="font-bold">&nbsp;stay calm</span>, and{" "}
                   <span className="font-bold">maintain confidence</span> This is
                   your opportunity to showcase your passion for studying abroad.
                 </li>
@@ -96,7 +96,10 @@ function Page() {
                 <li className="list-none text-sm">
                   It&rsquo; s important to be well-prepared but also flexible in
                   your responses.{" "}
-                  <span className="font-bold"> Avoid sounding rehearsed</span>
+                  <span className="font-bold">
+                    {" "}
+                    Avoid sounding rehearsed&nbsp;{" "}
+                  </span>
                   engage naturally during the interview.
                 </li>
               </div>
