@@ -11,8 +11,8 @@ function Layout({ children }: any) {
 
   useEffect(() => {
     if (user) {
-      const hasCv = user.docs.find((doc: any) => doc.name === "cv/resume");
-      const hasOfferLetter = user.docs.find(
+      const hasCv = user?.docs?.find((doc: any) => doc.name === "cv/resume");
+      const hasOfferLetter = user?.docs?.find(
         (doc: any) => doc.name === "offer-letter"
       );
       if ((!hasCv || !hasOfferLetter) && pathname !== "/onboarding") {

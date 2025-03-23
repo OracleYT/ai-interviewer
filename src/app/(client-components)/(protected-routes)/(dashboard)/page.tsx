@@ -10,9 +10,13 @@ import {
 } from "@/constatnts/content-const";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useInterview } from "@/contexts/InterviewContextProvider";
+import { buildFileLinkMap } from "@/utils/string-utils";
 import clsx from "clsx";
+import { Upload } from "lucide-react";
 import React, { useMemo } from "react";
 import toast from "react-hot-toast";
+
+
 
 function Page() {
   const { interview } = useInterview();
@@ -27,12 +31,8 @@ function Page() {
   });
 
   const fileLinkMap = useMemo(() => {
-    return (
-      user?.docs?.reduce((acc: any, doc: any) => {
-        acc[doc.name] = doc.url;
-        return acc;
-      }, {}) || {}
-    );
+    const view_size = 20;
+    return  buildFileLinkMap(user?.docs, view_size);
   }, [user]);
 
   const handleFileChange = async (
@@ -149,8 +149,8 @@ function Page() {
                   className={clsx(
                     "flex flex-col justify-between border-2 border-[#979797] bg-red",
                     {
-                      "bg-green-200": Boolean(fileLinkMap[type]),
-                      "bg-[#EDF0F6]": !Boolean(fileLinkMap[type]),
+                      "bg-green-200": Boolean(fileLinkMap[type]?.url),
+                      "bg-[#EDF0F6]": !Boolean(fileLinkMap[type]?.url),
                     }
                   )}
                 >
@@ -165,7 +165,10 @@ function Page() {
                       htmlFor={`file-upload-${type}`}
                       className="cursor-pointer text-[#273240] hover:text-[#000000] text-[11px] underline"
                     >
-                      Upload Here
+                      <span className="flex gap-2 items-center">
+                        {" "}
+                        <Upload size="14" /> Upload
+                      </span>
                       <input
                         id={`file-upload-${type}`}
                         type="file"
@@ -175,11 +178,14 @@ function Page() {
                     </label>
                     <div>
                       {uploadingStatusMap[type] && "Uploading..."}
-                      {!uploadingStatusMap[type] && fileLinkMap[type] && (
+                      {!uploadingStatusMap[type] && fileLinkMap[type]?.url && (
                         <a
                           target="_blank"
-                          href={fileLinkMap[type]}
-                        >{`download`}</a>
+                          href={fileLinkMap[type]?.url}
+                          title={fileLinkMap[type]?.file_name}
+                        >
+                          {fileLinkMap[type]?.view_file_name}
+                        </a>
                       )}
                     </div>
                   </span>

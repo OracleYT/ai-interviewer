@@ -125,7 +125,7 @@ function Page() {
         {/* <div className="flex flex-col justify-between overflow-scroll element border"> */}
           <div className="flex flex-col items-center justify-between gap-4">
             <p className="text-[20px] text-[#262A41]">
-              Prepare for CAS Round 1
+              Prepare for Interview
             </p>
             <Card
               background="#EDF0F6"

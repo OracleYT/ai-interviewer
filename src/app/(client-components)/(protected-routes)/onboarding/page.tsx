@@ -10,9 +10,10 @@ import {
 } from "@/action/auth-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
-import { User, Book, University } from "lucide-react";
+import { User, Book, University, Upload } from "lucide-react";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import { buildFileLinkMap } from "@/utils/string-utils";
 
 type DocuemntType = "cv/resume" | "offer-letter";
 
@@ -36,14 +37,21 @@ export default function Login() {
     ol: false,
   });
 
+  const fileLinkMap = useMemo(() => {
+    const view_size = 20;
+    return buildFileLinkMap(user?.docs, view_size);
+  }, [user]);
+
   useEffect(() => {
     if (!userId) {
       return;
     }
     if (user) {
       setUploaded({
-        cv: Boolean(user.docs.find((doc: any) => doc.name === "cv/resume")),
-        ol: Boolean(user.docs.find((doc: any) => doc.name === "offer-letter")),
+        cv: Boolean(user?.docs?.find((doc: any) => doc.name === "cv/resume")),
+        ol: Boolean(
+          user?.docs?.find((doc: any) => doc.name === "offer-letter")
+        ),
       });
     }
     // reloadUserData();
@@ -210,43 +218,77 @@ export default function Login() {
           </div>
           <div className="flex gap-4 h-20 text-[#333333]/60 font-bold w-full">
             {/* CV/Resume */}
-            <label
-              htmlFor={`file-upload-cv-resume`}
+            <div
               className={clsx(
-                "cursor-pointer text-[#273240] hover:text-[#000000] text-[14px] text-center flex items-center border-2 border-[#333333] rounded-lg h-full px-2 w-full",
+                "border-2 border-[#333333] rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
                   "bg-green-200": uploaded.cv,
                   "bg-gray-200": uploadingStatusMap["cv/resume"],
                 }
               )}
             >
-              <span>CV/Resume *</span>
-              <input
-                id={`file-upload-cv-resume`}
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileChange(e, "cv/resume")}
-              />
-            </label>
+              <label
+                htmlFor={`file-upload-cv-resume`}
+                className={clsx(
+                  "cursor-pointer text-[#273240] hover:text-[#000000] flex items-center underline"
+                )}
+              >
+                <span className="flex gap-1 items-center">
+                  <Upload size="14" /> CV/Resume *
+                </span>
+
+                <input
+                  id={`file-upload-cv-resume`}
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "cv/resume")}
+                />
+              </label>
+              <a
+                className="text-[10px] text-black underline"
+                href={fileLinkMap["cv/resume"]?.url}
+                title={fileLinkMap["cv/resume"]?.file_name}
+                target="_blank"
+              >
+                {fileLinkMap["cv/resume"]?.view_file_name}
+              </a>
+            </div>
             {/* Offer Letter */}
-            <label
-              htmlFor={`file-upload-offer-letter`}
+            <div
               className={clsx(
-                "cursor-pointer text-[#273240] hover:text-[#000000] text-[14px]  flex items-center border-2 border-[#333333] rounded-lg h-full px-2 w-full",
+                "border-2 border-[#333333] rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
                   "bg-green-200": uploaded.ol,
                   "bg-gray-200": uploadingStatusMap["offer-letter"],
                 }
               )}
             >
-              Upload Offer Letter*
-              <input
-                id={`file-upload-offer-letter`}
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileChange(e, "offer-letter")}
-              />
-            </label>
+              <label
+                htmlFor={`file-upload-offer-letter`}
+                className={clsx(
+                  "cursor-pointer text-[#273240] hover:text-[#000000] flex items-center underline"
+                )}
+              >
+                <span className="flex gap-1 items-center">
+                  <Upload size="14" /> Upload Offer Letter*
+                </span>
+
+                <input
+                  id={`file-upload-offer-letter`}
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, "offer-letter")}
+                />
+              </label>
+              <a
+                className="text-[10px] text-black underline"
+                href={fileLinkMap["offer-letter"]?.url}
+                title={fileLinkMap["offer-letter"]?.file_name}
+                target="_blank"
+              >
+                {fileLinkMap["offer-letter"]?.view_file_name}
+              </a>
+            </div>
           </div>
           <Button
             type="submit"
