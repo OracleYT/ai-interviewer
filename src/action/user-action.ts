@@ -128,7 +128,7 @@ export async function updateUserDocs(
   userId: string,
   docs: {
     url: string;
-    status: string;
+    status?: string;
     name: string;
   }
 ): Promise<{ success: boolean; message: string; data: any }> {
