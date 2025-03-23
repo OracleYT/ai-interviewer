@@ -68,6 +68,7 @@ export const INTERVIEW_ABOUT_MAP = [
   },
 ];
 
+
 export const DAHSBOARD_SUCCESS_STEPS = [
   {
     step: "1",
@@ -75,7 +76,7 @@ export const DAHSBOARD_SUCCESS_STEPS = [
     note: "Ensure everything is in order.",
     description:
       "Review and submit all required documents to get started. This step is crucial for a smooth process, so double-check your details and verify your documents.",
-    colour: "bg-[#32A7E2]",
+    bgColor: "#32A7E2",
   },
   {
     step: "2",
@@ -83,7 +84,7 @@ export const DAHSBOARD_SUCCESS_STEPS = [
     note: "Ready to shine?",
     description:
       "Head to the Learn Section to access essential preparation materials. Get familiar with what’s coming up in your interview and prepare with confidence.",
-    colour: "bg-[#B548C6]",
+    bgColor: "#B548C6",
   },
   {
     step: "3",
@@ -91,7 +92,7 @@ export const DAHSBOARD_SUCCESS_STEPS = [
     note: "Show us your enthusiasm!",
     description:
       "When you're ready, start your first round of the CAS interview. Answer with confidence and authenticity. This is your opportunity to excel and demonstrate your exceptional suitability.",
-    colour: "bg-[#FF8700]",
+    bgColor: "#FF8700",
   },
   {
     step: "4",
@@ -99,9 +100,10 @@ export const DAHSBOARD_SUCCESS_STEPS = [
     note: "Keep going strong!",
     description:
       "After completing Round 1, continue the process with Round 2. Stay confident, be genuine, and maintain your focus. This is the final step to confirm your readiness for studying abroad!",
-    colour: "bg-[#DC3434]",
+    bgColor: "#DC3434",
   },
 ];
+
 
 export type DocuemntType =
   | "passport"

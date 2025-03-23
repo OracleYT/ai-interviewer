@@ -15,6 +15,7 @@ export type AuthContextType = {
   userId?: string;
   reloadUserData: () => Promise<void>;
   isDocUploaded: boolean;
+  questionBankLink: string;
 };
 
 export type InterviewDataContextType = {
@@ -52,6 +53,11 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
       user?.docs?.some((doc: any) => doc.name === "bank-statement")
     );
   }, [user?.docs]);
+
+  const questionBankLink = useMemo(() => {
+    return user?.docs?.find((doc: any) => doc.name === "question-bank")?.url;
+  }, [user?.docs]);
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -102,6 +108,7 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         userId: user?.id,
         reloadUserData,
         isDocUploaded,
+        questionBankLink
       }}
     >
       {children}

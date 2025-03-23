@@ -12,13 +12,17 @@ import {
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import { sendInterviewDoneEvent, updateInterviewStatusById } from "@/action/interview-action";
-import axios from "axios";
+import {
+  updateInterviewStatusById,
+} from "@/action/interview-action";
+import { useAuth } from "@/contexts/AuthProvider";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
   const vapiCallRef = useRef<Call | null>();
   const router = useRouter();
+  const { user } = useAuth();
+
   const { procterState, stopProctering } = useAutoProctor();
   const useCallStatus = useRef<"init" | "started" | "ended">("init");
 
@@ -63,7 +67,7 @@ const useVapi = (meetingId: string) => {
         callId: vapiCallRef.current?.id!,
         status: "COMPLETED",
       });
-      await sendInterviewDoneEvent(meetingId)
+      // await sendInterviewDoneEvent(meetingId);
       stopProctering();
     };
 
@@ -100,7 +104,25 @@ const useVapi = (meetingId: string) => {
       return;
     }
     useCallStatus.current = "started";
-    vapiCallRef.current = await vapiRef.current.start(assistantId);
+    const assistantOverrides = {
+      transcriber: {
+        provider: "deepgram" as const,
+        model: "nova-2" as const,
+        language: "en-US" as const,
+      },
+      recordingEnabled: false,
+      variableValues: {
+        name: user?.name,
+        course: user?.course,
+        university: user?.university,
+        userSummary: user?.userSummary,
+      },
+    };
+
+    vapiCallRef.current = await vapiRef.current.start(
+      assistantId,
+      assistantOverrides
+    );
     updateInterviewStatusById({
       interviewId: meetingId,
       callId: vapiCallRef.current?.id!,
