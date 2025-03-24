@@ -33,13 +33,18 @@ const useVapi = (meetingId: string) => {
   useEffect(() => {
     const handleProctoringStop = async () => {
       if (procterState === ProctorState.PROCTING_STOPED) {
+        // let report = {};
+        // try {
+        //   report = await getProcteringReport();
+        // } catch (error) {
+        //   console.error("Error while getting proctoring report", error);
+        // }
         try {
-          const report = await getProcteringReport();
           await updateInterviewStatusById({
             interviewId: meetingId,
             callId: vapiCallRef.current?.id!,
             status: "COMPLETED",
-            procterReport: report,
+            // procterReport: report,
           });
         } catch (error) {
           console.error("Error while updating interview status", error);

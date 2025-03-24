@@ -102,6 +102,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       const testAttemptID = instance.current.testAttemptId;
       const endSessionCall = `${testAttemptID}-end-session`;
       const evidenceCode: string = e?.detail?.evidenceCode as string;
+      console.log("Evidence :", e?.detail)
       if (localStorage.getItem(endSessionCall) !== null) {
         return;
       }
@@ -161,7 +162,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     window.addEventListener("apEvidenceEvent", apEvidenceEvent);
     window.addEventListener("apMonitoringStopped", apMonitoringStopped);
 
-
     return () => {
       window.removeEventListener("apEvidenceEvent", apEvidenceEvent);
       window.removeEventListener("apMonitoringStarted", apMonitoringStarted);
@@ -214,7 +214,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       proctorStateRef.current === ProctorState.PROCTING_STARTED
     ) {
       console.log("[stopProctering] Stopping Auto Proctor...");
-      instance.current.stop();
+      await instance.current.stop();
     }
   }, []);
 
@@ -222,9 +222,27 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     if (instance.current && instance.current.getReport) {
       return await instance.current.getReport();
     }
-    return null;
+    return {};
   }, []);
 
+  // useEffect(() => {
+  //   let intervalId: any;
+  //   if (procterState === ProctorState.PROCTING_STARTED) {
+  //     intervalId = setInterval(() => {
+  //       getProcteringReport().then((report) => {
+  //         updateInterviewStatusById({
+  //           interviewId: interview.id,
+  //           procterReport: report,
+  //         });
+  //         console.log(report);
+  //       });
+  //     }, 10_000);
+  //   }
+
+  //   return () => {
+  //     intervalId && clearInterval(intervalId);
+  //   };
+  // }, [procterState]);
   const isProctorStarted = () => {
     return instance.current?.isApTestStarted;
   };
@@ -236,7 +254,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         initAutoProctor,
         procterState,
         stopProctering,
-        getProcteringReport
+        getProcteringReport,
       }}
     >
       {children}

@@ -112,12 +112,12 @@ export async function updateInterviewStatusById(data: {
   interviewId: string;
   status: "COMPLETED" | "ONGOING";
   callId: string;
-  procterReport?: any;
+  // procterReport?: any;
 }) {
   const update: any = {
     status: data.status,
     callId: data.callId,
-    procterReport: data.procterReport,
+    // procterReport: data.procterReport,
   };
   if (data.status === "ONGOING") {
     update.startedAt = new Date();
