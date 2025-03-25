@@ -29,19 +29,12 @@ const useVapi = (meetingId: string) => {
   >("init");
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
-  // const statusRef = useRef<"init" | "started">("init");
   const { setVolumeLevel } = useContext(VolumeLevelContext);
   const { stopCamera } = useContext(BrowserMediaContext);
 
   useEffect(() => {
     const handleProctoringStop = async () => {
       if (procterState === ProctorState.PROCTING_STOPED) {
-        // let report = {};
-        // try {
-        //   report = await getProcteringReport();
-        // } catch (error) {
-        //   console.error("Error while getting proctoring report", error);
-        // }
         try {
           await updateInterviewStatusById({
             interviewId: meetingId,
@@ -126,9 +119,7 @@ const useVapi = (meetingId: string) => {
     if (!vapiRef.current) {
       throw new Error("Vapi not Initialize");
     }
-    if (
-      ["starting", "started", "ending", "ended"].includes(useCallStatus.current)
-    ) {
+    if (["starting", "started"].includes(useCallStatus.current)) {
       return;
     }
     useCallStatus.current = "starting";

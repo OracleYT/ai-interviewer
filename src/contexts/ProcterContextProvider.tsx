@@ -37,7 +37,6 @@ type ProcterContextType = {
   isProctorStarted?: () => boolean;
   procterState?: ProctorState;
   stopProctering: () => void;
-  getProcteringReport: () => Promise<any>;
   modalConfig?: ModaleConfig;
   setModalConfig?: (m: ModaleConfig) => void;
 };
@@ -250,16 +249,10 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       proctorStateRef.current === ProctorState.PROCTING_STARTED
     ) {
       console.log("[stopProctering] Stopping Auto Proctor...");
-      // await instance.current.stop();
+      await instance.current.stop();
     }
   }, []);
 
-  const getProcteringReport = useCallback(async () => {
-    if (instance.current && instance.current.getReport) {
-      return await instance.current.getReport();
-    }
-    return {};
-  }, []);
 
   const isProctorStarted = () => {
     return instance.current?.isApTestStarted;
@@ -272,7 +265,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         initAutoProctor,
         procterState,
         stopProctering,
-        getProcteringReport,
         modalConfig,
         setModalConfig,
       }}

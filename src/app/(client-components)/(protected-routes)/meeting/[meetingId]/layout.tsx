@@ -9,6 +9,7 @@ import VolumeLevelProvider from "@/contexts/VolumeLevelProvider";
 import { useInterviewDetails } from "@/contexts/InterviewContextProvider";
 import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 import Popup from "@/components/Popup";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 type LayoutProps = {
   children: ReactNode;
@@ -24,6 +25,7 @@ export default function Layout({ children }: LayoutProps) {
   const { interviewDetails: meetingData } = useInterviewDetails();
   const router = useRouter();
   const { modalConfig } = useAutoProctor();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!meetingData) {
@@ -31,7 +33,15 @@ export default function Layout({ children }: LayoutProps) {
         router.push(`/meeting/${meetingId}`);
       }
     }
+    setTimeout(()=>{
+      setLoading(false);
+    }, 1200)
   }, [pathname]);
+
+
+  if(loading) {
+    return <LoadingOverlay/>  ;
+  }
 
   return (
     <>
