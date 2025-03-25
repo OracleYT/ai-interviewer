@@ -1,7 +1,7 @@
-import IconButton, { IconButtonProps } from './IconButton';
-import clsx from 'clsx';
+import IconButton, { IconButtonProps } from "./IconButton";
+import clsx from "clsx";
 
-interface CallControlButtonProps extends Omit<IconButtonProps, 'variant'> {}
+interface CallControlButtonProps extends Omit<IconButtonProps, "variant"> {}
 
 const CallControlButton = ({
   active,
@@ -10,15 +10,17 @@ const CallControlButton = ({
   icon,
   onClick,
   title,
+  disabled,
 }: CallControlButtonProps) => {
   return (
     <IconButton
+      disabled={disabled}
       variant="secondary"
       active={active}
       alert={alert}
       icon={icon}
       title={title}
-      className={clsx('call-control-button', className)}
+      className={clsx("call-control-button", className)}
       onClick={onClick}
     />
   );

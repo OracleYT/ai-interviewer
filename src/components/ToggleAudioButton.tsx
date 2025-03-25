@@ -54,10 +54,10 @@ const ToggleAudioButton = () => {
           )
         }
         title={isMicrophoneMute ? 'Turn on microphone' : 'Turn off microphone'}
-        onClick={toggleMicrophone}
-        active={isMicrophoneMute}
+        // onClick={toggleMicrophone}
+        active={!isMicrophoneMute}
         alert={!hasBrowserPermission}
-        className={clsx(isMicrophoneMute && 'toggle-button-alert')}
+        className={clsx(isMicrophoneMute && 'toggle-button-alert', " cursor-not-allowed")}
       />
     </ToggleButtonContainer>
   );

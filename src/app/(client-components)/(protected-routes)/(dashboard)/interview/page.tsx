@@ -74,41 +74,6 @@ function Interview() {
           </p>
         </div>
       </div>
-      {/* right container */}
-      {/* <Card
-        background="#F9FAFC"
-        width="30%"
-        padding="40px"
-        className="rounded-r-[30px] flex flex-col justify-between items-center overflow-y-scroll element min-h-[600px]"
-      >
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-[20px] text-[#262A41]">Prepare for CAS Round 1</p>
-          <div>
-            <Card
-              background="#EDF0F6"
-              borderRadius="15px"
-              padding="15px"
-              className="mt-8"
-            >
-              <div className="flex justify-between items-center gap-7">
-                <p className="text-[#273240] text-[13px] font-medium">
-                  Interview Question Bank
-                </p>
-                <span className="text-[#273240] text-[11px]">PDF</span>
-              </div>
-              <span className="text-[#273240] text-[11px]">
-                Click here &gt;
-              </span>
-            </Card>
-          </div>
-        </div>
-        {!loading && (
-          <StartInterviewCard
-            ctaHref={`/meeting/${interview?.id}`}
-            showCta={interview?.id && isDocUploaded}
-          />
-        )}
-      </Card> */}
       <RightSidePannel />
     </Card>
   );

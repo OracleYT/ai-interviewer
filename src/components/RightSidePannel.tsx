@@ -37,7 +37,7 @@ function RightSidePannel() {
               feel more confident and ready for your interview.
             </p>
             <a
-              className="text-[#273240] text-[12px] font-medium underline"
+              className="text-[#273240] text-[12px] font-medium underline cursor-pointer"
               href={questionBankLink}
               target="_blank"
             >

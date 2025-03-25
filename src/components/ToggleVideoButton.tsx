@@ -47,10 +47,10 @@ const ToggleVideoButton = () => {
           )
         }
         title={isCameraOn ? "Turn off camera" : "Turn on camera"}
-        onClick={toggleCamera}
+        // onClick={}
         active={isCameraOn}
         // alert={!hasBrowserPermission}
-        className={clsx(isCameraOn && "toggle-button-alert")}
+        className={clsx(!isCameraOn && "toggle-button-alert", "cursor-not-allowed")}
       />
     </ToggleButtonContainer>
   );

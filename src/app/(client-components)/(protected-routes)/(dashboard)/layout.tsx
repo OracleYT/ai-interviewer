@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthProvider";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Layout({
   children,
@@ -15,6 +16,16 @@ export default function Layout({
 }>) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [loading, setLoading] = useState(true); 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (loading) {
+    return <div className="text-2xl text-center absolute top-[45%] left-[40%]">Authenticating... Please wait.</div>;
+  }
 
   return (
     <>

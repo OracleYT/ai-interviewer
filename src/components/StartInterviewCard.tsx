@@ -47,7 +47,7 @@ function StartInterviewCard({
           <div>
             {!showCta ? (
               <span
-                className="border text-[#ffffff] text-center py-1 bg-[#101010]/50 rounded-lg cursor-not-allowed"
+                className="border text-[#ffffff] text-center py-1 bg-[#101010]/60 rounded-lg cursor-not-allowed px-4"
                 title={
                   isDocumentVerified
                     ? "Interview Expired"
@@ -59,7 +59,7 @@ function StartInterviewCard({
             ) : (
               <Link
                 href={ctaHref!}
-                className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg"
+                className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg px-4 cursor-pointer"
               >
                 {cta ?? "Start Interview"}
               </Link>

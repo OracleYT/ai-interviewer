@@ -112,16 +112,14 @@ export async function updateInterviewStatusById(data: {
   interviewId: string;
   status: "COMPLETED" | "ONGOING";
   callId: string;
-  procterReport?: any;
 }) {
   const update: any = {
     status: data.status,
     callId: data.callId,
-    procterReport: data.procterReport,
   };
   if (data.status === "ONGOING") {
     update.startedAt = new Date();
-  } else if (status === "COMPLETED") {
+  } else if (data.status === "COMPLETED") {
     update.endedAt = new Date();
   }
 
@@ -147,6 +145,80 @@ export async function updateInterviewStatusById(data: {
     message: "Interview status updated",
     data: updatedInterview,
   };
+}
+
+export async function addProcterEvidance(data: {
+  interviewId: string;
+  evidence: any;
+}) {
+  console.log(
+    "Updating procter report with data:\n\n " + JSON.stringify(data, null, 2)
+  );
+
+  try {
+    if (!data.interviewId) {
+      return {
+        status: 400,
+        success: false,
+        message: "Interview ID is required",
+        data: null,
+      };
+    }
+    if (!data.evidence) {
+      return {
+        status: 400,
+        success: false,
+        message: "Evidence is required",
+        data: null,
+      };
+    }
+
+    const interviewData = await prisma.interview.findFirst({
+      where: {
+        id: data.interviewId,
+      },
+      select: {
+        procterReport: true,
+      },
+    });
+
+    if (!interviewData) {
+      return {
+        status: 404,
+        success: false,
+        message: "Interview not found",
+        data: null,
+      };
+    }
+
+    //@ts-ignore
+    const procterReport: any = interviewData?.procterReport?.evidences
+      ? interviewData?.procterReport
+      : {
+          evidences: [],
+        };
+
+    if (!procterReport?.evidences) {
+      procterReport.evidences = [];
+    }
+    procterReport.evidences.push(data.evidence);
+    await prisma.interview.update({
+      where: {
+        id: data.interviewId,
+      },
+      data: {
+        procterReport,
+      },
+    });
+    console.log("Procter report updated for interview", data.interviewId);  
+    return {
+      status: 200,
+      success: true,
+      message: "Procter report updated",
+    };
+  } catch (error) {
+    console.error("Error while updating procter report", error);
+  }
 }
 
 export async function sendInterviewDoneEvent(meetingId: string) {
