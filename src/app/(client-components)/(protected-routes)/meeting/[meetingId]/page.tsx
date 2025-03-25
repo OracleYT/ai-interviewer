@@ -92,7 +92,7 @@ const Lobby = () => {
     }
   }, [loading, joining]);
 
-    // const updateGuestName = async () => {
+  // const updateGuestName = async () => {
   //   try {
   //     // await fetch("/api/user", {
   //     //   method: "POST",
@@ -123,7 +123,6 @@ const Lobby = () => {
     }
   }, [procterState]);
 
-
   const joinCall = async () => {
     setJoining(true);
     initAutoProctor(meetingId);
@@ -144,8 +143,7 @@ const Lobby = () => {
       </div>
     );
 
-
-    return (
+  return (
     <div>
       <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">

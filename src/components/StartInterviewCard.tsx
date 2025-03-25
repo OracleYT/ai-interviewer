@@ -59,7 +59,7 @@ function StartInterviewCard({
             ) : (
               <Link
                 href={ctaHref!}
-                className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg"
+                className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg px-4 cursor-pointer"
               >
                 {cta ?? "Start Interview"}
               </Link>

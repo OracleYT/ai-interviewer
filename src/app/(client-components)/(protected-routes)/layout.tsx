@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function Layout({ children }: any) {
-  const { user, reloadUserData } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 

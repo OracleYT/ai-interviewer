@@ -11,6 +11,7 @@ import {
 } from "react";
 import useCache from "../hooks/useCache";
 import {
+  AP_BROWSER_ERRORS,
   AP_VOILATION_WARNINGS,
   PROCTORING_OPTIONS,
 } from "../constatnts/auto-procter-const";
@@ -21,6 +22,14 @@ import {
 } from "@/constatnts/env-const";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
 
+type ModaleConfig = {
+  showModel: boolean;
+  title: string;
+  content: string;
+  ctaText?: string;
+  ctaAction?: () => void;
+  onClose?: () => void;
+};
 /* eslint-disable no-unused-vars*/
 type ProcterContextType = {
   initAutoProctor: (testAttemptId: string, callback?: any) => void;
@@ -29,6 +38,8 @@ type ProcterContextType = {
   procterState?: ProctorState;
   stopProctering: () => void;
   getProcteringReport: () => Promise<any>;
+  modalConfig?: ModaleConfig;
+  setModalConfig?: (m: ModaleConfig) => void;
 };
 /* eslint-enable no-unused-vars*/
 
@@ -61,6 +72,12 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     ProctorState.INIT
   );
 
+  const [modalConfig, setModalConfig] = useState<ModaleConfig>({
+    showModel: false,
+    title: "",
+    content: "",
+  });
+
   const isAutoProcterEnabled = useCallback(() => {
     if (NEXT_AUTO_PROCTOR_ENABLE !== "true") {
       return false;
@@ -82,7 +99,24 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       console.log("[useEffect] Auto Proctor is not enabled");
       return;
     }
-
+    const apErrorEvent = (e: any) => {
+      const errorCode = e.detail.errorCode;
+      const error: any = AP_BROWSER_ERRORS[errorCode];
+      if (error) {
+        setModalConfig({
+          showModel: true,
+          title: error.message,
+          content: error.action,
+          ctaText: "Reload",
+          ctaAction: () => {
+            window.location.reload();
+          },
+          onClose: () => {
+            setModalConfig({ showModel: false, title: "", content: "" });
+          },
+        });
+      }
+    };
     const apSuccessEvent = (e: any) => {
       const { successCode } = e.detail;
       switch (successCode) {
@@ -102,7 +136,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       const testAttemptID = instance.current.testAttemptId;
       const endSessionCall = `${testAttemptID}-end-session`;
       const evidenceCode: string = e?.detail?.evidenceCode as string;
-      console.log("Evidence :", e?.detail)
       if (localStorage.getItem(endSessionCall) !== null) {
         return;
       }
@@ -133,8 +166,13 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         if (message) {
           const event = new CustomEvent(VapiDomEvents.SPEAK_ASSISTANT, {
             detail: {
+              title: evidence?.title,
               message,
-              endSession,
+              testAttemptID,
+              evidence: e?.detail,
+              voilation: evidence?.voilation,
+              endSession: endSession,
+              capturedAt: new Date(),
             },
           });
           document.dispatchEvent(event);
@@ -145,7 +183,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
 
     const apSetupComplete = (_e: any) => {
       updateProctorState(ProctorState.SETUP_COMPLETED);
-      instance.current?.start();
     };
 
     const apMonitoringStarted = (_e: any) => {
@@ -156,6 +193,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       updateProctorState(ProctorState.PROCTING_STOPED);
     };
 
+    window.addEventListener("apErrorEvent", apErrorEvent);
     window.addEventListener("apSuccessEvent", apSuccessEvent);
     window.addEventListener("apMonitoringStarted", apMonitoringStarted);
     window.addEventListener("apSetupComplete", apSetupComplete);
@@ -163,6 +201,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     window.addEventListener("apMonitoringStopped", apMonitoringStopped);
 
     return () => {
+      window.removeEventListener("apErrorEvent", apErrorEvent);
       window.removeEventListener("apEvidenceEvent", apEvidenceEvent);
       window.removeEventListener("apMonitoringStarted", apMonitoringStarted);
       window.removeEventListener("apSetupComplete", apSetupComplete);
@@ -192,13 +231,10 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
           clientId,
           hashedTestAttemptId,
         });
-
-        await apInst.setup(PROCTORING_OPTIONS);
         instance.current = apInst;
+        await apInst.setup(PROCTORING_OPTIONS);
         await apInst.start();
-        updateProctorState(ProctorState.SETUP_COMPLETED);
-
-        console.log("[initAutoProctor] Auto Proctor started...");
+        console.log("[initAutoProctor] Auto Proctor starting...");
         return Promise.resolve(true);
       } catch (error) {
         console.log(error);
@@ -225,24 +261,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     return {};
   }, []);
 
-  // useEffect(() => {
-  //   let intervalId: any;
-  //   if (procterState === ProctorState.PROCTING_STARTED) {
-  //     intervalId = setInterval(() => {
-  //       getProcteringReport().then((report) => {
-  //         updateInterviewStatusById({
-  //           interviewId: interview.id,
-  //           procterReport: report,
-  //         });
-  //         console.log(report);
-  //       });
-  //     }, 10_000);
-  //   }
-
-  //   return () => {
-  //     intervalId && clearInterval(intervalId);
-  //   };
-  // }, [procterState]);
   const isProctorStarted = () => {
     return instance.current?.isApTestStarted;
   };
@@ -255,6 +273,8 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         procterState,
         stopProctering,
         getProcteringReport,
+        modalConfig,
+        setModalConfig,
       }}
     >
       {children}

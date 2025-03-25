@@ -7,6 +7,8 @@ import { ParticipantsProvider } from "@/contexts/ParticipantsProvider";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import VolumeLevelProvider from "@/contexts/VolumeLevelProvider";
 import { useInterviewDetails } from "@/contexts/InterviewContextProvider";
+import { useAutoProctor } from "@/contexts/ProcterContextProvider";
+import Popup from "@/components/Popup";
 
 type LayoutProps = {
   children: ReactNode;
@@ -21,6 +23,7 @@ export default function Layout({ children }: LayoutProps) {
   const meetingId = params.meetingId;
   const { interviewDetails: meetingData } = useInterviewDetails();
   const router = useRouter();
+  const { modalConfig } = useAutoProctor();
 
   useEffect(() => {
     if (!meetingData) {
@@ -31,12 +34,28 @@ export default function Layout({ children }: LayoutProps) {
   }, [pathname]);
 
   return (
-    <ParticipantsProvider meetingId={meetingId}>
-      <BrowserMediaProvider>
-        <VolumeLevelProvider>
-          <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
-        </VolumeLevelProvider>
-      </BrowserMediaProvider>
-    </ParticipantsProvider>
+    <>
+      {modalConfig?.showModel && (
+        <Popup
+          open={modalConfig?.showModel}
+          title={modalConfig?.title}
+          height={400}
+          ctaAction={modalConfig?.ctaAction}
+          ctaText={modalConfig?.ctaText}
+          onClose={() => {
+            modalConfig?.onClose && modalConfig?.onClose();
+          }}
+        >
+          <div className="text-center p-4">{modalConfig?.content}</div>
+        </Popup>
+      )}
+      <ParticipantsProvider meetingId={meetingId}>
+        <BrowserMediaProvider>
+          <VolumeLevelProvider>
+            <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
+          </VolumeLevelProvider>
+        </BrowserMediaProvider>
+      </ParticipantsProvider>
+    </>
   );
 }

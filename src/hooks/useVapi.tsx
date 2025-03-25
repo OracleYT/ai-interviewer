@@ -6,13 +6,15 @@ import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
-import { sendInterviewDataToBackend } from "@/action/server";
 import {
   ProctorState,
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import { updateInterviewStatusById } from "@/action/interview-action";
+import {
+  addProcterEvidance,
+  updateInterviewStatusById,
+} from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
 
 const useVapi = (meetingId: string) => {
@@ -21,9 +23,10 @@ const useVapi = (meetingId: string) => {
   const router = useRouter();
   const { user } = useAuth();
 
-  const { procterState, stopProctering, getProcteringReport } =
-    useAutoProctor();
-  const useCallStatus = useRef<"init" | "started" | "ended">("init");
+  const { procterState, stopProctering } = useAutoProctor();
+  const useCallStatus = useRef<
+    "init" | "started" | "starting" | "ending" | "ended"
+  >("init");
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   // const statusRef = useRef<"init" | "started">("init");
@@ -56,15 +59,13 @@ const useVapi = (meetingId: string) => {
   }, [procterState, router]);
 
   const stopVapiSession = useCallback(async () => {
-    if (vapiRef.current) {
-      stopCamera();
-      if (useCallStatus.current === "ended") return;
-      useCallStatus.current = "ended";
-      vapiRef.current.stop();
-    } else {
-      throw new Error("Vapi not initialized");
+    if (["ending", "ended"].includes(useCallStatus.current)) {
+      return;
     }
-  }, [sendInterviewDataToBackend, stopCamera]);
+    if (vapiRef.current) {
+      await vapiRef.current.stop();
+    }
+  }, []);
 
   useEffect(() => {
     if (!vapiRef.current) {
@@ -78,8 +79,12 @@ const useVapi = (meetingId: string) => {
     const volumeLevelHandler = (level: number) => {
       setVolumeLevel(level);
     };
-    const endCallHandler = async () => {
-      await stopVapiSession();
+
+    const endCallEventHandler = async () => {
+      if (useCallStatus.current === "ended") {
+        return;
+      }
+      useCallStatus.current = "ended";
       await updateInterviewStatusById({
         interviewId: meetingId,
         callId: vapiCallRef.current?.id!,
@@ -89,14 +94,17 @@ const useVapi = (meetingId: string) => {
       stopProctering();
     };
 
-    const speakAssistantHandler = (e: any) => {
-      const { detail } = e;
-      const { message, endSession } = detail;
+    const speakAssistantHandler = async (e: any) => {
+      const { message, endSession } = e.detail;
+      addProcterEvidance({
+        interviewId: meetingId,
+        evidence: e?.detail,
+      });
       vapiRef.current?.say(message, endSession);
     };
 
     vapiRef.current?.on("volume-level", volumeLevelHandler);
-    vapiRef.current?.on("call-end", endCallHandler);
+    vapiRef.current?.on("call-end", endCallEventHandler);
 
     document.addEventListener(
       VapiDomEvents.SPEAK_ASSISTANT,
@@ -118,10 +126,20 @@ const useVapi = (meetingId: string) => {
     if (!vapiRef.current) {
       throw new Error("Vapi not Initialize");
     }
-    if (useCallStatus.current === "started") {
+    if (
+      ["starting", "started", "ending", "ended"].includes(useCallStatus.current)
+    ) {
       return;
     }
-    useCallStatus.current = "started";
+    useCallStatus.current = "starting";
+    const userData = {
+      name: user?.name,
+      course: user?.course,
+      university: user?.university,
+      userSummary: user?.userSummary,
+    };
+    console.log("userData: ", userData);
+
     const assistantOverrides = {
       transcriber: {
         provider: "deepgram" as const,
@@ -129,18 +147,15 @@ const useVapi = (meetingId: string) => {
         language: "en-US" as const,
       },
       recordingEnabled: false,
-      variableValues: {
-        name: user?.name,
-        course: user?.course,
-        university: user?.university,
-        userSummary: user?.userSummary,
-      },
+      variableValues: userData,
     };
 
     vapiCallRef.current = await vapiRef.current.start(
       assistantId,
       assistantOverrides
     );
+    useCallStatus.current = "started";
+
     updateInterviewStatusById({
       interviewId: meetingId,
       callId: vapiCallRef.current?.id!,

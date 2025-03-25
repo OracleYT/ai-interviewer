@@ -37,15 +37,16 @@ import useTime from "@/hooks/useTime";
 import useVapi from "@/hooks/useVapi";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
+import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 
 const Meeting = () => {
   const params = useParams<{ meetingId: string }>();
   const meetingId = params.meetingId;
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const router = useRouter();
-  const call = useCall();
-  const user = useConnectedUser();
+  // const router = useRouter();
+  // const call = useCall();
+  // const user = useConnectedUser();
   const { currentTime } = useTime();
   // const { client: chatClient } = useChatContext();
   // const { useCallCallingState, useParticipants, useScreenShareState } =
@@ -66,6 +67,7 @@ const Meeting = () => {
     useContext(BrowserMediaContext);
   const { startVapiSession, stopVapiSession, vapiInstance } =
     useVapi(meetingId);
+  const { setModalConfig } = useAutoProctor();
 
   // const isCreator = call?.state.createdBy?.id === user?.id;
   // const isCreator = true;
@@ -106,7 +108,19 @@ const Meeting = () => {
   }, [participantInSpotlight]);
 
   const leaveCall = async () => {
-    stopVapiSession();
+    setModalConfig &&
+      setModalConfig({
+        showModel: true,
+        title: "End Interview ?",
+        content: "Are you sure you want to end the call ?",
+        ctaText: "End Interview",
+        ctaAction: () => {
+          stopVapiSession();
+        },
+        onClose: () => {
+          setModalConfig({ showModel: false, title: "", content: "" });
+        },
+      });
   };
 
   // const toggleScreenShare = async () => {
