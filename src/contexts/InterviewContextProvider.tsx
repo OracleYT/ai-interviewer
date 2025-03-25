@@ -48,7 +48,7 @@ export const InterviewContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { userId } = useAuth();
+  const { userId, user } = useAuth();
   const [interview, setInterview] = useState<any>();
   const [interviewDetails, setInterviewDetails] = useState<any>();
   const [errMessage, setErrMessage] = useState<string>();
@@ -116,7 +116,7 @@ export const InterviewContextProvider = ({
     };
     fetchInterviewData();
   }, [
-    userId,
+    user,
     setInterview,
     setErrMessage,
     setMessage,
