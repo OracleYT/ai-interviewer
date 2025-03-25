@@ -128,6 +128,7 @@ const useVapi = (meetingId: string) => {
       course: user?.course,
       university: user?.university,
       userSummary: user?.userSummary,
+      passportNumber: user?.passportNumber,
     };
     console.log("userData: ", userData);
 
