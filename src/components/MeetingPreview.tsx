@@ -40,7 +40,7 @@ const MeetingPreview = () => {
     hasBrowserPermission: hasMicrophonePermission,
     status: microphoneStatus,
   } = useMicrophoneState();
-  
+
   const { videoRef, isCameraOn, startCamera, stopCamera } =
     useContext(BrowserMediaContext);
 
@@ -115,19 +115,21 @@ const MeetingPreview = () => {
               title={
                 isMicrophoneMute ? "Turn on microphone" : "Turn off microphone"
               }
-              onClick={toggleMicrophone}
+              // onClick={toggleMicrophone}
               active={!isMicrophoneMute}
               alert={!hasMicrophonePermission}
               variant="secondary"
+              className="cursor-not-allowed"
             />
             {/* Camera control */}
             <IconButton
-              icon={isCameraOn ?   <Videocam /> : <VideocamOff />}
-              title={isCameraOn ?   "Turn off camera" :"Turn on camera"}
-              onClick={toggleCamera}
+              icon={isCameraOn ? <Videocam /> : <VideocamOff />}
+              title={isCameraOn ? "Turn off camera" : "Turn on camera"}
+              // onClick={toggleCamera}
               active={isCameraOn}
               // alert={!hasCameraPermission}
               variant="secondary"
+              className="cursor-not-allowed"
             />
           </div>
         )}

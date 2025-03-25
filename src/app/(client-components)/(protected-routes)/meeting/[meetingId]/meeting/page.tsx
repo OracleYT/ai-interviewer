@@ -161,10 +161,10 @@ const Meeting = () => {
           <div className="relative flex grow shrink basis-1/4 items-center justify-center px-1.5 gap-3 ml-0">
             <ToggleAudioButton />
             <ToggleVideoButton />
-            <CallControlButton
+            {/* <CallControlButton
               icon={<ClosedCaptions />}
               title={"Turn on captions"}
-            />
+            /> */}
             {/* <CallControlButton
               icon={<Mood />}
               title={"Send a reaction"}
