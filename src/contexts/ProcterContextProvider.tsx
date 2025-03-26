@@ -21,6 +21,7 @@ import {
   NEXT_AUTO_PROCTOR_ENABLE,
 } from "@/constatnts/env-const";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
+import toast from "react-hot-toast";
 
 type ModaleConfig = {
   showModel: boolean;
@@ -98,10 +99,24 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       console.log("[useEffect] Auto Proctor is not enabled");
       return;
     }
+    
     const apErrorEvent = (e: any) => {
       const errorCode = e.detail.errorCode;
       const error: any = AP_BROWSER_ERRORS[errorCode];
       if (error) {
+        toast(
+          (t: any) => (
+            <span className="toast">
+              <b>{error.message}</b>
+              <button className="px-2 border text-[13px] rounded-md" onClick={() => {
+                window.location.reload();
+              }}>Reload</button>
+            </span>
+          ),
+          {
+            duration: 1_000_000,
+          }
+        );
         setModalConfig({
           showModel: true,
           title: error.message,
@@ -252,7 +267,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       await instance.current.stop();
     }
   }, []);
-
 
   const isProctorStarted = () => {
     return instance.current?.isApTestStarted;

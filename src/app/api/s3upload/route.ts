@@ -6,18 +6,6 @@ import prisma from "@/libs/db/prisma";
 const bucket = process.env.AWS_S3_BUCKET || "";
 
 
-function setCorsHeaders(response: NextResponse) {
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
-}
-
-export async function OPTIONS() {
-  return setCorsHeaders(new NextResponse(null, { status: 204 }));
-}
-
-
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();

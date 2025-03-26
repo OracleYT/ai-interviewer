@@ -6,25 +6,29 @@ import Button from "@/components/Button";
 import { resetPassword } from "@/action/user-action";
 import toast from "react-hot-toast";
 import { useAuth } from "@/contexts/AuthProvider";
+import { throttle } from "lodash";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null); // Error state
+  const [isLogingIn, setIsLogingIn] = useState<boolean>(false);
   const auth = useAuth();
 
-  const loginUser = async (e: React.FormEvent) => {
-    e.preventDefault();
 
+  const loginUser = async () => {
+    setIsLogingIn(true);
+    setError(null);
     try {
       const data = { username: email, password };
       const res = await auth.login(data);
-
       if (!res.success) {
         setError(res.message);
       }
     } catch (err) {
       console.error(err);
+    }finally{
+      setIsLogingIn(false);
     }
   };
 
@@ -73,7 +77,7 @@ export default function Login() {
             email address
           </p>
         </div>
-        <form onSubmit={loginUser} className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4">
           <div className="relative flex items-center">
             <svg
               width="22"
@@ -129,13 +133,13 @@ export default function Login() {
               className="border py-2 pl-12 pr-4 w-[320px] border-[#EEEEEE] rounded-lg bg-transparent text-black  focus:outline-slate-400"
             />
           </div>
-          {error && <div className="text-red-500">{error}</div>}
-          <Button type="submit" variant="secondry">
-            Login
+          {error && <div className="text-sm text-red-500">{error}</div>}
+          <Button onClick={throttle(loginUser, 5_000)} variant="secondry" disabled={isLogingIn || !email || !password}>
+            {isLogingIn ? "Login in..." : "Login"}
           </Button>
-        </form>
+        </div>
         <span
-          onClick={resetPasswordHandler}
+          onClick={throttle(resetPasswordHandler, 60_000)}
           className="text-[#101010]/50 text-xs cursor-pointer"
         >
           Reset password ?

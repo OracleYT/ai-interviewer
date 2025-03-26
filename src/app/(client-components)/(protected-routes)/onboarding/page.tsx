@@ -14,6 +14,7 @@ import { User, Book, University, Upload } from "lucide-react";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { buildFileLinkMap } from "@/utils/string-utils";
+import { throttle } from "lodash";
 
 type DocuemntType = "cv/resume" | "offer-letter";
 
@@ -36,11 +37,13 @@ export default function Login() {
     cv: false,
     ol: false,
   });
+  const[isUpdating, setIsUpdating] = useState(false);
 
   const fileLinkMap = useMemo(() => {
     const view_size = 20;
     return buildFileLinkMap(user?.docs, view_size);
   }, [user]);
+
 
   useEffect(() => {
     if (!userId) {
@@ -129,6 +132,7 @@ export default function Login() {
       toast.error("Offer Letter is required");
       return;
     }
+    setIsUpdating(true);
 
     const res = await updateUserDetails(userId!, {
       name: formData.name,
@@ -144,7 +148,9 @@ export default function Login() {
     } else {
       toast.error("Error updating details");
     }
+    setIsUpdating(false);
   };
+
   return (
     <Card
       background="#000000"
@@ -177,6 +183,7 @@ export default function Login() {
           </p>
         </div>
         <div className="flex flex-col items-center space-y-4 w-[400px]">
+          {/* Name */}
           <div className="relative flex items-center w-full ">
             <span className="absolute ml-3">
               <User color="#444444" />
@@ -185,11 +192,13 @@ export default function Login() {
               type="text"
               placeholder="Name *"
               value={formData?.name}
+              disabled={Boolean(user?.name)}
               onChange={onChangeHandler("name")}
               required
               className="border py-2 px-12 w-full border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
             />
           </div>
+          {/* Couese */}
           <div className="relative flex items-center w-full">
             <span className="absolute ml-3">
               <Book color="#444444" />
@@ -203,6 +212,7 @@ export default function Login() {
               className="border py-2 px-12 w-full border-[#EEEEEE] rounded-lg bg-transparent text-black focus:outline-slate-400"
             />
           </div>
+          {/* University */}
           <div className="relative flex items-center w-full">
             <span className="absolute ml-3">
               <University color="#444444" />
@@ -220,17 +230,17 @@ export default function Login() {
             {/* CV/Resume */}
             <div
               className={clsx(
-                "border-2 border-[#333333] rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
+                "border-2  rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
-                  "bg-green-200": uploaded.cv,
-                  "bg-gray-200": !uploaded.cv,
+                  "bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]": uploaded.cv,
+                  "bg-gray-200 border-[#333333]": !uploaded.cv,
                 }
               )}
             >
               <label
                 htmlFor={`file-upload-cv-resume`}
                 className={clsx(
-                  "cursor-pointer text-[#273240] hover:text-[#000000] flex items-center underline"
+                  "cursor-pointer hover:text-[#000000] flex items-center underline"
                 )}
               >
                 <span className="flex gap-1 items-center">
@@ -248,7 +258,7 @@ export default function Login() {
                 <span>{"Uploading..."}</span>
               ) : (
                 <a
-                  className="text-[10px] text-black underline"
+                  className="text-[10px]"
                   href={fileLinkMap["cv/resume"]?.url}
                   title={fileLinkMap["cv/resume"]?.file_name}
                   target="_blank"
@@ -260,17 +270,17 @@ export default function Login() {
             {/* Offer Letter */}
             <div
               className={clsx(
-                "border-2 border-[#333333] rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
+                "border-2  rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
-                  "bg-green-200": uploaded.ol,
-                  "bg-gray-200": uploadingStatusMap["offer-letter"],
+                  "bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]": uploaded.ol,
+                  "bg-gray-200 border-[#333333]": uploadingStatusMap["offer-letter"],
                 }
               )}
             >
               <label
                 htmlFor={`file-upload-offer-letter`}
                 className={clsx(
-                  "cursor-pointer text-[#273240] hover:text-[#000000] flex items-center underline"
+                  "cursor-pointer hover:text-[#000000] flex items-center underline"
                 )}
               >
                 <span className="flex gap-1 items-center">
@@ -287,7 +297,7 @@ export default function Login() {
              { (uploadingStatusMap["offer-letter"] ? (
                 <span>{"Uploading..."}</span>
               ) :<a
-                className="text-[10px] text-black underline"
+                className="text-[10px]"
                 href={fileLinkMap["offer-letter"]?.url}
                 title={fileLinkMap["offer-letter"]?.file_name}
                 target="_blank"
@@ -300,10 +310,10 @@ export default function Login() {
             type="submit"
             variant="secondry"
             className="w-full"
-            disabled={!Boolean(uploaded.cv && uploaded.ol && formData?.name)}
-            onClick={handleContinueClick}
+            disabled={!Boolean(uploaded.cv && uploaded.ol && formData?.name) && isUpdating}
+            onClick={throttle(handleContinueClick,10_000)}
           >
-            Continue
+            {isUpdating ? "Updating..." : "Continue"}
           </Button>
         </div>
 

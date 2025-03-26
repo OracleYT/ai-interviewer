@@ -159,7 +159,7 @@ function parseInterviewData(interviews: any[]) {
   }
 
   interview["expiryDate"] =
-    dayjs(interview?.expiryDate).format("DD-MM-YYYY hh:mm:a") || "N/A";
+    dayjs(interview?.expiryDate).format("DD-MM-YYYY") || "N/A";
 
   return interview;
 }
