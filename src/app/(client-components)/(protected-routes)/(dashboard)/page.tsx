@@ -29,9 +29,6 @@ function Page() {
     "english-proficiency": false,
   });
 
-  const [isUploading, setIsUploading] =
-    React.useState<boolean>(false);
-
   const fileLinkMap = useMemo(() => {
     const view_size = 20;
     return buildFileLinkMap(user?.docs, view_size);
