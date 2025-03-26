@@ -5,11 +5,6 @@ import prisma from "@/libs/db/prisma";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 function setCorsHeaders(response: NextResponse) {
   response.headers.set('Access-Control-Allow-Origin', '*');
