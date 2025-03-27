@@ -14,11 +14,11 @@ import { useInterview } from "@/contexts/InterviewContextProvider";
 import { buildFileLinkMap } from "@/utils/string-utils";
 import clsx from "clsx";
 import { CloudUpload } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 
 function Page() {
-  const { interview } = useInterview();
+  const { interview, fetchInterviewData } = useInterview();
   const { userId, reloadUserData, user } = useAuth();
   const [uploadingStatusMap, setUploadingStatusMap] = React.useState<
     Record<DocuemntType, boolean>
@@ -33,6 +33,10 @@ function Page() {
     const view_size = 20;
     return buildFileLinkMap(user?.docs, view_size);
   }, [user]);
+
+  useEffect(() => {
+    fetchInterviewData && fetchInterviewData();
+  }, [userId]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -93,7 +97,6 @@ function Page() {
       });
       if (update_response_2.success) {
         reloadUserData();
-      
       }
     } catch (error: any) {
       toast.error("Somthing went wrong, please try again");
@@ -112,8 +115,6 @@ function Page() {
     >
       {/* Left Container */}
       <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[96vh]">
-     
-
         <div className="flex flex-col gap-4 my-3">
           <div className="flex justify-between w-full">
             <div className="flex flex-col gap-2 w-full">

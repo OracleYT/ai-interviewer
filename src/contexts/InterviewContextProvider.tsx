@@ -4,20 +4,20 @@ import { useAuth } from "./AuthProvider";
 import { getInterviewDetails, getInterviews } from "@/action/interview-action";
 import dayjs from "dayjs";
 
-type InterviewContextType =
-  | {
-      interview?: any;
-      errMessage?: string;
-      message?: string;
-      fetchingInterview?: boolean;
-    };
+type InterviewContextType = {
+  interview?: any;
+  errMessage?: string;
+  message?: string;
+  fetchingInterview?: boolean;
+  fetchInterviewData?: () => void;
+};
 
-type InterviewDetailsContextType =
-  | {
-      interviewDetails?: any;
-      errMessage?: string;
-      fetchingInterviewDetails?: boolean;
-    };
+type InterviewDetailsContextType = {
+  interviewDetails?: any;
+  errMessage?: string;
+  fetchInterviewDetails?: (interviewId: string) => void;
+  fetchingInterviewDetails?: boolean;
+};
 //@ts-ignore
 const InterviewContext = createContext<InterviewContextType>();
 //@ts-ignore
@@ -60,58 +60,6 @@ export const InterviewContextProvider = ({
     useState<boolean>();
 
   useEffect(() => {
-    const fetchInterviewDetails = (interviewId?: string) => {
-      if (!interviewId) {
-        return;
-      }
-
-      setErrMessage2("");
-      setFetchingInterviewDeatils(true);
-      getInterviewDetails(interviewId)
-        .then((response: any) => {
-          if (response.success && response.data) {
-            setInterviewDetails(response.data);
-          } else {
-            setErrMessage2(response.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching interview details:", error);
-          setErrMessage2("Error fetching interview details");
-        })
-        .finally(() => {
-          setFetchingInterviewDeatils(false);
-        });
-    };
-    const fetchInterviewData = () => {
-      if (!userId) {
-        return;
-      }
-      setErrMessage("");
-      setMessage("");
-      setFetchingInterview(true);
-      getInterviews(userId)
-        .then((response: any) => {
-          if (response.success && response.data) {
-            if (response?.data?.length === 0) {
-              setMessage("No interviews found");
-            } else {
-              const _interview = parseInterviewData(response.data);
-              setInterview(_interview);
-              fetchInterviewDetails(_interview.id);
-            }
-          } else {
-            setErrMessage(response.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching interviews:", error);
-          setErrMessage("Error fetching interviews");
-        })
-        .finally(() => {
-          setFetchingInterview(false);
-        });
-    };
     fetchInterviewData();
   }, [
     user,
@@ -124,6 +72,60 @@ export const InterviewContextProvider = ({
     setFetchingInterviewDeatils,
   ]);
 
+  const fetchInterviewDetails = (interviewId?: string) => {
+    if (!interviewId) {
+      return;
+    }
+
+    setErrMessage2("");
+    setFetchingInterviewDeatils(true);
+    getInterviewDetails(interviewId)
+      .then((response: any) => {
+        if (response.success && response.data) {
+          setInterviewDetails(response.data);
+        } else {
+          setErrMessage2(response.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching interview details:", error);
+        setErrMessage2("Error fetching interview details");
+      })
+      .finally(() => {
+        setFetchingInterviewDeatils(false);
+      });
+  };
+
+  const fetchInterviewData = () => {
+    if (!userId) {
+      return;
+    }
+    setErrMessage("");
+    setMessage("");
+    setFetchingInterview(true);
+    getInterviews(userId)
+      .then((response: any) => {
+        if (response.success && response.data) {
+          if (response?.data?.length === 0) {
+            setMessage("No interviews found");
+          } else {
+            const _interview = parseInterviewData(response.data);
+            setInterview(_interview);
+            fetchInterviewDetails(_interview.id);
+          }
+        } else {
+          setErrMessage(response.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching interviews:", error);
+        setErrMessage("Error fetching interviews");
+      })
+      .finally(() => {
+        setFetchingInterview(false);
+      });
+  };
+
   return (
     <InterviewContext.Provider
       value={{
@@ -131,13 +133,15 @@ export const InterviewContextProvider = ({
         errMessage,
         message,
         fetchingInterview,
+        fetchInterviewData
       }}
     >
       <InterviewDetailsContext.Provider
         value={{
           interviewDetails,
           errMessage: errMessage2,
-          fetchingInterviewDetails: fetchingInterviewDetails,
+          fetchInterviewDetails,
+          fetchingInterviewDetails
         }}
       >
         {children}
