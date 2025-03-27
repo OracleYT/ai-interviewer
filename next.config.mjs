@@ -19,6 +19,8 @@ const nextConfig = {
     NEXT_PUBLIC_VAPI_KEY: process.env.NEXT_PUBLIC_VAPI_KEY,
     NEXT_INTERVIEW_END_URI: process.env.NEXT_INTERVIEW_END_URI,
     NEXT_AUTO_PROCTOR_CLIENT_ID: process.env.NEXT_AUTO_PROCTOR_CLIENT_ID,
+    NEXT_INTERVIEW_VIDE_PLAY_DURATION_IN_SEC: 
+      process.env.NEXT_INTERVIEW_VIDE_PLAY_DURATION_IN_SEC,
   },
   experimental: {
     serverActions: {

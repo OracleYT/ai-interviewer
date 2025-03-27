@@ -4,8 +4,11 @@ import VolumeRipple from "./VolumeRipple";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import clsx from "clsx";
-import MicOff from "./icons/MicOff";
-import Mic from "./icons/Mic";
+
+const interviewer_video_play_duration: number = parseInt(
+  process.env.INTERVIEW_VIDE_PLAY_DURATION_IN_SEC || "5",
+  10
+);
 
 export const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
@@ -17,7 +20,7 @@ export const ParticipantItem = ({ participant }: any) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowVideo(false);
-    }, 5000);
+    }, interviewer_video_play_duration * 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -36,7 +39,7 @@ export const ParticipantItem = ({ participant }: any) => {
           <div className="relative w-full h-full">
             <video
               className={`w-full h-full object-cover`}
-              src="/7581332-hd_1920_1080_30fps.mp4"
+              src="/screening.mp4"
               autoPlay
               muted
             />
