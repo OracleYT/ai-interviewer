@@ -124,11 +124,11 @@ const useVapi = (meetingId: string) => {
     }
     useCallStatus.current = "starting";
     const userData = {
-      name: user?.name,
-      course: user?.course,
-      university: user?.university,
-      userSummary: user?.userSummary,
-      passportNumber: user?.passportNumber,
+      name: user?.name||'',
+      course: user?.course ||'',
+      university: user?.university ||'',
+      userSummary: user?.userSummary || '',
+      passportNumber: user?.passportNumber||'',
     };
     console.log("userData: ", userData);
 

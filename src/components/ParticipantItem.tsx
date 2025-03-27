@@ -4,6 +4,7 @@ import VolumeRipple from "./VolumeRipple";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import clsx from "clsx";
+import MicOffFilled from "./icons/MicOffFilled";
 
 const interviewer_video_play_duration: number = parseInt(
   process.env.INTERVIEW_VIDE_PLAY_DURATION_IN_SEC || "5",
@@ -43,7 +44,9 @@ export const ParticipantItem = ({ participant }: any) => {
               autoPlay
               muted
             />
-            {/* <MicOff  className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#484848]/30 flex justify-center items-center"/> */}
+            <div className="absolute top-5 right-5 h-7 w-7 rounded-full bg-[#484848]/30 flex justify-center items-center">
+              <MicOffFilled />
+            </div>
           </div>
         ) : participant.image ? (
           <div className="relative w-full h-full">

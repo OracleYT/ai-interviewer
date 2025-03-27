@@ -64,7 +64,6 @@ export const InterviewContextProvider = ({
       if (!interviewId) {
         return;
       }
-      console.log("fetchInterviewDetails");
 
       setErrMessage2("");
       setFetchingInterviewDeatils(true);
@@ -88,7 +87,6 @@ export const InterviewContextProvider = ({
       if (!userId) {
         return;
       }
-      console.log("fetchInterviewData");
       setErrMessage("");
       setMessage("");
       setFetchingInterview(true);

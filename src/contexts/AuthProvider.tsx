@@ -67,7 +67,7 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
   }, [user?.docs]);
 
   const questionBankLink = useMemo(() => {
-    return user?.docs?.find((doc: any) => doc.name === "question-bank")?.url;
+    return user?.docs?.find((doc: any) => doc.name === "question-bank")?.url || "https://interviewbhargav.s3.ap-south-1.amazonaws.com/1743100937945-Ulster University Material.pdf";
   }, [user?.docs]);
 
   const router = useRouter();
