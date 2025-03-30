@@ -59,13 +59,17 @@ const Header = ({ navItems = true, user }: HeaderProps) => {
             <div className="text-sm">{user?.name}</div>
             <div className="text-xs">{user?.email}</div>
           </div>
-          <Avatar
-            // image="/assets/profile-picture.png"
-            name={user?.name}
-            size={36}
-            user={user}
-            shape="circle"
-          />
+          <div 
+          className="bg-black rounded-full text-white"
+          >
+            <Avatar
+              // image="/assets/profile-picture.png"
+              name={user?.name}
+              size={40}
+              user={user}
+              shape="circle"
+            />
+          </div>
         </div>
       )}
     </header>
