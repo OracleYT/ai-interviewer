@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileToS3 } from "@/libs/aws/s3";
 import prisma from "@/libs/db/prisma";
+import getPrismaClient from "@/libs/db/prisma";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
 
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
     const uploadKey = `${Date.now()}-${file.name}`;
     const response = await uploadFileToS3(file, bucket, uploadKey);
 
+    const prisma = await getPrismaClient();
     await prisma.upload.create({
       data: {
         bucket: response.bucket,
