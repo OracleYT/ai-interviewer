@@ -36,27 +36,31 @@ const useVapi = (meetingId: string) => {
     const handleProctoringStop = async () => {
       if (procterState === ProctorState.PROCTING_STOPED) {
         try {
-          await updateInterviewStatusById({
-            interviewId: meetingId,
-            callId: vapiCallRef.current?.id!,
-            status: "COMPLETED",
-            // procterReport: report,
-          });
+          router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
         } catch (error) {
           console.error("Error while updating interview status", error);
         }
-        router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
       }
     };
     handleProctoringStop();
   }, [procterState, router]);
 
   const stopVapiSession = useCallback(async () => {
-    if (["ending", "ended"].includes(useCallStatus.current)) {
+    if (vapiCallRef.current?.status === "ended") {
       return;
     }
     if (vapiRef.current) {
+      useCallStatus.current = "ended";
       await vapiRef.current.stop();
+      await updateInterviewStatusById({
+        interviewId: meetingId,
+        callId: vapiCallRef.current?.id!,
+        status: "COMPLETED",
+      });
+      stopCamera();
+      await stopProctering();
+      router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
+
     }
   }, []);
 
@@ -124,11 +128,11 @@ const useVapi = (meetingId: string) => {
     }
     useCallStatus.current = "starting";
     const userData = {
-      name: user?.name||'',
-      course: user?.course ||'',
-      university: user?.university ||'',
-      userSummary: user?.userSummary || '',
-      passportNumber: user?.passportNumber||'',
+      name: user?.name || "",
+      course: user?.course || "",
+      university: user?.university || "",
+      userSummary: user?.userSummary || "",
+      passportNumber: user?.passportNumber || "",
     };
     console.log("userData: ", userData);
 
