@@ -129,7 +129,6 @@ const useVapi = (meetingId: string) => {
       userSummary: user?.userSummary || "",
       passportNumber: user?.passportNumber || "",
     };
-    console.log("userData: ", userData);
 
     const assistantOverrides = {
       transcriber: {
