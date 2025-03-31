@@ -12,7 +12,7 @@ import {
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
 import {
-  addProcterEvidance,
+  // addProcterEvidance,
   updateInterviewStatusById,
 } from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
@@ -60,7 +60,6 @@ const useVapi = (meetingId: string) => {
       stopCamera();
       await stopProctering();
       router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
-
     }
   }, []);
 
@@ -92,12 +91,8 @@ const useVapi = (meetingId: string) => {
     };
 
     const speakAssistantHandler = async (e: any) => {
-      const { message, endSession } = e.detail;
-      addProcterEvidance({
-        interviewId: meetingId,
-        evidence: e?.detail,
-      });
-      vapiRef.current?.say(message, endSession);
+      const { message } = e.detail;
+      vapiRef.current?.say(message);
     };
 
     vapiRef.current?.on("volume-level", volumeLevelHandler);

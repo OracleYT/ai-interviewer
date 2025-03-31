@@ -27,11 +27,13 @@ import {
   ProctorState,
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
   const params = useParams<{ meetingId: string }>();
   const meetingId = params.meetingId;
+  const { user } = useAuth();
   const validMeetingId = MEETING_ID_REGEX.test(meetingId);
   const { newMeeting, setNewMeeting } = useContext(AppContext);
   // const [meetingData, setMeetingData] = useState<any>();
@@ -125,7 +127,10 @@ const Lobby = () => {
 
   const joinCall = async () => {
     setJoining(true);
-    initAutoProctor(meetingId);
+    initAutoProctor(meetingId, {
+      name: user?.name || null,
+      email: user?.email || null,
+    });
   };
 
   if (!validMeetingId)
