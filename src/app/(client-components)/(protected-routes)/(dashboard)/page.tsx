@@ -90,14 +90,13 @@ function Page() {
         toast.error("Failed to verify document, pleaes try again later");
       }
 
-      const update_response_2 = await updateUserDocs(userId!, {
+      await updateUserDocs(userId!, {
         url: upload_response.url,
         status: verificationResponse.success ? "verified" : "failed",
         name: type,
       });
-      if (update_response_2.success) {
-        reloadUserData();
-      }
+     
+      reloadUserData();
     } catch (error: any) {
       toast.error("Somthing went wrong, please try again");
       console.error(error);

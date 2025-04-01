@@ -9,22 +9,23 @@ const MESSAGE_MAP: Record<
   "attention" | "you-moved-away" | "more-people" | "eye-contact",
   string
 > = {
-  attention: "Please look at the camera.",
+  attention: "You're looking away a lot. Stay focused here.",
   "you-moved-away": "Please come back to the camera.",
-  "more-people": "More than one person detected in the frame.",
-  "eye-contact": "Please maintain eye contact with the camera.",
+  "more-people":
+    "I'm noticing someone else in the frame—this interview is just for you. Please continue alone.",
+  "eye-contact": "You're looking around quite a bit. Let's stay focused here.",
 };
 
 function useFaceDetactionAlgo() {
   const [started, setStarted] = useState(false);
-  const { addKey, hasKey } = useCache(10_000);
+  const { addKey, hasKey } = useCache(20_000);
 
   const dataRef = useRef<{
     thresholds: any;
     lastViolationTime: Record<string, number | null>;
     violationDuration: number;
   }>({
-    thresholds: { attention: 30, eyeContact: 30, peopleCount: 1 },
+    thresholds: { attention: 50, eyeContact: 50, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,
@@ -42,10 +43,7 @@ function useFaceDetactionAlgo() {
   const emitSpeakEvent = (
     type: "attention" | "you-moved-away" | "more-people" | "eye-contact"
   ) => {
-    if (hasKey(type)) {
-      return;
-    }
-    addKey(type);
+
     const message = MESSAGE_MAP[type];
     const eventData = {
       message: message,
@@ -96,6 +94,11 @@ function useFaceDetactionAlgo() {
     issueDetected: boolean
   ) => {
     const currentTime = Date.now();
+
+    if (hasKey(type)) {
+      return;
+    }
+    addKey(type);
 
     if (issueDetected) {
       if (!dataRef.current.lastViolationTime[type]) {
