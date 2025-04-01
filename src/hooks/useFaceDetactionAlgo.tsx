@@ -32,7 +32,7 @@ function useFaceDetactionAlgo() {
       moreThanOnePeople: null,
       movedAway: null,
     },
-    violationDuration: 1000,
+    violationDuration: 2000,
   });
 
   const faceDetectionProcessor = useMemo(
