@@ -6,22 +6,22 @@ import Videocam from "./icons/Videocam";
 import VideocamOff from "./icons/VideocamOff";
 import VisualEffects from "./icons/VisualEffects";
 import { VideoInputDeviceSelector } from "./DeviceSelector";
-import { useContext } from "react";
-import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+import { useCallStateHooks } from "@stream-io/video-react-sdk";
+// import { useContext } from "react";
+// import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 
 const ICON_SIZE = 20;
 
 const ToggleVideoButton = () => {
-  const { isCameraOn, startCamera, stopCamera } =
-    useContext(BrowserMediaContext);
+  // const { isCameraOn, startCamera, stopCamera } =
+  //   useContext(BrowserMediaContext);
 
   const toggleCamera = async () => {
-    if (isCameraOn) {
-      stopCamera();
-    } else {
-      startCamera();
-    }
+    camera.toggle();
   };
+
+  const { useCameraState } = useCallStateHooks();
+  const { camera, hasBrowserPermission, isMute } = useCameraState();
 
   return (
     <ToggleButtonContainer
@@ -40,16 +40,16 @@ const ToggleVideoButton = () => {
     >
       <CallControlButton
         icon={
-          isCameraOn ? (
-            <Videocam width={ICON_SIZE} height={ICON_SIZE} />
-          ) : (
+          isMute ? (
             <VideocamOff width={ICON_SIZE} height={ICON_SIZE} />
+          ) : (
+            <Videocam width={ICON_SIZE} height={ICON_SIZE} />
           )
         }
-        title={isCameraOn ? "Turn off camera" : "Turn on camera"}
-        // onClick={}
-        active={isCameraOn}
-        // alert={!hasBrowserPermission}
+        title={isMute ? "Turn on camera" : "Turn off camera"}
+        // onClick={toggleCamera}
+        active={!isMute}
+        alert={!hasBrowserPermission}
         className={clsx("cursor-not-allowed")}
       />
     </ToggleButtonContainer>

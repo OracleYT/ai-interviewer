@@ -28,6 +28,7 @@ import {
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
@@ -52,19 +53,22 @@ const Lobby = () => {
   //   ai_interviwer,
   // ]);
   // const isGuest = !isSignedIn;
-  const { isCameraOn, startCamera, stopCamera } =
-    useContext(BrowserMediaContext);
+  // const { isCameraOn, startCamera, stopCamera } =
+  //   useContext(BrowserMediaContext);
   const { participants, meetingData, loading } =
     useContext(ParticipantsContext);
   const { procterState, initAutoProctor } = useAutoProctor();
+  const { useMicrophoneState, useCameraState } = useCallStateHooks();
+  const { hasBrowserPermission: hasMicPermission } = useMicrophoneState();
+  const { hasBrowserPermission: hasCameraPermission } = useCameraState();
 
-  useEffect(() => {
-    if (isCameraOn) {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isCameraOn) {
+  //     startCamera();
+  //   } else {
+  //     stopCamera();
+  //   }
+  // }, []);
 
   useEffect(() => {
     setNewMeeting(newMeeting);
@@ -78,6 +82,12 @@ const Lobby = () => {
     if (loading) return "Getting ready...";
     return "Ready to join?";
   }, [loading]);
+
+  const hasBrowserPermission = useMemo(() => {
+    if (hasMicPermission && hasCameraPermission) return true;
+    return false;
+  }
+  , [hasMicPermission, hasCameraPermission]);
 
   const participantsUI = useMemo(() => {
     switch (true) {
@@ -126,6 +136,8 @@ const Lobby = () => {
   }, [procterState]);
 
   const joinCall = async () => {
+    if(!hasBrowserPermission) return;
+
     setJoining(true);
     initAutoProctor(meetingId, {
       name: user?.name || null,
@@ -175,9 +187,15 @@ const Lobby = () => {
           <span className="text-meet-black font-medium text-center text-sm cursor-default">
             {participantsUI}
           </span>
-          <div>
+          <div title={!hasBrowserPermission ? "Please allow camera and microphone access" : "Click here to join you Interview"} className="flex flex-col items-center justify-center gap-2 mt-4">
             {!joining && !loading && (
-              <Button className="w-60 text-sm" onClick={joinCall} rounding="lg">
+              <Button
+                className="w-60 text-sm"
+                onClick={joinCall}
+                rounding="lg"
+                disabled={!hasBrowserPermission}
+                // variant="secondry"
+              >
                 Join now
               </Button>
             )}

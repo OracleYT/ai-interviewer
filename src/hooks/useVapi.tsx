@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import Vapi from "@vapi-ai/web";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
-import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+// import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
 import {
   ProctorState,
@@ -16,6 +16,7 @@ import {
   updateInterviewStatusById,
 } from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
+import { useCallStateHooks } from "@stream-io/video-react-sdk";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
@@ -30,12 +31,28 @@ const useVapi = (meetingId: string) => {
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   const { setVolumeLevel } = useContext(VolumeLevelContext);
-  const { stopCamera } = useContext(BrowserMediaContext);
+  // const { stopCamera } = useContext(BrowserMediaContext);
+  const { useCameraState, useMicrophoneState } = useCallStateHooks();
+
+  const {
+    camera,
+    optimisticIsMute: isCameraMute,
+    hasBrowserPermission: hasCameraPermission,
+    mediaStream,
+  } = useCameraState();
+
+  const {
+    microphone,
+    optimisticIsMute: isMicrophoneMute,
+    hasBrowserPermission: hasMicrophonePermission,
+    status: microphoneStatus,
+  } = useMicrophoneState();
 
   useEffect(() => {
     const handleProctoringStop = async () => {
       if (procterState === ProctorState.PROCTING_STOPED) {
         try {
+          await stopMedia()
           router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
         } catch (error) {
           console.error("Error while updating interview status", error);
@@ -57,11 +74,18 @@ const useVapi = (meetingId: string) => {
         callId: vapiCallRef.current?.id!,
         status: "COMPLETED",
       });
-      stopCamera();
       await stopProctering();
       router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
     }
   }, []);
+
+  const stopMedia = useCallback(async () => {
+    try {
+      await Promise.allSettled([microphone.disable(), camera.disable()]);
+    } catch (error) {
+      console.error("Error stopping media stream", error);
+    }
+  }, [microphone, camera]);
 
   useEffect(() => {
     if (!vapiRef.current) {

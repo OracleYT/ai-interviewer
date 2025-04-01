@@ -20,7 +20,7 @@ import {
   NEXT_AUTO_PROCTOR_CLIENT_ID,
   NEXT_AUTO_PROCTOR_ENABLE,
 } from "@/constatnts/env-const";
-import { VapiDomEvents } from "@/constatnts/vapi-const";
+// import { VapiDomEvents } from "@/constatnts/vapi-const";
 import toast from "react-hot-toast";
 import { addProcterEvidance } from "@/action/interview-action";
 
