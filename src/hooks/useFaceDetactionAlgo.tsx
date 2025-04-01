@@ -32,7 +32,7 @@ function useFaceDetactionAlgo() {
       moreThanOnePeople: null,
       movedAway: null,
     },
-    violationDuration: 2000,
+    violationDuration: 1000,
   });
 
   const faceDetectionProcessor = useMemo(
@@ -124,7 +124,7 @@ function useFaceDetactionAlgo() {
     }
     faceDetectionProcessor.start({
       options: {
-        interval: 500,
+        interval: 200,
       },
       stream: stream,
       callback: processFaceDetection,
