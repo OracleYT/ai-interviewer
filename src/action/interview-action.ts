@@ -1,8 +1,7 @@
 "use server";
 
-import getPrismaClient from "@/libs/db/prisma";
+import { prisma } from "@/libs/db/prisma";
 import axios from "axios";
-
 
 type UpdateProp = {
   userId: string;
@@ -12,7 +11,6 @@ type UpdateProp = {
 const interviewCompletionApi = process.env.NEXT_INTERVIEW_COMPLETION_API || "";
 
 export async function getInterviews(userId: string) {
-  const prisma = await getPrismaClient();
   const interviews = await prisma.interview.findMany({
     where: {
       userId,
@@ -49,7 +47,6 @@ export async function updateInterviewStatus({ userId, status }: UpdateProp) {
     };
   }
 
-  const prisma = await getPrismaClient();
   const interview = await prisma.interview.updateMany({
     where: {
       userId,
@@ -78,7 +75,7 @@ export async function updateInterviewStatus({ userId, status }: UpdateProp) {
 
 export async function getInterviewDetails(interviewId: string) {
   // find the interviewerId for the user
-  const prisma = await getPrismaClient();
+
   const interview = await prisma.interview.findFirst({
     where: {
       id: interviewId,
@@ -126,7 +123,7 @@ export async function updateInterviewStatusById(data: {
   } else if (data.status === "COMPLETED") {
     update.endedAt = new Date();
   }
-  const prisma = await getPrismaClient();
+
   const updatedInterview = await prisma.interview.update({
     where: {
       id: data.interviewId,
@@ -176,7 +173,7 @@ export async function addProcterEvidance(data: {
         data: null,
       };
     }
-    const prisma = await getPrismaClient();
+
     const interviewData = await prisma.interview.findFirst({
       where: {
         id: data.interviewId,
@@ -214,7 +211,7 @@ export async function addProcterEvidance(data: {
         procterReport,
       },
     });
-    console.log("Procter report updated for interview", data.interviewId);  
+    console.log("Procter report updated for interview", data.interviewId);
     return {
       status: 200,
       success: true,

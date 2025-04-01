@@ -1,14 +1,14 @@
 "use server";
 
-import getPrismaClient from "@/libs/db/prisma";
+import {prisma} from "@/libs/db/prisma";
 import axios from "axios";
 
 const resetPasswordUrl = process.env.NEXT_RESET_PASSWORD_API || "";
-
 const onboardingComplete = process.env.NEXT_ONBOARDING_COMPLETE_API || "";
-
 const documentVerificationUrl =
   process.env.NEXT_DOCUMENT_VERIFICATION_API || "";
+
+
 
 export async function verifyCredentials(email: string, password: string) {
   try {
@@ -20,7 +20,6 @@ export async function verifyCredentials(email: string, password: string) {
       };
     }
 
-    const prisma = await getPrismaClient();
     const user = await prisma.user.findFirst({
       where: {
         email,
@@ -98,7 +97,6 @@ export async function fetchUserById(
   userId: string
 ): Promise<{ success: boolean; message: string; data: any }> {
   try {
-    const prisma = await getPrismaClient();
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -135,7 +133,6 @@ export async function updateUserDocs(
   }
 ): Promise<{ success: boolean; message: string; data: any }> {
   try {
-    const prisma = await getPrismaClient();
 
     if (!docs.status) docs.status = "uploaded";
     const user = await prisma.user.findFirst({
@@ -203,7 +200,6 @@ export async function updateUserDetails(
 
     console.log("userId", userId);
     console.log("data", data);
-    const prisma = await getPrismaClient();
     const updatedUser = await prisma.user.update({
       where: {
         id: userId,
