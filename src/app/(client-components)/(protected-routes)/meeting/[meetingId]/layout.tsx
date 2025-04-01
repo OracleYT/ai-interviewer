@@ -24,15 +24,15 @@ export default function Layout({ children }: LayoutProps) {
   const meetingId = params.meetingId;
   const { interviewDetails: meetingData, fetchingInterviewDetails } =
     useInterviewDetails();
-  // const router = useRouter();
+  const router = useRouter();
   const { modalConfig } = useAutoProctor();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (fetchingInterviewDetails === false) {
-      // if (meetingData && pathname === `/meeting/${meetingId}/meeting`) {
-      //   router.push(`/meeting/${meetingId}`);
-      // }
+      if (meetingData && pathname === `/meeting/${meetingId}/meeting`) {
+        router.push(`/meeting/${meetingId}`);
+      }
 
       setLoading(false);
     }
