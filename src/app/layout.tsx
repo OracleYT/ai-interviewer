@@ -16,10 +16,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          src="https://cdn.autoproctor.co/ap-entry.js"
-          strategy="beforeInteractive"
-        />
         <meta charSet="utf-8" />
         <meta
           name="viewport"
