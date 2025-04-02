@@ -29,14 +29,15 @@ export default function Layout({ children }: LayoutProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (fetchingInterviewDetails === false) {
-      if (meetingData && pathname === `/meeting/${meetingId}/meeting`) {
+    if (!meetingData) {
+      if (pathname === `/meeting/${meetingId}/meeting`) {
         router.push(`/meeting/${meetingId}`);
       }
-
-      setLoading(false);
     }
-  }, [pathname, fetchingInterviewDetails]);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  }, [pathname]);
 
   if (loading) {
     return <LoadingOverlay />;
@@ -60,9 +61,9 @@ export default function Layout({ children }: LayoutProps) {
       )}
       <ParticipantsProvider meetingId={meetingId}>
         {/* <BrowserMediaProvider> */}
-          <VolumeLevelProvider>
-            <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
-          </VolumeLevelProvider>
+        <VolumeLevelProvider>
+          <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
+        </VolumeLevelProvider>
         {/* </BrowserMediaProvider> */}
       </ParticipantsProvider>
     </>
