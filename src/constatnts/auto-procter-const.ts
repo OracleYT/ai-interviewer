@@ -1,7 +1,7 @@
 export const PROCTORING_OPTIONS = {
   trackingOptions: {
     audio: false,
-    numHumans: false,
+    numHumans: true,
     tabSwitch: true,
     photosAtRandom: true,
     detectMultipleScreens: true,
