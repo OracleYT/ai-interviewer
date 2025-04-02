@@ -98,7 +98,6 @@ function useFaceDetactionAlgo() {
     if (hasKey(type)) {
       return;
     }
-    addKey(type);
 
     if (issueDetected) {
       if (!dataRef.current.lastViolationTime[type]) {
@@ -108,6 +107,7 @@ function useFaceDetactionAlgo() {
         dataRef.current.violationDuration
       ) {
         dataRef.current.lastViolationTime[type] = null;
+        addKey(type);
         emitSpeakEvent(type);
       }
     } else {
