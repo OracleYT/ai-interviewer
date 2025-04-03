@@ -13,12 +13,12 @@ import { useAuth } from "@/contexts/AuthProvider";
 import { useInterview } from "@/contexts/InterviewContextProvider";
 import { buildFileLinkMap } from "@/utils/string-utils";
 import clsx from "clsx";
-import { Upload } from "lucide-react";
-import React, { useMemo } from "react";
+import { CloudUpload } from "lucide-react";
+import React, { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 
 function Page() {
-  const { interview } = useInterview();
+  const { interview, fetchInterviewData } = useInterview();
   const { userId, reloadUserData, user } = useAuth();
   const [uploadingStatusMap, setUploadingStatusMap] = React.useState<
     Record<DocuemntType, boolean>
@@ -33,6 +33,10 @@ function Page() {
     const view_size = 20;
     return buildFileLinkMap(user?.docs, view_size);
   }, [user]);
+
+  useEffect(() => {
+    fetchInterviewData && fetchInterviewData();
+  }, [userId]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -68,7 +72,7 @@ function Page() {
         toast.success("File uploaded successfully!");
         reloadUserData();
       } else {
-        toast.error("Error uploading file");
+        toast.error("Failed to upload file, please try again");
         return;
       }
 
@@ -85,16 +89,16 @@ function Page() {
       } else {
         toast.error("Failed to verify document, pleaes try again later");
       }
-      const update_response_2 = await updateUserDocs(userId!, {
+
+      await updateUserDocs(userId!, {
         url: upload_response.url,
         status: verificationResponse.success ? "verified" : "failed",
         name: type,
       });
-      if (update_response_2.success) {
-        reloadUserData();
-      }
+     
+      reloadUserData();
     } catch (error: any) {
-      toast.error("Error uploading file");
+      toast.error("Somthing went wrong, please try again");
       console.error(error);
     } finally {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
@@ -109,17 +113,17 @@ function Page() {
       className="flex"
     >
       {/* Left Container */}
-      <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[92vh]">
+      <div className="pt-5 px-[64px] w-[70%] overflow-y-auto element max-h-[96vh]">
         <div className="flex flex-col gap-4 my-3">
           <div className="flex justify-between w-full">
             <div className="flex flex-col gap-2 w-full">
-              <h4 className="text-xl text-[#262A41] font-bold">
+              <h4 className="text-lg text-[#262A41] font-semibold">
                 Your PRE-CAS Interview: Ready to Begin?
               </h4>
               <div>
                 <div className="w-full flex justify-between">
                   {" "}
-                  <h2 className="text-2xl text-[#262A41]/90 font-semibold">
+                  <h2 className="text-4xl text-[#262A41] font-extrabold">
                     {interview?.title}
                   </h2>
                   {interview?.status && (
@@ -168,13 +172,12 @@ function Page() {
                   height="100px"
                   borderRadius="15px"
                   padding="15px"
-                  className={clsx(
-                    "flex flex-col justify-between border-2 border-[#979797] bg-red",
-                    {
-                      "bg-green-200": fileLinkMap[type]?.status === "verified",
-                      "bg-[#ff6060]": fileLinkMap[type]?.status === "failed",
-                    }
-                  )}
+                  className={clsx("flex flex-col justify-between border-2 ", {
+                    "bg-[#ECFDF5] border-[#A7F3D0]":
+                      fileLinkMap[type]?.status === "verified",
+                    "bg-[#FEF2F2] border-[#FECACA]":
+                      fileLinkMap[type]?.status === "failed",
+                  })}
                 >
                   <div className="flex justify-between items-center gap-7">
                     <span className="text-[#273240] text-[13px] font-medium">
@@ -189,11 +192,12 @@ function Page() {
                     >
                       <span className="flex gap-2 items-center">
                         {" "}
-                        <Upload size="14" /> Upload
+                        <CloudUpload size="14" /> Upload
                       </span>
                       <input
                         id={`file-upload-${type}`}
                         type="file"
+                        disabled={fileLinkMap[type]?.status === "verified"}
                         className="hidden"
                         onChange={(e) => handleFileChange(e, type)}
                       />
@@ -221,7 +225,7 @@ function Page() {
               Your Path to Success: Follow These Steps
             </h5>
             <div className="border-[0.5px] border-[#DEDEDE]"></div>
-            <div className="flex flex-col gap-4 pb-2 w-full max-h-[220px]">
+            <div className="flex flex-col gap-4 w-full max-h-[220px]">
               {DAHSBOARD_SUCCESS_STEPS?.map((step) => (
                 <InterviewReadySteps key={step.title} step={step} />
               ))}

@@ -2,7 +2,7 @@
 import { ReactNode, useEffect, useState } from "react";
 
 import MeetProvider from "@/contexts/MeetProvider";
-import BrowserMediaProvider from "@/contexts/BrowserMediaProvider";
+// import BrowserMediaProvider from "@/contexts/BrowserMediaProvider";
 import { ParticipantsProvider } from "@/contexts/ParticipantsProvider";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import VolumeLevelProvider from "@/contexts/VolumeLevelProvider";
@@ -22,7 +22,8 @@ export default function Layout({ children }: LayoutProps) {
   const pathname = usePathname();
   const params = useParams<{ meetingId: string }>();
   const meetingId = params.meetingId;
-  const { interviewDetails: meetingData } = useInterviewDetails();
+  const { interviewDetails: meetingData, fetchingInterviewDetails } =
+    useInterviewDetails();
   const router = useRouter();
   const { modalConfig } = useAutoProctor();
   const [loading, setLoading] = useState(true);
@@ -33,14 +34,13 @@ export default function Layout({ children }: LayoutProps) {
         router.push(`/meeting/${meetingId}`);
       }
     }
-    setTimeout(()=>{
+    setTimeout(() => {
       setLoading(false);
-    }, 1200)
+    }, 1500);
   }, [pathname]);
 
-
-  if(loading) {
-    return <LoadingOverlay/>  ;
+  if (loading) {
+    return <LoadingOverlay />;
   }
 
   return (
@@ -60,11 +60,11 @@ export default function Layout({ children }: LayoutProps) {
         </Popup>
       )}
       <ParticipantsProvider meetingId={meetingId}>
-        <BrowserMediaProvider>
-          <VolumeLevelProvider>
-            <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
-          </VolumeLevelProvider>
-        </BrowserMediaProvider>
+        {/* <BrowserMediaProvider> */}
+        <VolumeLevelProvider>
+          <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
+        </VolumeLevelProvider>
+        {/* </BrowserMediaProvider> */}
       </ParticipantsProvider>
     </>
   );

@@ -1,0 +1,23 @@
+import React from "react";
+
+export default function EmailIcon() {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute left-4"
+    >
+      <g opacity="0.6">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M1.375 4.8125L2.0625 4.125H19.9375L20.625 4.8125V17.1875L19.9375 17.875H2.0625L1.375 17.1875V4.8125ZM2.75 6.23562V16.5H19.25V6.237L11.4263 12.2375H10.5875L2.75 6.23562ZM17.9163 5.5H4.08375L11 10.8199L17.9163 5.5Z"
+          fill="#333333"
+        />
+      </g>
+    </svg>
+  );
+}

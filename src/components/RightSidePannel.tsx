@@ -18,6 +18,7 @@ function RightSidePannel() {
       <div className="flex flex-col gap-13 justify-between items-center overflow-y-scroll element min-h-[600px] h-full">
         <div className="flex flex-col items-center justify-between gap-4">
           <p className="text-[20px] text-[#262A41]">Prepare for Interview</p>
+          <a href={questionBankLink} target="_blank">
           <Card
             background="#EDF0F6"
             borderRadius="15px"
@@ -25,10 +26,10 @@ function RightSidePannel() {
             className="flex flex-col gap-2 border"
           >
             <div className="flex justify-between items-center gap-7">
-              <p className="text-[#273240] font-medium">
+              <p className="text-sm text-[#273240] font-medium">
                 Interview Question Bank
               </p>
-              <span className="text-[#273240] text-[11px]">PDF</span>
+              <span className="text-[#273240] text-[10px]">PDF</span>
             </div>
             <p className="text-[#273240] text-[11px]">
               To help you prepare, we&rsquo; ve compiled a list of common
@@ -36,14 +37,8 @@ function RightSidePannel() {
               interview. Be sure to review these and practice your answers to
               feel more confident and ready for your interview.
             </p>
-            <a
-              className="text-[#273240] text-[12px] font-medium underline cursor-pointer"
-              href={questionBankLink}
-              target="_blank"
-            >
-              Click here &gt;
-            </a>
           </Card>
+          </a>
         </div>
 
         <StartInterviewCard

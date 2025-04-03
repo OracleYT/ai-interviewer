@@ -4,7 +4,7 @@ export const initialParticipants = [
     userId: "user_2u1F7RFolSMguLpRStV5sdhmGsM",
     user: {
       name: "Abhinav Jain",
-      image: "/image.png",
+      image: "/image.jpg",
       id: 123,
     },
     sessionId: "b1cbb11b-cbad-4e8b-bd1b-8c8e87da6e94",
@@ -16,7 +16,7 @@ export const initialParticipants = [
     audioLevel: 0,
     name: "Abhinav Jain",
     hasImage: true,
-    image: "/image.png",
+    image: "/image.jpg",
     roles: ["host"],
     joinedAt: {
       seconds: "0",

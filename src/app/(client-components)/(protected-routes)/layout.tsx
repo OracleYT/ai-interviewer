@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthProvider";
 import { usePathname, useRouter } from "next/navigation";
+import Script from "next/script";
 import React, { useEffect } from "react";
 
 function Layout({ children }: any) {
@@ -21,7 +22,15 @@ function Layout({ children }: any) {
     }
   }, [user, pathname]);
 
-  return <div>{children}</div>;
+  return (
+    <div>
+      <Script
+        src="https://cdn.autoproctor.co/ap-entry.js"
+        strategy="beforeInteractive"
+      />
+      {children}
+    </div>
+  );
 }
 
 export default Layout;

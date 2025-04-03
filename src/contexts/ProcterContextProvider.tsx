@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import useCache from "../hooks/useCache";
+// import useCache from "../hooks/useCache";
 import {
   AP_BROWSER_ERRORS,
   AP_VOILATION_WARNINGS,
@@ -20,7 +20,9 @@ import {
   NEXT_AUTO_PROCTOR_CLIENT_ID,
   NEXT_AUTO_PROCTOR_ENABLE,
 } from "@/constatnts/env-const";
-import { VapiDomEvents } from "@/constatnts/vapi-const";
+// import { VapiDomEvents } from "@/constatnts/vapi-const";
+import toast from "react-hot-toast";
+import { addProcterEvidance } from "@/action/interview-action";
 
 type ModaleConfig = {
   showModel: boolean;
@@ -66,7 +68,7 @@ export enum ProctorState {
 function ProcterContextProvider({ children }: { children: ReactNode }) {
   const proctorStateRef = useRef<ProctorState>(ProctorState.INIT);
   const instance = useRef<any>();
-  const { addKey, hasKey } = useCache(10_000); // 10sec
+  // const { addKey, hasKey } = useCache(10_000); // 10sec
   const [procterState, setProctorState] = useState<ProctorState>(
     ProctorState.INIT
   );
@@ -98,10 +100,29 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       console.log("[useEffect] Auto Proctor is not enabled");
       return;
     }
+
     const apErrorEvent = (e: any) => {
       const errorCode = e.detail.errorCode;
       const error: any = AP_BROWSER_ERRORS[errorCode];
       if (error) {
+        toast(
+          (t: any) => (
+            <span className="toast">
+              <b>{error.message}</b>
+              <button
+                className="px-2 border text-[13px] rounded-md"
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Reload
+              </button>
+            </span>
+          ),
+          {
+            duration: 1_000_000,
+          }
+        );
         setModalConfig({
           showModel: true,
           title: error.message,
@@ -132,12 +153,12 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     };
 
     const apEvidenceEvent = (e: any) => {
-      const testAttemptID = instance.current.testAttemptId;
-      const endSessionCall = `${testAttemptID}-end-session`;
+      const testAttemptID = instance.current?.testAttemptId;
+      // const endSessionCall = `${testAttemptID}-end-session`;
       const evidenceCode: string = e?.detail?.evidenceCode as string;
-      if (localStorage.getItem(endSessionCall) !== null) {
-        return;
-      }
+      // if (localStorage.getItem(endSessionCall) !== null) {
+      //   return;
+      // }
 
       if (
         Object.prototype.hasOwnProperty.call(
@@ -145,38 +166,42 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
           evidenceCode
         )
       ) {
-        if (hasKey(evidenceCode)) return;
-        addKey(evidenceCode);
+        // if (hasKey(evidenceCode)) return;
+        // addKey(evidenceCode);
         // @ts-ignore
         const evidence = AP_VOILATION_WARNINGS[evidenceCode];
-        if (!evidence?.voilation) return;
-        const key = `${testAttemptID}-voilation-${evidenceCode}`;
-        const messageIndex = Number(localStorage.getItem(key) || 0);
-        let message = "";
-        let endSession = false;
-        if (evidence?.messages?.length <= messageIndex) {
-          message = AP_VOILATION_WARNINGS["finalStatement"];
-          localStorage.setItem(endSessionCall, "true");
-          endSession = true;
-        } else {
-          message = evidence?.messages[messageIndex];
-        }
+        // if (!evidence?.voilation) return;
+        // const key = `${testAttemptID}-voilation-${evidenceCode}`;
+        // const messageIndex = Number(localStorage.getItem(key) || 0);
+        // let message = "";
+        // let endSession = false;
+        // if (evidence?.messages?.length <= messageIndex) {
+        //   // localStorage.setItem(endSessionCall, "true");
+        //   // endSession = true;
+        // } else {
+        //   message = evidence?.messages[messageIndex];
+        // }
 
-        if (message) {
-          const event = new CustomEvent(VapiDomEvents.SPEAK_ASSISTANT, {
-            detail: {
-              title: evidence?.title,
-              message,
-              testAttemptID,
-              evidence: e?.detail,
-              voilation: evidence?.voilation,
-              endSession: endSession,
-              capturedAt: new Date(),
-            },
-          });
-          document.dispatchEvent(event);
-        }
-        localStorage.setItem(key, JSON.stringify(messageIndex + 1));
+        /// ship event to backend...
+        // const event = new CustomEvent(VapiDomEvents.SPEAK_ASSISTANT, {
+        //   detail: {
+        //     title: evidence?.title,
+        //     testAttemptID,
+        //     evidence: e?.detail,
+        //     voilation: evidence?.voilation,
+        //     capturedAt: new Date(),
+        //   },
+        // });
+        // document.dispatchEvent(event);
+        addProcterEvidance({
+          interviewId: testAttemptID,
+          evidence: {
+            title: evidence?.title,
+            evidence: e?.detail,
+            voilation: evidence?.voilation,
+            capturedAt: new Date(),
+          },
+        });
       }
     };
 
@@ -210,7 +235,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
   }, [updateProctorState]);
 
   const initAutoProctor = useCallback(
-    async (testAttemptId: string) => {
+    async (testAttemptId: string, userDetails: any) => {
       try {
         if (!isAutoProcterEnabled()) {
           return Promise.resolve(false);
@@ -231,7 +256,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
           hashedTestAttemptId,
         });
         instance.current = apInst;
-        await apInst.setup(PROCTORING_OPTIONS);
+        await apInst.setup({ ...PROCTORING_OPTIONS, userDetails });
         await apInst.start();
         console.log("[initAutoProctor] Auto Proctor starting...");
         return Promise.resolve(true);
@@ -252,7 +277,6 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       await instance.current.stop();
     }
   }, []);
-
 
   const isProctorStarted = () => {
     return instance.current?.isApTestStarted;

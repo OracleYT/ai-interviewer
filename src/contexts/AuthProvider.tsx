@@ -14,7 +14,6 @@ export type AuthContextType = {
   logout: () => void;
   userId?: string;
   reloadUserData: () => Promise<void>;
-  isDocUploaded: boolean;
   questionBankLink: string;
   isDocumentVerified: boolean;
 };
@@ -48,26 +47,18 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
     StoreKeys.user_authanticated,
     false
   );
-  const isDocUploaded = useMemo(() => {
-    return (
-      user?.docs?.some((doc: any) => doc.name === "passport") &&
-      user?.docs?.some((doc: any) => doc.name === "bank-statement")
-    );
-  }, [user?.docs]);
 
   const isDocumentVerified = useMemo(() => {
-    return (
-      user?.docs?.some(
-        (doc: any) => doc.name === "passport" && doc.status === "verified"
-      ) &&
-      user?.docs?.some(
-        (doc: any) => doc.name === "bank-statement" && doc.status === "verified"
-      )
+    return user?.docs?.some(
+      (doc: any) => doc.name === "passport" && doc.status === "verified"
     );
   }, [user?.docs]);
 
   const questionBankLink = useMemo(() => {
-    return user?.docs?.find((doc: any) => doc.name === "question-bank")?.url;
+    return (
+      user?.docs?.find((doc: any) => doc.name === "question-bank")?.url ||
+      "https://interviewbhargav.s3.ap-south-1.amazonaws.com/1743100937945-Ulster University Material.pdf"
+    );
   }, [user?.docs]);
 
   const router = useRouter();
@@ -119,7 +110,6 @@ function AuthContextProvider({ children }: { children: ReactNode }) {
         logout,
         userId: user?.id,
         reloadUserData,
-        isDocUploaded,
         isDocumentVerified,
         questionBankLink,
       }}

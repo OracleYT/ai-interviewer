@@ -126,9 +126,9 @@ export const DOCUMENTS_UPLOADS: {
     type: "academic-transcript",
   },
   {
-    title: "Bank Statement*",
+    title: "Bank Statement",
     type: "bank-statement",
-    required: true,
+    required: false,
   },
   {
     title: "English Proficiency Result",

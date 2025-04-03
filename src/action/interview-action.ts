@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/libs/db/prisma";
+import { prisma } from "@/libs/db/prisma";
 import axios from "axios";
 
 type UpdateProp = {
@@ -75,6 +75,7 @@ export async function updateInterviewStatus({ userId, status }: UpdateProp) {
 
 export async function getInterviewDetails(interviewId: string) {
   // find the interviewerId for the user
+
   const interview = await prisma.interview.findFirst({
     where: {
       id: interviewId,
@@ -210,7 +211,7 @@ export async function addProcterEvidance(data: {
         procterReport,
       },
     });
-    console.log("Procter report updated for interview", data.interviewId);  
+    console.log("Procter report updated for interview", data.interviewId);
     return {
       status: 200,
       success: true,

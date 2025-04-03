@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  VideoPreview,
+  // VideoPreview,
   useCallStateHooks,
   useConnectedUser,
 } from "@stream-io/video-react-sdk";
@@ -11,29 +11,32 @@ import {
   VideoInputDeviceSelector,
 } from "./DeviceSelector";
 import IconButton from "./IconButton";
-import MoreVert from "./icons/MoreVert";
+// import MoreVert from "./icons/MoreVert";
 import Mic from "./icons/Mic";
 import MicOff from "./icons/MicOff";
 import SpeechIndicator from "./SpeechIndicator";
 import Videocam from "./icons/Videocam";
 import VideocamOff from "./icons/VideocamOff";
-import VisualEffects from "./icons/VisualEffects";
+// import VisualEffects from "./icons/VisualEffects";
 import useSoundDetected from "../hooks/useSoundDetected";
-import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+// import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 
 const MeetingPreview = () => {
   const user = useConnectedUser();
   // const user = { name: "Guest" };
   const soundDetected = useSoundDetected();
-  const [videoPreviewText, setVideoPreviewText] = useState("");
+  // const [videoPreviewText, setVideoPreviewText] = useState("");
   const [displaySelectors, setDisplaySelectors] = useState(false);
   const [devicesEnabled, setDevicesEnabled] = useState(false);
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
+  const vidRef = useRef<HTMLVideoElement>(null);
   const {
     camera,
     optimisticIsMute: isCameraMute,
     hasBrowserPermission: hasCameraPermission,
+    mediaStream,
   } = useCameraState();
+
   const {
     microphone,
     optimisticIsMute: isMicrophoneMute,
@@ -41,8 +44,8 @@ const MeetingPreview = () => {
     status: microphoneStatus,
   } = useMicrophoneState();
 
-  const { videoRef, isCameraOn, startCamera, stopCamera } =
-    useContext(BrowserMediaContext);
+  // const { videoRef, isCameraOn, startCamera, stopCamera } =
+  //   useContext(BrowserMediaContext);
 
   useEffect(() => {
     const enableMicAndCam = async () => {
@@ -72,16 +75,30 @@ const MeetingPreview = () => {
     }
   }, [microphoneStatus, hasMicrophonePermission]);
 
-  const toggleCamera = async () => {
-    if (isCameraOn) {
-      stopCamera();
-    } else {
-      startCamera();
+  // const toggleCamera = async () => {
+  //   if (isCameraOn) {
+  //     stopCamera();
+  //   } else {
+  //     startCamera();
+  //   }
+  // };
+
+  useEffect(() => {
+    if (vidRef.current && mediaStream) {
+      vidRef.current.srcObject = mediaStream;
     }
-  };
+  }, [mediaStream]);
+
   const toggleMicrophone = async () => {
     try {
       await microphone.toggle();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const toggleCamera = async () => {
+    try {
+      await camera.toggle();
     } catch (error) {
       console.error(error);
     }
@@ -97,7 +114,7 @@ const MeetingPreview = () => {
         {/* Video preview */}
         <div className="absolute w-full h-full [&>div]:w-auto [&>div]:h-auto z-1 flex items-center justify-center rounded-lg overflow-hidden [&_video]:-scale-x-100">
           <video
-            ref={videoRef}
+            ref={vidRef}
             className="w-full h-full object-cover"
             autoPlay
             muted
@@ -115,21 +132,21 @@ const MeetingPreview = () => {
               title={
                 isMicrophoneMute ? "Turn on microphone" : "Turn off microphone"
               }
-              // onClick={toggleMicrophone}
+              onClick={toggleMicrophone}
               active={!isMicrophoneMute}
               alert={!hasMicrophonePermission}
               variant="secondary"
-              className="cursor-not-allowed"
+              // className="cursor-not-allowed"
             />
             {/* Camera control */}
             <IconButton
-              icon={isCameraOn ? <Videocam /> : <VideocamOff />}
-              title={isCameraOn ? "Turn off camera" : "Turn on camera"}
-              // onClick={toggleCamera}
-              active={isCameraOn}
-              // alert={!hasCameraPermission}
+              icon={isCameraMute ? <VideocamOff /> : <Videocam />}
+              title={isCameraMute ? "Turn on camera" : "Turn off camera"}
+              onClick={toggleCamera}
+              active={!isCameraMute}
+              alert={!hasCameraPermission}
               variant="secondary"
-              className="cursor-not-allowed"
+              // className="cursor-not-allowed"
             />
           </div>
         )}

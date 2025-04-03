@@ -1,4 +1,5 @@
 "use client";
+import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
 import React, {
   createContext,
   ReactNode,
@@ -14,6 +15,9 @@ function BrowserMediaProvider({ children }: { children: ReactNode }) {
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [hasCameraPermission, setHasCameraPermission] = useState(true);
   const [videoPreviewText, setVideoPreviewText] = useState("");
+ const { startDetectingFace, started, stopDetectingFace } =
+    useFaceDetactionAlgo();
+
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -30,6 +34,7 @@ function BrowserMediaProvider({ children }: { children: ReactNode }) {
       if (videoRef.current) {
         //@ts-ignore
         videoRef.current.srcObject = stream;
+        startDetectingFace(stream);
       }
       setVideoPreviewText("");
       //@ts-ignore
@@ -45,6 +50,7 @@ function BrowserMediaProvider({ children }: { children: ReactNode }) {
       //@ts-ignore
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
+      stopDetectingFace();
     }
     if (videoRef.current) {
       //@ts-ignore

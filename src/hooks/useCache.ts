@@ -1,6 +1,6 @@
 /**
- * cache key for ttl seconds
- * @param ttl in seconds
+ * cache key for ttl mili-seconds
+ * @param ttl in miliseconds
  * @returns { addKey, hasKey };
  */
 function useCache(ttl: number) {

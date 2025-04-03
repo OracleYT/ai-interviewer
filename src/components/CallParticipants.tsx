@@ -1,6 +1,6 @@
-import { CallParticipantResponse } from '@stream-io/video-react-sdk';
+import { CallParticipantResponse } from "@stream-io/video-react-sdk";
 
-import Avatar from './Avatar';
+import Avatar from "./Avatar";
 
 interface CallParticipantsProps {
   participants: CallParticipantResponse[];
@@ -12,8 +12,8 @@ const CallParticipants = ({ participants }: CallParticipantsProps) => {
   const getText = () => {
     if (participants.length === 1) {
       return `${
-        participants[0].user.name || participants[0].user.id
-      } is in this call`;
+      // @ts-ignore
+        participants[0]?.name || `Interviewer` } is in this call`;
     } else {
       // if there are more than 4 then "x, y, z and n - 3 more are in this call"
       // if there are 4 or less then "x ... and y are in this call"
@@ -21,13 +21,13 @@ const CallParticipants = ({ participants }: CallParticipantsProps) => {
         participants
           .slice(0, 3)
           .map((p) => p.user.name || p.user.id)
-          .join(', ') +
+          .join(", ") +
         (participants.length > 4
           ? ` and ${participants.length - 3} more`
           : participants.length === 4
-          ? ` and ${participants[3].user.name || participants[3].user.id}`
-          : '') +
-        ' are in this call'
+            ? ` and ${participants[3].user.name || participants[3].user.id}`
+            : "") +
+        " are in this call"
       );
     }
   };
@@ -35,7 +35,7 @@ const CallParticipants = ({ participants }: CallParticipantsProps) => {
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       <div className="flex items-center justify-center gap-2">
-        {participants.slice(0, 3).map((p,idx) => (
+        {participants.slice(0, 3).map((p, idx) => (
           <Avatar participant={p} width={AVATAR_SIZE} key={idx} />
         ))}
         {participants.length === 4 && (
