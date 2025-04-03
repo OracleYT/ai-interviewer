@@ -12,7 +12,7 @@ const CallParticipants = ({ participants }: CallParticipantsProps) => {
   const getText = () => {
     if (participants.length === 1) {
       return `${
-        participants[0].user.name || participants[0].user.id
+        participants[0]?.name || `Interviewer` || participants[0]?.id
       } is in this call`;
     } else {
       // if there are more than 4 then "x, y, z and n - 3 more are in this call"
