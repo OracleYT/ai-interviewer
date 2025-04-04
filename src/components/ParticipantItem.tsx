@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import Mic from "./icons/Mic";
 import MicOff from "./icons/MicOff";
+import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
 
 const interviewer_video_play_duration: number = parseInt(
   process.env.INTERVIEW_VIDE_PLAY_DURATION_IN_SEC || "5",
@@ -25,6 +26,8 @@ export const ParticipantItem = ({ participant }: any) => {
   const { mediaStream, isMute, camera } = useCameraState();
   const { microphone } = useMicrophoneState();
   const vidRef = useRef<HTMLVideoElement>(null);
+  const { startDetectingFace, started, stopDetectingFace } =
+    useFaceDetactionAlgo();
 
   useEffect(() => {
     camera.enable();
@@ -32,6 +35,7 @@ export const ParticipantItem = ({ participant }: any) => {
     const timer = setTimeout(() => {
       setShowVideo(false);
     }, interviewer_video_play_duration * 1000);
+
     return () => {
       clearTimeout(timer);
       camera.disable();
@@ -39,13 +43,20 @@ export const ParticipantItem = ({ participant }: any) => {
       if (vidRef.current) {
         vidRef.current.srcObject = null;
       }
+      stopDetectingFace();
     };
   }, []);
 
   useEffect(() => {
     if (vidRef.current && mediaStream) {
       vidRef.current.srcObject = mediaStream;
+      startDetectingFace(mediaStream);
     }
+    () => {
+      if (started) {
+        stopDetectingFace();
+      }
+    };
   }, [mediaStream]);
 
   if (participant.roles?.includes("host")) {
