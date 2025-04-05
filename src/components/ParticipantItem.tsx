@@ -113,7 +113,8 @@ export const ParticipantItem = ({ participant }: any) => {
             className="w-full h-full object-cover"
             autoPlay
             muted
-            style={{ objectFit: "cover" }}
+            style={{ transform: "scaleX(-1)" }}
+            playsInline
           />
         ) : (
           <div
