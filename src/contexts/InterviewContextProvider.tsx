@@ -10,6 +10,8 @@ type InterviewContextType = {
   message?: string;
   fetchingInterview?: boolean;
   fetchInterviewData?: () => void;
+  startRedirect?: boolean;
+  setStartRedirect?: (value: boolean) => void;
 };
 
 type InterviewDetailsContextType = {
@@ -52,6 +54,7 @@ export const InterviewContextProvider = ({
   const [interview, setInterview] = useState<any>();
   const [interviewDetails, setInterviewDetails] = useState<any>();
   const [errMessage, setErrMessage] = useState<string>();
+  const [startRedirect, setStartRedirect] = useState<boolean>(false);
 
   const [errMessage2, setErrMessage2] = useState<string>();
   const [message, setMessage] = useState<string>("");
@@ -133,15 +136,17 @@ export const InterviewContextProvider = ({
         errMessage,
         message,
         fetchingInterview,
-        fetchInterviewData
+        fetchInterviewData,
+        startRedirect,
+        setStartRedirect,
       }}
-    >
+      >
       <InterviewDetailsContext.Provider
         value={{
           interviewDetails,
           errMessage: errMessage2,
           fetchInterviewDetails,
-          fetchingInterviewDetails
+          fetchingInterviewDetails,
         }}
       >
         {children}

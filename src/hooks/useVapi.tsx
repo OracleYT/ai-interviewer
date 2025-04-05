@@ -34,25 +34,14 @@ const useVapi = (meetingId: string) => {
   // const { stopCamera } = useContext(BrowserMediaContext);
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
 
-  const {
-    camera,
-    optimisticIsMute: isCameraMute,
-    hasBrowserPermission: hasCameraPermission,
-    mediaStream,
-  } = useCameraState();
-
-  const {
-    microphone,
-    optimisticIsMute: isMicrophoneMute,
-    hasBrowserPermission: hasMicrophonePermission,
-    status: microphoneStatus,
-  } = useMicrophoneState();
+  const { camera } = useCameraState();
+  const { microphone } = useMicrophoneState();
 
   useEffect(() => {
     const handleProctoringStop = async () => {
       if (procterState === ProctorState.PROCTING_STOPED) {
         try {
-          await stopMedia()
+          await stopMedia();
           router.push(`/meeting/${meetingId}/meeting-end?endCall=true`);
         } catch (error) {
           console.error("Error while updating interview status", error);
@@ -61,6 +50,22 @@ const useVapi = (meetingId: string) => {
     };
     handleProctoringStop();
   }, [procterState, router]);
+
+
+    useEffect(() => {
+      const handleBeforeUnload = (event: any) => {
+        const message = "Are you sure you want to leave Interview?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, []);
 
   const stopVapiSession = useCallback(async () => {
     if (vapiCallRef.current?.status === "ended") {
@@ -145,6 +150,7 @@ const useVapi = (meetingId: string) => {
     if (["starting", "started"].includes(useCallStatus.current)) {
       return;
     }
+
     useCallStatus.current = "starting";
     const userData = {
       name: user?.name || "",
@@ -175,6 +181,7 @@ const useVapi = (meetingId: string) => {
       callId: vapiCallRef.current?.id!,
       status: "ONGOING",
     });
+
     return vapiCallRef.current;
   };
 
