@@ -95,7 +95,7 @@ export default function Login() {
         <div className="w-[320px] flex flex-col gap-2">
           <h3 className="text-4xl text-[#262A41] font-semibold">Hello! 👋</h3>
           <p className="text-sm text-[#101010]/50">
-            Please enter your email and password you received on your respected
+            Please enter your email and password you received on your respective
             email address
           </p>
         </div>
