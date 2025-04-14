@@ -73,7 +73,6 @@ const Meeting = () => {
   //   useContext(BrowserMediaContext);
   const { startVapiSession, stopVapiSession, vapiInstance } =
     useVapi(meetingId);
-  const { startRedirect } = useInterview();
   const { setModalConfig } = useAutoProctor();
 
   // const isCreator = call?.state.createdBy?.id === user?.id;
@@ -88,19 +87,17 @@ const Meeting = () => {
   //   };
   // }, []);
 
-
-
-  const startVapi = useCallback(async () => {
-    if (!vapiInstance) {
-      await startVapiSession(meetingData.interviewer?.assistantID);
-    }
-  }, [vapiInstance]);
-
   useEffect(() => {
-    if (startRedirect) {
-      startVapi();
-    }
-  }, [startRedirect]);
+    const id = setTimeout(() => {
+      if (!vapiInstance) {
+        startVapiSession(meetingData.interviewer?.assistantID);
+      }
+    }, 2000);
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, []);
 
   useEffect(() => {
     if (participants.length > prevParticipantsCount) {

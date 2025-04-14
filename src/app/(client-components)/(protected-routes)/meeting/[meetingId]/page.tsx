@@ -140,7 +140,6 @@ const Lobby = () => {
     if (!hasBrowserPermission) return;
 
     setJoining(true);
-    setStartRedirect && setStartRedirect(true);
     initAutoProctor(meetingId, {
       name: user?.name || null,
       email: user?.email || null,
