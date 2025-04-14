@@ -1,3 +1,4 @@
+"use client";
 // import useUserColor from "@/hooks/useUserColor";
 import { useContext, useEffect, useRef, useState } from "react";
 import VolumeRipple from "./VolumeRipple";
@@ -9,7 +10,7 @@ import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import Mic from "./icons/Mic";
 import MicOff from "./icons/MicOff";
 import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
-import useSoundDetected from "@/hooks/useSoundDetected";
+// import useSoundDetected from "@/hooks/useSoundDetected";
 import SpeechIndicator from "./SpeechIndicator";
 
 const interviewer_video_play_duration: number = parseInt(
@@ -17,13 +18,13 @@ const interviewer_video_play_duration: number = parseInt(
   10
 );
 
-export const ParticipantItem = ({ participant }: any) => {
+ const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
   // const color = useUserColor()(participant.name);
   const { volumeLevel } = useContext(VolumeLevelContext);
   // const { videoRef, isCameraOn } = useContext(BrowserMediaContext);
   const [showVideo, setShowVideo] = useState(true);
-  const soundDetected = useSoundDetected();
+  // const soundDetected = useSoundDetected();
 
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
   const { mediaStream, isMute, camera } = useCameraState();
@@ -135,3 +136,5 @@ export const ParticipantItem = ({ participant }: any) => {
     </div>
   );
 };
+
+export default ParticipantItem;
