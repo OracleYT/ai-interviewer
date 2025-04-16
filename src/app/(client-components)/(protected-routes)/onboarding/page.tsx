@@ -15,6 +15,7 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { buildFileLinkMap } from "@/utils/string-utils";
 import { throttle } from "lodash";
+import { UNIVERSITY_NAME } from "@/constatnts/content-const";
 
 type DocuemntType = "cv/resume" | "offer-letter";
 
