@@ -3,6 +3,7 @@
 import React from "react";
 import Card from "@/components/Card";
 import RightSidePannel from "@/components/RightSidePannel";
+import { UNIVERSITY_NAME } from "@/constatnts/content-const";
 
 function Page() {
   return (
@@ -19,7 +20,7 @@ function Page() {
             Learn - PRE-CAS Interview Preparation
           </h3>
           <span className="text-sm text-[#262A41]/80">
-            Your final step toward securing your place at Ulster University.
+            Your final step toward securing your place at ${UNIVERSITY_NAME}.
           </span>
         </div>
         <div>

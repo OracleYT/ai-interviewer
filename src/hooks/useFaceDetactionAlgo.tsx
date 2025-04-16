@@ -25,7 +25,7 @@ function useFaceDetactionAlgo() {
     lastViolationTime: Record<string, number | null>;
     violationDuration: number;
   }>({
-    thresholds: { attention: 52, eyeContact: 90, peopleCount: 1 },
+    thresholds: { attention: 62, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,

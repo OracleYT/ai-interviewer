@@ -10,6 +10,7 @@ import { throttle } from "lodash";
 import EmailIcon from "@/components/icons/EmailIcon";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LockIcon from "@/components/icons/LockIcon";
+import { UNIVERSITY_NAME } from "@/constatnts/content-const";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -79,7 +80,7 @@ export default function Login() {
     >
       <div className="w-[40%] flex flex-col mx-auto">
         <h1 className="text-[#ffffff] text-6xl font-bold ">
-          Ulster University <br /> CAS Interview
+          {UNIVERSITY_NAME} <br /> CAS Interview
         </h1>
         <p className="text-[20px] font-semibold text-[#ffffff]/50">
           Join your dream university with us

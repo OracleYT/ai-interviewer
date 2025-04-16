@@ -163,3 +163,5 @@ export const  INTERVIEW_INSTRUCTIONS = [
     tip: "Be mindful of your background and surroundings to avoid distractions.",
   },
 ];
+
+export const UNIVERSITY_NAME = `Coventry University`

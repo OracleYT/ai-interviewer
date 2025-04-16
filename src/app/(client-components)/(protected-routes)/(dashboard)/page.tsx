@@ -8,6 +8,7 @@ import {
   DAHSBOARD_SUCCESS_STEPS,
   DocuemntType,
   DOCUMENTS_UPLOADS,
+  UNIVERSITY_NAME,
 } from "@/constatnts/content-const";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useInterview } from "@/contexts/InterviewContextProvider";
@@ -149,7 +150,7 @@ function Page() {
             <div className="flex flex-col gap-3 text-sm text-[#404852]/70">
               <p>
                 The PRE-CAS interview is an important step in your journey to
-                study at the ULSTER UNIVERSITY. It helps us understand if
+                study at the {` ${UNIVERSITY_NAME}`}. It helps us understand if
                 you&rsquo;re ready for studying abroad and makes sure you meet
                 the requirements for your student visa.
               </p>

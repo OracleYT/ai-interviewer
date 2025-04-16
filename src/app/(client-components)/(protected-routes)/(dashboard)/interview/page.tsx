@@ -2,7 +2,7 @@
 
 import React from "react";
 import Card from "@/components/Card";
-import { INTERVIEW_INSTRUCTIONS } from "@/constatnts/content-const";
+import { INTERVIEW_INSTRUCTIONS, UNIVERSITY_NAME } from "@/constatnts/content-const";
 import RightSidePannel from "@/components/RightSidePannel";
 
 function Interview() {
@@ -22,8 +22,7 @@ function Interview() {
               It&rsquo; s Time: Your PRE-CAS Interview is Just a Click Away{" "}
             </h3>
             <span className="text-sm text-[#262A41]/80">
-              This is your final step toward securing your place at Ulster
-              University.
+              This is your final step toward securing your place at {UNIVERSITY_NAME}.
             </span>
           </div>
         </div>
@@ -70,7 +69,7 @@ function Interview() {
           <p className="mt-10 text-sm text-[#262A41]">
             You are all set for your PRE-CAS interview. Please tap the button
             below to begin your interview and take the next step towards
-            securing your place at Ulster University.
+            securing your place at {`${UNIVERSITY_NAME}`}.
           </p>
         </div>
       </div>
