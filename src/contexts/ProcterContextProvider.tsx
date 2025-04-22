@@ -234,8 +234,44 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
     };
   }, [updateProctorState]);
 
+  const retryAutoProctor =
+    (fn: Function) =>
+    (...args: any) => {
+      let attempts = 0;
+      const maxAttempts = 3;
+
+      const execute = async () => {
+        try {
+          return await fn(...args);
+        } catch (error) {
+          if (attempts < maxAttempts) {
+            attempts++;
+            console.log(`Retrying... Attempt ${attempts}`);
+            return execute();
+          } else {
+            toast((t: any) => {
+              return (
+                <span className="toast">
+                  <b>Please check your internet connectivity and retry </b>
+                  <button
+                    className="px-2 border text-[13px] rounded-md"
+                    onClick={() => {
+                      window.location.reload();
+                    }}
+                  >
+                    Reload
+                  </button>
+                </span>
+              );
+            });
+          }
+        }
+      };
+      return execute();
+    };
+
   const initAutoProctor = useCallback(
-    async (testAttemptId: string, userDetails: any) => {
+    retryAutoProctor(async (testAttemptId: string, userDetails: any) => {
       try {
         if (!isAutoProcterEnabled()) {
           return Promise.resolve(false);
@@ -263,7 +299,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.log(error);
       }
-    },
+    }),
     [updateProctorState, isAutoProcterEnabled]
   );
 
