@@ -24,10 +24,6 @@ function Layout({ children }: any) {
 
   return (
     <div>
-      <Script
-        src="https://cdn.autoproctor.co/ap-entry.js"
-        strategy="beforeInteractive"
-      />
       {children}
     </div>
   );
