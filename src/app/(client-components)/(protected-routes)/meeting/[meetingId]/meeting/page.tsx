@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   // CallingState,
@@ -38,9 +38,15 @@ import useVapi from "@/hooks/useVapi";
 // import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 import { useAutoProctor } from "@/contexts/ProcterContextProvider";
+import {
+  useInterview,
+  useInterviewDetails,
+} from "@/contexts/InterviewContextProvider";
+// import usePersistantRouter from "@/hooks/usePersistantRouter";
 
 const Meeting = () => {
   const params = useParams<{ meetingId: string }>();
+  // const { redirectState } = usePersistantRouter();
   const meetingId = params.meetingId;
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -82,13 +88,16 @@ const Meeting = () => {
   // }, []);
 
   useEffect(() => {
-    const startup = async () => {
+    const id = setTimeout(() => {
       if (!vapiInstance) {
-        await startVapiSession(meetingData.interviewer?.assistantID);
+        startVapiSession(meetingData.interviewer?.assistantID);
       }
+    }, 2000);
+
+    return () => {
+      clearTimeout(id);
     };
-    startup();
-  }, [vapiInstance]);
+  }, []);
 
   useEffect(() => {
     if (participants.length > prevParticipantsCount) {

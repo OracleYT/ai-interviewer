@@ -34,9 +34,12 @@ export default function Layout({ children }: LayoutProps) {
         router.push(`/meeting/${meetingId}`);
       }
     }
-    setTimeout(() => {
+    const id = setTimeout(() => {
       setLoading(false);
     }, 1500);
+    return () => {
+      clearTimeout(id);
+    };
   }, [pathname]);
 
   if (loading) {

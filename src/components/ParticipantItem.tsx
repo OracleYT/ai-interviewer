@@ -1,3 +1,4 @@
+"use client";
 // import useUserColor from "@/hooks/useUserColor";
 import { useContext, useEffect, useRef, useState } from "react";
 import VolumeRipple from "./VolumeRipple";
@@ -9,22 +10,26 @@ import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import Mic from "./icons/Mic";
 import MicOff from "./icons/MicOff";
 import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
+// import useSoundDetected from "@/hooks/useSoundDetected";
+import SpeechIndicator from "./SpeechIndicator";
 
 const interviewer_video_play_duration: number = parseInt(
   process.env.INTERVIEW_VIDE_PLAY_DURATION_IN_SEC || "5",
   10
 );
 
-export const ParticipantItem = ({ participant }: any) => {
+ const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
   // const color = useUserColor()(participant.name);
   const { volumeLevel } = useContext(VolumeLevelContext);
   // const { videoRef, isCameraOn } = useContext(BrowserMediaContext);
   const [showVideo, setShowVideo] = useState(true);
+  // const soundDetected = useSoundDetected();
 
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
   const { mediaStream, isMute, camera } = useCameraState();
-  const { microphone } = useMicrophoneState();
+
+  const { microphone, status: microphoneStatus } = useMicrophoneState();
   const vidRef = useRef<HTMLVideoElement>(null);
   const { startDetectingFace, started, stopDetectingFace } =
     useFaceDetactionAlgo();
@@ -71,7 +76,7 @@ export const ParticipantItem = ({ participant }: any) => {
                 autoPlay
                 muted
               />
-              <MicOff className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#484848]/30 flex justify-center items-center" />
+              <MicOff className="absolute top-5 right-5 h-7 w-7 rounded-full bg-[#484848]/30 flex justify-center items-center" />
             </div>
           ) : (
             <div className="relative w-full h-full">
@@ -82,6 +87,11 @@ export const ParticipantItem = ({ participant }: any) => {
                   className={`w-32 h-32 rounded-full object-cover`}
                 />
               </VolumeRipple>
+
+              <div className="z-2 absolute top-3.5 right-3.5 w-6.5 h-6.5 flex items-center justify-center bg-primary rounded-full">
+                <SpeechIndicator isSpeaking={volumeLevel} />
+              </div>
+
               {/* <Mic className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#484848]/30 flex justify-center items-center" /> */}
             </div>
           )}
@@ -104,7 +114,8 @@ export const ParticipantItem = ({ participant }: any) => {
             className="w-full h-full object-cover"
             autoPlay
             muted
-            style={{ objectFit: "cover" }}
+            style={{ transform: "scaleX(-1)" }}
+            playsInline
           />
         ) : (
           <div
@@ -125,3 +136,5 @@ export const ParticipantItem = ({ participant }: any) => {
     </div>
   );
 };
+
+export default ParticipantItem;

@@ -9,8 +9,8 @@ const MESSAGE_MAP: Record<
   "attention" | "you-moved-away" | "more-people" | "eye-contact",
   string
 > = {
-  attention: "You're looking away a lot. Stay focused here.",
-  "you-moved-away": "Please come back to the camera.",
+  attention: "Please try to maintain eye contact.",
+  "you-moved-away": "Can you please come back to the camera.",
   "more-people":
     "I'm noticing someone else in the frame—this interview is just for you. Please continue alone.",
   "eye-contact": "You're looking around quite a bit. Let's stay focused here.",
@@ -25,7 +25,7 @@ function useFaceDetactionAlgo() {
     lastViolationTime: Record<string, number | null>;
     violationDuration: number;
   }>({
-    thresholds: { attention: 35, eyeContact: 38, peopleCount: 1 },
+    thresholds: { attention: 62, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,

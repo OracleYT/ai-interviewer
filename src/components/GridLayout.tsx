@@ -3,8 +3,12 @@ import { useContext, useMemo } from "react";
 import clsx from "clsx";
 
 import useAnimateVideoLayout from "../hooks/useAnimateVideoLayout";
-import { ParticipantItem } from "./ParticipantItem";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
+import dynamic from "next/dynamic";
+
+const ParticipantItem = dynamic(() => import("./ParticipantItem"), {
+  ssr: false,
+});
 
 const GridLayout = () => {
   const { participants } = useContext(ParticipantsContext);

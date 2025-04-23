@@ -29,9 +29,9 @@ const Header = ({ navItems = true, user }: HeaderProps) => {
       <div className="w-60 max-w-full" onClick={onLogoClick}>
         <div className="flex items-center gap-2 w-full">
           <img
-            src="/assets/ulster-university.svg"
+            src="/assets/image.png"
             alt="logo"
-            className="w-20 h-20"
+            className="h-20"
           />
           <div className="font-product-sans text-2xl leading-6 text-meet-gray">
             <span className="font-medium">CAS </span>

@@ -21,7 +21,7 @@ import Header from "@/components/Header";
 import MeetingPreview from "@/components/MeetingPreview";
 import Spinner from "@/components/Spinner";
 // import TextField from "@/components/TextField";
-import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
+// import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 import {
   ProctorState,
@@ -29,6 +29,7 @@ import {
 } from "@/contexts/ProcterContextProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
+import { useInterview } from "@/contexts/InterviewContextProvider";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
@@ -86,8 +87,7 @@ const Lobby = () => {
   const hasBrowserPermission = useMemo(() => {
     if (hasMicPermission && hasCameraPermission) return true;
     return false;
-  }
-  , [hasMicPermission, hasCameraPermission]);
+  }, [hasMicPermission, hasCameraPermission]);
 
   const participantsUI = useMemo(() => {
     switch (true) {
@@ -103,6 +103,7 @@ const Lobby = () => {
       // return null;
     }
   }, [loading, joining]);
+  const { setStartRedirect } = useInterview();
 
   // const updateGuestName = async () => {
   //   try {
@@ -136,7 +137,7 @@ const Lobby = () => {
   }, [procterState]);
 
   const joinCall = async () => {
-    if(!hasBrowserPermission) return;
+    if (!hasBrowserPermission) return;
 
     setJoining(true);
     initAutoProctor(meetingId, {
@@ -187,7 +188,14 @@ const Lobby = () => {
           <span className="text-meet-black font-medium text-center text-sm cursor-default">
             {participantsUI}
           </span>
-          <div title={!hasBrowserPermission ? "Please allow camera and microphone access" : "Click here to join you Interview"} className="flex flex-col items-center justify-center gap-2 mt-4">
+          <div
+            title={
+              !hasBrowserPermission
+                ? "Please allow camera and microphone access"
+                : "Click here to join you Interview"
+            }
+            className="flex flex-col items-center justify-center gap-2 mt-4"
+          >
             {!joining && !loading && (
               <Button
                 className="w-60 text-sm"

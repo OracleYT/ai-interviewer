@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Script from "next/script";
 import { MobileMessageProvider } from "@/contexts/MobileMessageProvider";
+import { UNIVERSITY_NAME } from "@/constatnts/content-const";
+import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "CAS Interview for Ulster University",
-  description: "Start your journey to Ulster University with the CAS Interview",
+  title: "CAS Interview for " + UNIVERSITY_NAME,
+  description: `Start your journey to ${UNIVERSITY_NAME} with the CAS Interview`,
 };
 
 export default function RootLayout({
@@ -23,6 +24,10 @@ export default function RootLayout({
         />
         <meta name="theme-color" content="#000000" />
         <link rel="favicon" href="favicon.png" />
+        <Script
+          src="https://cdn.autoproctor.co/ap-entry.js"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className="element h-screen">
         <MobileMessageProvider>{children}</MobileMessageProvider>

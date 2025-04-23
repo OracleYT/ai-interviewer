@@ -15,6 +15,7 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { buildFileLinkMap } from "@/utils/string-utils";
 import { throttle } from "lodash";
+import { UNIVERSITY_NAME } from "@/constatnts/content-const";
 
 type DocuemntType = "cv/resume" | "offer-letter";
 
@@ -161,7 +162,7 @@ export default function Login() {
     >
       <div className="w-[40%] flex flex-col mx-auto">
         <h1 className="text-[#ffffff] text-6xl font-bold ">
-          Ulster University <br /> CAS Interview
+          {UNIVERSITY_NAME} <br /> CAS Interview
         </h1>
         <p className="text-[20px] font-semibold text-[#ffffff]/50">
           Join your dream university with us
