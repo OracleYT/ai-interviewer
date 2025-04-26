@@ -72,7 +72,7 @@ const interviewer_video_play_duration: number = parseInt(
     const sendEvidanceImages = async (e: any) => {
       const { message } = e.detail;
 
-      captureImage(vidRef.current!, message);
+      captureImage(vidRef.current!, message?.title);
     };
 
     document.addEventListener(

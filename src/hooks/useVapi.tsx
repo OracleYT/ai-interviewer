@@ -121,7 +121,7 @@ const useVapi = (meetingId: string) => {
         type: "add-message",
         message: {
           role: "system",
-          content: message,
+          content: message?.message,
         },
       });
     };
