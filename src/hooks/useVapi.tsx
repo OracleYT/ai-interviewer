@@ -13,6 +13,7 @@ import { VapiDomEvents } from "@/constatnts/vapi-const";
 import { updateInterviewStatusById } from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
+import { fetchUserById } from "@/action/user-action";
 
 const useVapi = (meetingId: string) => {
   const vapiRef = useRef<Vapi>();
@@ -47,20 +48,20 @@ const useVapi = (meetingId: string) => {
     handleProctoringStop();
   }, [procterState, router]);
 
-    useEffect(() => {
-      const handleBeforeUnload = (event: any) => {
-        const message = "Are you sure you want to leave Interview?";
-        event.preventDefault();
-        event.returnValue = message;
-        return message;
-      };
-  
-      window.addEventListener("beforeunload", handleBeforeUnload);
-  
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }, []);
+  useEffect(() => {
+    const handleBeforeUnload = (event: any) => {
+      const message = "Are you sure you want to leave Interview?";
+      event.preventDefault();
+      event.returnValue = message;
+      return message;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const stopVapiSession = useCallback(async () => {
     if (vapiCallRef.current?.status === "ended") {
@@ -152,8 +153,7 @@ const useVapi = (meetingId: string) => {
       return;
     }
 
-    useCallStatus.current = "starting";
-    const userData = {
+    let userData = {
       name: user?.name || "",
       course: user?.course || "",
       university: user?.university || "",
@@ -161,6 +161,19 @@ const useVapi = (meetingId: string) => {
       passportNumber: user?.passportNumber || "",
     };
 
+    const userNewData = await fetchUserById(user?.id!);
+    if (userNewData.success) {
+      userData = {
+        name: userNewData?.data?.name || "",
+        course: userNewData?.data?.course || "",
+        university: userNewData?.data?.university || "",
+        userSummary: userNewData?.data?.userSummary || "",
+        passportNumber: userNewData?.data?.passportNumber || "",
+      };
+    }
+    useCallStatus.current = "starting";
+
+    console.log(userData);
     const assistantOverrides = {
       transcriber: {
         provider: "deepgram" as const,

@@ -92,10 +92,6 @@ export default function Login() {
       const res = await fetch("/api/s3upload", {
         method: "POST",
         body: formData,
-        headers: {
-          "content-type":
-            "multipart/form-data; boundary=--------------------------151840689896304164188529",
-        },
       });
 
       if (!res.ok) {
