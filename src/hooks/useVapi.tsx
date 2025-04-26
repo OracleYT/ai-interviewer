@@ -47,20 +47,20 @@ const useVapi = (meetingId: string) => {
     handleProctoringStop();
   }, [procterState, router]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: any) => {
-      const message = "Are you sure you want to leave Interview?";
-      event.preventDefault();
-      event.returnValue = message;
-      return message;
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+    useEffect(() => {
+      const handleBeforeUnload = (event: any) => {
+        const message = "Are you sure you want to leave Interview?";
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, []);
 
   const stopVapiSession = useCallback(async () => {
     if (vapiCallRef.current?.status === "ended") {

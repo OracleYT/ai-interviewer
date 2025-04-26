@@ -22,12 +22,13 @@ const interviewer_video_play_duration: number = parseInt(
   10
 );
 
-const ParticipantItem = ({ participant }: any) => {
+ const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
   // const color = useUserColor()(participant.name);
   const { volumeLevel } = useContext(VolumeLevelContext);
   // const { videoRef, isCameraOn } = useContext(BrowserMediaContext);
   const [showVideo, setShowVideo] = useState(true);
+  // const soundDetected = useSoundDetected();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   // const soundDetected = useSoundDetected();
@@ -195,6 +196,3 @@ const ParticipantItem = ({ participant }: any) => {
 };
 
 export default ParticipantItem;
-function speakAssistantHandler(this: Document, ev: any) {
-  throw new Error("Function not implemented.");
-}
