@@ -47,6 +47,12 @@ function Page() {
       return;
     }
     const file = event.target.files[0];
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Please ensure your file size is under 10MB");
+      event.target.value = "";
+      return;
+    }
     try {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
       const formData = new FormData();
@@ -98,10 +104,12 @@ function Page() {
       });
 
       reloadUserData();
+      
     } catch (error: any) {
       toast.error("Somthing went wrong, please try again");
       console.error(error);
     } finally {
+      event.target.value = "";
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
     }
   };

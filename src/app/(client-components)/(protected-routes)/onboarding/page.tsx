@@ -84,6 +84,13 @@ export default function Login() {
       return;
     }
     const file = event.target.files[0];
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Please ensure your file size is under 10MB");
+      event.target.value = "";
+      return;
+    }
+
     try {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
       const formData = new FormData();
@@ -114,6 +121,7 @@ export default function Login() {
     } catch (error) {
       toast.error("Error uploading file");
     } finally {
+      event.target.value = "";
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
     }
   };
