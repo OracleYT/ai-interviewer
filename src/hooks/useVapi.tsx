@@ -120,7 +120,7 @@ const useVapi = (meetingId: string) => {
         type: "add-message",
         message: {
           role: "system",
-          content: `say "${message}"`,
+          content: `${message}`,
         },
       });
     };
