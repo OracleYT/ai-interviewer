@@ -6,7 +6,7 @@ import { useCallback } from "react";
  * Hook for capturing photos from a camera stream
  * @returns Functions for capturing photos from a stream
  */
-const useEvidanceSender = () => {
+const useEvidanceSender = () => { 
   const sendEvidence = useCallback(
     async (
       img: Blob,
