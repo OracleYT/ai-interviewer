@@ -7,17 +7,7 @@ import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import Button from "@/components/Button";
 import PlainButton from "@/components/PlainButton";
 
-interface MeetingEndProps {
-  params: {
-    meetingId: string;
-  };
-  searchParams?: {
-    invalid: string;
-    endCall: string;
-  };
-}
-
-const MeetingEnd = ({ searchParams }: MeetingEndProps) => {
+const MeetingEnd = ({ searchParams }: any) => {
   // const params = useParams<{ meetingId: string }>();
   // const meetingId = params.meetingId;
   const router = useRouter();
