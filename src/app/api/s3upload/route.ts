@@ -5,6 +5,14 @@ import { prisma } from "@/libs/db/prisma";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
