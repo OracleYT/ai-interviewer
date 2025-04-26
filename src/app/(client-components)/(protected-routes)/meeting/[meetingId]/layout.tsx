@@ -11,16 +11,9 @@ import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 import Popup from "@/components/Popup";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
-type LayoutProps = {
-  children: ReactNode;
-  params: {
-    meetingId: string;
-  };
-};
-
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: any) {
   const pathname = usePathname();
-  const params = useParams<{ meetingId: string }>();
+  const params = useParams<any>();
   const meetingId = params.meetingId;
   const { interviewDetails: meetingData, fetchingInterviewDetails } =
     useInterviewDetails();

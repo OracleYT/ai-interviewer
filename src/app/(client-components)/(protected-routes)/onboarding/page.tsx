@@ -38,13 +38,12 @@ export default function Login() {
     cv: false,
     ol: false,
   });
-  const[isUpdating, setIsUpdating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const fileLinkMap = useMemo(() => {
     const view_size = 20;
     return buildFileLinkMap(user?.docs, view_size);
   }, [user]);
-
 
   useEffect(() => {
     if (!userId) {
@@ -85,6 +84,13 @@ export default function Login() {
       return;
     }
     const file = event.target.files[0];
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Please ensure your file size is under 10MB");
+      event.target.value = "";
+      return;
+    }
+
     try {
       setUploadingStatusMap((prev) => ({ ...prev, [type]: true }));
       const formData = new FormData();
@@ -115,6 +121,7 @@ export default function Login() {
     } catch (error) {
       toast.error("Error uploading file");
     } finally {
+      event.target.value = "";
       setUploadingStatusMap((prev) => ({ ...prev, [type]: false }));
     }
   };
@@ -274,7 +281,8 @@ export default function Login() {
                 "border-2  rounded-lg h-full px-2 w-full text-[12px] items-center flex gap-2 flex-col text-center justify-center",
                 {
                   "bg-[#ECFDF5] border-[#A7F3D0] text-[#047857]": uploaded.ol,
-                  "bg-gray-200 border-[#333333]": uploadingStatusMap["offer-letter"],
+                  "bg-gray-200 border-[#333333]":
+                    uploadingStatusMap["offer-letter"],
                 }
               )}
             >
@@ -295,24 +303,29 @@ export default function Login() {
                   onChange={(e) => handleFileChange(e, "offer-letter")}
                 />
               </label>
-             { (uploadingStatusMap["offer-letter"] ? (
+              {uploadingStatusMap["offer-letter"] ? (
                 <span>{"Uploading..."}</span>
-              ) :<a
-                className="text-[10px]"
-                href={fileLinkMap["offer-letter"]?.url}
-                title={fileLinkMap["offer-letter"]?.file_name}
-                target="_blank"
-              >
-                {fileLinkMap["offer-letter"]?.view_file_name}
-              </a>)}
+              ) : (
+                <a
+                  className="text-[10px]"
+                  href={fileLinkMap["offer-letter"]?.url}
+                  title={fileLinkMap["offer-letter"]?.file_name}
+                  target="_blank"
+                >
+                  {fileLinkMap["offer-letter"]?.view_file_name}
+                </a>
+              )}
             </div>
           </div>
           <Button
             type="submit"
             variant="secondry"
             className="w-full"
-            disabled={!Boolean(uploaded.cv && uploaded.ol && formData?.name) && isUpdating}
-            onClick={throttle(handleContinueClick,10_000)}
+            disabled={
+              !Boolean(uploaded.cv && uploaded.ol && formData?.name) &&
+              isUpdating
+            }
+            onClick={throttle(handleContinueClick, 10_000)}
           >
             {isUpdating ? "Updating..." : "Continue"}
           </Button>
