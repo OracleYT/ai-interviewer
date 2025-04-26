@@ -4,17 +4,13 @@ import { useState, useEffect, useRef, useContext, useCallback } from "react";
 import Vapi from "@vapi-ai/web";
 import { VolumeLevelContext } from "@/contexts/VolumeLevelProvider";
 import { Call } from "@vapi-ai/web/dist/api";
-// import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { useRouter } from "next/navigation";
 import {
   ProctorState,
   useAutoProctor,
 } from "@/contexts/ProcterContextProvider";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import {
-  // addProcterEvidance,
-  updateInterviewStatusById,
-} from "@/action/interview-action";
+import { updateInterviewStatusById } from "@/action/interview-action";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 
@@ -50,7 +46,6 @@ const useVapi = (meetingId: string) => {
     };
     handleProctoringStop();
   }, [procterState, router]);
-
 
     useEffect(() => {
       const handleBeforeUnload = (event: any) => {
@@ -121,7 +116,13 @@ const useVapi = (meetingId: string) => {
 
     const speakAssistantHandler = async (e: any) => {
       const { message } = e.detail;
-      vapiRef.current?.say(message);
+      vapiRef.current?.send({
+        type: "add-message",
+        message: {
+          role: "system",
+          content: `say "${message}"`,
+        },
+      });
     };
 
     vapiRef.current?.on("volume-level", volumeLevelHandler);

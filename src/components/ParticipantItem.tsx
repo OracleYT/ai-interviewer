@@ -12,6 +12,10 @@ import MicOff from "./icons/MicOff";
 import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
 // import useSoundDetected from "@/hooks/useSoundDetected";
 import SpeechIndicator from "./SpeechIndicator";
+import toast from "react-hot-toast";
+import { VapiDomEvents } from "@/constatnts/vapi-const";
+import useEvidanceSender from "@/hooks/useEvidanceSender";
+import { useParams } from "next/navigation";
 
 const interviewer_video_play_duration: number = parseInt(
   process.env.INTERVIEW_VIDE_PLAY_DURATION_IN_SEC || "5",
@@ -26,6 +30,9 @@ const interviewer_video_play_duration: number = parseInt(
   const [showVideo, setShowVideo] = useState(true);
   // const soundDetected = useSoundDetected();
 
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // const soundDetected = useSoundDetected();
+
   const { useCameraState, useMicrophoneState } = useCallStateHooks();
   const { mediaStream, isMute, camera } = useCameraState();
 
@@ -33,6 +40,10 @@ const interviewer_video_play_duration: number = parseInt(
   const vidRef = useRef<HTMLVideoElement>(null);
   const { startDetectingFace, started, stopDetectingFace } =
     useFaceDetactionAlgo();
+
+  const { sendEvidence } = useEvidanceSender();
+  const params = useParams<{ meetingId: string }>();
+  const meetingId = params.meetingId;
 
   useEffect(() => {
     camera.enable();
@@ -57,12 +68,59 @@ const interviewer_video_play_duration: number = parseInt(
       vidRef.current.srcObject = mediaStream;
       startDetectingFace(mediaStream);
     }
-    () => {
+
+    const sendEvidanceImages = async (e: any) => {
+      const { message } = e.detail;
+
+      captureImage(vidRef.current!, message);
+    };
+
+    document.addEventListener(
+      VapiDomEvents.SPEAK_ASSISTANT,
+      sendEvidanceImages
+    );
+    return () => {
       if (started) {
         stopDetectingFace();
+        document.removeEventListener(
+          VapiDomEvents.SPEAK_ASSISTANT,
+          sendEvidanceImages
+        );
       }
     };
   }, [mediaStream]);
+
+  const captureImage = async (videElem: HTMLVideoElement, message: string) => {
+    if (videElem && videElem.srcObject) {
+      if (!canvasRef.current) {
+        canvasRef.current = document.createElement("canvas");
+      }
+      // get size of video element
+      canvasRef.current.width = videElem.videoWidth;
+      canvasRef.current.height = videElem.videoHeight;
+
+      canvasRef.current
+        .getContext("2d")
+        ?.drawImage(
+          videElem,
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height
+        );
+      // Convert the canvas to a data URL
+      const blob = await new Promise<Blob>((resolve) => {
+        canvasRef.current?.toBlob(
+          (blob) => resolve(blob ?? new Blob()),
+          "image/jpeg",
+          1
+        );
+      });
+
+      sendEvidence(blob, meetingId, message, true);
+      canvasRef.current = null;
+    }
+  };
 
   if (participant.roles?.includes("host")) {
     return (
