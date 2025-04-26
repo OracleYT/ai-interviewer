@@ -9,23 +9,24 @@ const MESSAGE_MAP: Record<
   "attention" | "you-moved-away" | "more-people" | "eye-contact",
   string
 > = {
-  attention: "Please try to maintain eye contact.",
-  "you-moved-away": "Can you please come back to the camera.",
+  attention: "user is looking here and there and seems distracted, tell them to focus and look straight (try to add human touch as well some different content based on the current conversation, reply should look like real.(if it's second or third time then you can warn them as it might affect their results)",
+  "you-moved-away": "user moved away from the camera and not visible, tell them to please come back to the camera (if it's the second or third time then you can warn them as it might affect their results)",
   "more-people":
-    "I'm noticing someone else in the frame—this interview is just for you. Please continue alone.",
-  "eye-contact": "You're looking around quite a bit. Let's stay focused here.",
+    "user has someone else in the camera, tell them I'm noticing someone else in the frame—this interview is just for you. Please continue alone. (if it's second or third time then you can warn them as it might affect their results)",
+  "eye-contact": "user is looking here and there and seems distracted, tell them You're looking around quite a bit. Let's stay focused here.",
 };
 
 function useFaceDetactionAlgo() {
   const [started, setStarted] = useState(false);
-  const { addKey, hasKey } = useCache(10_000);
+  const { addKey, hasKey } = useCache(3_000);
 
   const dataRef = useRef<{
     thresholds: any;
     lastViolationTime: Record<string, number | null>;
     violationDuration: number;
+    currentAttentionDirection: string | null;
   }>({
-    thresholds: { attention: 62, eyeContact: 90, peopleCount: 1 },
+    thresholds: { attention: 58, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,
@@ -33,6 +34,7 @@ function useFaceDetactionAlgo() {
       movedAway: null,
     },
     violationDuration: 2000,
+    currentAttentionDirection: null,
   });
 
   const faceDetectionProcessor = useMemo(
@@ -43,7 +45,6 @@ function useFaceDetactionAlgo() {
   const emitSpeakEvent = (
     type: "attention" | "you-moved-away" | "more-people" | "eye-contact"
   ) => {
-
     const message = MESSAGE_MAP[type];
     const eventData = {
       message: message,
@@ -65,14 +66,25 @@ function useFaceDetactionAlgo() {
     const eyeContactThreshold = thresholds.eyeContact;
     const peopleCountThreshold = thresholds.peopleCount;
 
-    // Check if user is not looking at the camera
-    const attentionIssue =
-      faceLandMark.eyeLookOutLeft > attentionThreshold ||
-      faceLandMark.eyeLookOutRight > attentionThreshold ||
+    let detectedAttentionDirection: string | null = null;
+
+    if (faceLandMark.eyeLookOutLeft > attentionThreshold) {
+      detectedAttentionDirection = "left";
+    } else if (faceLandMark.eyeLookOutRight > attentionThreshold) {
+      detectedAttentionDirection = "right";
+    } else if (
       faceLandMark.eyeLookUpLeft > attentionThreshold ||
-      faceLandMark.eyeLookUpRight > attentionThreshold ||
+      faceLandMark.eyeLookUpRight > attentionThreshold
+    ) {
+      detectedAttentionDirection = "up";
+    } else if (
       faceLandMark.eyeLookDownLeft > attentionThreshold ||
-      faceLandMark.eyeLookDownRight > attentionThreshold;
+      faceLandMark.eyeLookDownRight > attentionThreshold
+    ) {
+      detectedAttentionDirection = "down";
+    }
+
+    processAttentionIssue(detectedAttentionDirection);
 
     // Check for eye contact
     const eyeContactIssue =
@@ -83,10 +95,39 @@ function useFaceDetactionAlgo() {
     const noOneInFrame = faceDetected === 0;
     const moreThanOnePeopleInFrame = faceDetected > peopleCountThreshold;
 
-    handleViolation("attention", attentionIssue);
     handleViolation("eye-contact", eyeContactIssue);
     handleViolation("you-moved-away", noOneInFrame);
     handleViolation("more-people", moreThanOnePeopleInFrame);
+  };
+
+  const processAttentionIssue = (detectedDirection: string | null) => {
+    const currentTime = Date.now();
+    const { lastViolationTime, violationDuration } = dataRef.current;
+
+    if (hasKey("attention")) {
+      return;
+    }
+
+    if (!detectedDirection) {
+      dataRef.current.currentAttentionDirection = null;
+      lastViolationTime["attention"] = null;
+      return;
+    }
+
+    if (!dataRef.current.currentAttentionDirection) {
+      dataRef.current.currentAttentionDirection = detectedDirection;
+      lastViolationTime["attention"] = currentTime;
+    } else if (dataRef.current.currentAttentionDirection !== detectedDirection) {
+      dataRef.current.currentAttentionDirection = detectedDirection;
+      lastViolationTime["attention"] = currentTime;
+    } else {
+      if (currentTime - (lastViolationTime["attention"] ?? 0) >= violationDuration) {
+        lastViolationTime["attention"] = null;
+        dataRef.current.currentAttentionDirection = null;
+        addKey("attention");
+        emitSpeakEvent("attention");
+      }
+    }
   };
 
   const handleViolation = (
@@ -103,7 +144,7 @@ function useFaceDetactionAlgo() {
       if (!dataRef.current.lastViolationTime[type]) {
         dataRef.current.lastViolationTime[type] = currentTime;
       } else if (
-        currentTime - dataRef.current.lastViolationTime[type] >=
+        currentTime - dataRef.current.lastViolationTime[type]! >=
         dataRef.current.violationDuration
       ) {
         dataRef.current.lastViolationTime[type] = null;
