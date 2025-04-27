@@ -13,7 +13,7 @@ const usePersistantRouter = () => {
     setRedirectState(state);
     router.push(route);
     setTimeout(() => { 
-      setRedirectState(null);
+      setRedirectState(null); 
     }, 5000);
   };
 

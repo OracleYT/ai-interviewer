@@ -57,7 +57,7 @@ function useFaceDetactionAlgo() {
     type: "attention" | "you-moved-away" | "more-people" | "eye-contact"
   ) => {
     const message = MESSAGE_MAP[type];
-    const eventData = {
+    const eventData = {  
       message: message,
       timestamp: Date.now(),
     };
