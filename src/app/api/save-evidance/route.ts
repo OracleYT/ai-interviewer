@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileToS3 } from "@/libs/aws/s3";
 import { addProcterEvidance } from "@/action/interview-action";
+import { randomUUID } from "crypto";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
+
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   console.log("[save-evidence] Received request");
@@ -26,19 +29,16 @@ export async function POST(req: NextRequest) {
       console.error("[save-evidence] No file provided in request");
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
+    const fileName = `${Date.now()}-${randomUUID({ disableEntropyCache: true })}`;
 
-    const uploadKey = `evidance/${interviewId}/${Date.now()}-${file.name}`;
+    const uploadKey = `evidence/${interviewId}/${fileName}`;
     console.log("[save-evidence] Starting S3 upload with key:", uploadKey);
 
     uploadFileToS3(file, bucket, uploadKey)
       .then(async (response) => {
-        console.log("[save-evidence] File uploaded successfully:", {
-          url: response.url,
-          key: uploadKey,
-        });
-
+        console.log("[save-evidence] File uploaded successfully:", response);
         console.log("[save-evidence] Adding evidence record to database");
-        await addProcterEvidance({
+        return {
           interviewId,
           evidence: {
             title,
@@ -48,8 +48,14 @@ export async function POST(req: NextRequest) {
             violation: voilation == "true",
             capturedAt: new Date(),
           },
-        });
-        console.log("[save-evidence] Evidence record added successfully");
+        };
+      })
+      .then(addProcterEvidance)
+      .then((result) => {
+        console.log(
+          "[save-evidence] Evidence record added successfully:",
+          result
+        );
       })
       .catch((err) => {
         console.error(
