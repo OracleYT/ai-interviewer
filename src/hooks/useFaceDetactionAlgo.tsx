@@ -37,14 +37,14 @@ function useFaceDetactionAlgo() {
     violationDuration: number;
     currentAttentionDirection: string | null;
   }>({
-    thresholds: { attention: 50, eyeContact: 90, peopleCount: 1 },
+    thresholds: { attention: 54, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,
       moreThanOnePeople: null,
       movedAway: null,
     },
-    violationDuration: 1500,
+    violationDuration: 1800,
     currentAttentionDirection: null,
   });
 
