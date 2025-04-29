@@ -1,5 +1,7 @@
 import { StreamClient } from '@stream-io/node-sdk';
 
+export const maxDuration = 60;
+
 const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 const SECRET = process.env.STREAM_API_SECRET!;
 

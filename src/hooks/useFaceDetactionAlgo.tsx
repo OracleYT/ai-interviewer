@@ -128,14 +128,20 @@ function useFaceDetactionAlgo() {
     if (!dataRef.current.currentAttentionDirection) {
       dataRef.current.currentAttentionDirection = detectedDirection;
       lastViolationTime["attention"] = currentTime;
-    } else if (dataRef.current.currentAttentionDirection !== detectedDirection) {
+    } else if (
+      dataRef.current.currentAttentionDirection !== detectedDirection
+    ) {
       dataRef.current.currentAttentionDirection = detectedDirection;
       lastViolationTime["attention"] = currentTime;
     } else {
-      if (currentTime - (lastViolationTime["attention"] ?? 0) >= violationDuration) {
+      if (
+        currentTime - (lastViolationTime["attention"] ?? 0) >=
+        violationDuration
+      ) {
         lastViolationTime["attention"] = null;
         dataRef.current.currentAttentionDirection = null;
         addKey("attention");
+
         emitSpeakEvent("attention");
       }
     }

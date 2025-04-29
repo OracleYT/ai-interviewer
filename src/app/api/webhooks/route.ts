@@ -6,6 +6,7 @@ import { StreamClient } from '@stream-io/node-sdk';
 const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 const SECRET = process.env.STREAM_API_SECRET!;
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   const client = new StreamClient(API_KEY, SECRET);
