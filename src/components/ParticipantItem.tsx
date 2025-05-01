@@ -9,11 +9,11 @@ import clsx from "clsx";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import Mic from "./icons/Mic";
 import MicOff from "./icons/MicOff";
-import useFaceDetactionAlgo from "@/hooks/useFaceDetactionAlgo";
+import useFaceDetactionAlgo from "@/contexts/FaceDetectionProvider";
 // import useSoundDetected from "@/hooks/useSoundDetected";
 import SpeechIndicator from "./SpeechIndicator";
-import toast from "react-hot-toast";
-import { VapiDomEvents } from "@/constatnts/vapi-const";
+// import toast from "react-hot-toast";
+// import { VapiDomEvents } from "@/constatnts/vapi-const";
 import useEvidanceSender from "@/hooks/useEvidanceSender";
 import { useParams } from "next/navigation";
 
@@ -22,7 +22,7 @@ const interviewer_video_play_duration: number = parseInt(
   10
 );
 
- const ParticipantItem = ({ participant }: any) => {
+const ParticipantItem = ({ participant }: any) => {
   const firstNameLetter = participant.name.split(" ")[0][0]?.toUpperCase();
   // const color = useUserColor()(participant.name);
   const { volumeLevel } = useContext(VolumeLevelContext);
@@ -69,23 +69,23 @@ const interviewer_video_play_duration: number = parseInt(
       startDetectingFace(mediaStream);
     }
 
-    const sendEvidanceImages = async (e: any) => {
-      const { message } = e.detail;
+    // const sendEvidanceImages = async (e: any) => {
+    //   const { message } = e.detail;
 
-      captureImage(vidRef.current!, message?.title);
-    };
+    //   captureImage(vidRef.current!, message?.title);
+    // };
 
-    document.addEventListener(
-      VapiDomEvents.SPEAK_ASSISTANT,
-      sendEvidanceImages
-    );
+    // document.addEventListener(
+    //   VapiDomEvents.SPEAK_ASSISTANT,
+    //   sendEvidanceImages
+    // );
     return () => {
       if (started) {
         stopDetectingFace();
-        document.removeEventListener(
-          VapiDomEvents.SPEAK_ASSISTANT,
-          sendEvidanceImages
-        );
+        // document.removeEventListener(
+        //   VapiDomEvents.SPEAK_ASSISTANT,
+        //   sendEvidanceImages
+        // );
       }
     };
   }, [mediaStream]);

@@ -10,6 +10,7 @@ import { useInterviewDetails } from "@/contexts/InterviewContextProvider";
 import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 import Popup from "@/components/Popup";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import { FaceDetectionProvider } from "@/contexts/FaceDetectionProvider";
 
 export default function Layout({ children }: any) {
   const pathname = usePathname();
@@ -58,7 +59,9 @@ export default function Layout({ children }: any) {
       <ParticipantsProvider meetingId={meetingId}>
         {/* <BrowserMediaProvider> */}
         <VolumeLevelProvider>
-          <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
+          <FaceDetectionProvider>
+            <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
+          </FaceDetectionProvider>
         </VolumeLevelProvider>
         {/* </BrowserMediaProvider> */}
       </ParticipantsProvider>

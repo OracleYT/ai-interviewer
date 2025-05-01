@@ -1,9 +1,9 @@
 "use client";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import { useMemo, useRef, useState } from "react";
+import { createContext, ReactNode, useContext, useMemo, useRef, useState } from "react";
 
 import { FaceDetectionProcessor } from "@videosdk.live/videosdk-media-processor-web";
-import useCache from "./useCache";
+import useCache from "../hooks/useCache";
 
 const MESSAGE_MAP: Record<
   "attention" | "you-moved-away" | "more-people" | "eye-contact",
@@ -27,14 +27,25 @@ const MESSAGE_MAP: Record<
   }
 };
 
-function useFaceDetactionAlgo() {
+type FaceDetectionContextType = {
+  startDetectingFace: (stream: any) => void;
+  stopDetectingFace: () => void;
+  started: boolean;
+};
+
+const FaceDetectionContext = createContext<FaceDetectionContextType | null>(null);
+
+interface FaceDetectionProviderProps {
+  children: ReactNode;
+}
+
+export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) {
   const [started, setStarted] = useState(false);
   const { addKey, hasKey } = useCache(10_000);
 
   const dataRef = useRef<{
     thresholds: any;
     lastViolationTime: Record<string, number | null>;
-    violationDuration: number;
     currentAttentionDirection: string | null;
   }>({
     thresholds: { attention: 54, eyeContact: 90, peopleCount: 1 },
@@ -44,7 +55,6 @@ function useFaceDetactionAlgo() {
       moreThanOnePeople: null,
       movedAway: null,
     },
-    violationDuration: 1800,
     currentAttentionDirection: null,
   });
 
@@ -113,7 +123,7 @@ function useFaceDetactionAlgo() {
 
   const processAttentionIssue = (detectedDirection: string | null) => {
     const currentTime = Date.now();
-    const { lastViolationTime, violationDuration } = dataRef.current;
+    const { lastViolationTime } = dataRef.current;
 
     if (hasKey("attention")) {
       return;
@@ -134,16 +144,11 @@ function useFaceDetactionAlgo() {
       dataRef.current.currentAttentionDirection = detectedDirection;
       lastViolationTime["attention"] = currentTime;
     } else {
-      if (
-        currentTime - (lastViolationTime["attention"] ?? 0) >=
-        violationDuration
-      ) {
-        lastViolationTime["attention"] = null;
-        dataRef.current.currentAttentionDirection = null;
-        addKey("attention");
-
-        emitSpeakEvent("attention");
-      }
+      // Emit event after sustained attention issue
+      lastViolationTime["attention"] = null;
+      dataRef.current.currentAttentionDirection = null;
+      addKey("attention");
+      emitSpeakEvent("attention");
     }
   };
 
@@ -160,10 +165,8 @@ function useFaceDetactionAlgo() {
     if (issueDetected) {
       if (!dataRef.current.lastViolationTime[type]) {
         dataRef.current.lastViolationTime[type] = currentTime;
-      } else if (
-        currentTime - dataRef.current.lastViolationTime[type]! >=
-        dataRef.current.violationDuration
-      ) {
+      } else {
+        // Issue persists, trigger event
         dataRef.current.lastViolationTime[type] = null;
         addKey(type);
         emitSpeakEvent(type);
@@ -192,9 +195,33 @@ function useFaceDetactionAlgo() {
 
   const stopDetectingFace = () => {
     setStarted(false);
+    if (started) {
+      faceDetectionProcessor.stop();
+    }
   };
 
-  return { startDetectingFace, started, stopDetectingFace };
+  const contextValue = useMemo(() => ({
+    startDetectingFace,
+    stopDetectingFace,
+    started,
+  }), [started]);
+
+  return (
+    <FaceDetectionContext.Provider value={contextValue}>
+      {children}
+    </FaceDetectionContext.Provider>
+  );
+}
+
+// Custom hook to use the face detection context
+function useFaceDetactionAlgo() {
+  const context = useContext(FaceDetectionContext);
+  
+  if (!context) {
+    throw new Error("useFaceDetactionAlgo must be used within a FaceDetectionProvider");
+  }
+  
+  return context;
 }
 
 export default useFaceDetactionAlgo;

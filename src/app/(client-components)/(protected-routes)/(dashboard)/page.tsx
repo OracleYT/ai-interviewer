@@ -13,10 +13,13 @@ import {
 import { useAuth } from "@/contexts/AuthProvider";
 import { useInterview } from "@/contexts/InterviewContextProvider";
 import { buildFileLinkMap } from "@/utils/string-utils";
+// import axios from "axios";
 import clsx from "clsx";
 import { CloudUpload } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
+
+// const backendUrl = process.env.NEXT_PUBLIC_AI_BACKEND_URL;
 
 function Page() {
   const { interview, fetchInterviewData } = useInterview();
@@ -58,6 +61,14 @@ function Page() {
       const formData = new FormData();
       formData.append("file", file);
       // uploading to s3
+
+      // const res = await axios.post(
+      //   `${backendUrl}/uploads`,
+      //   formData
+      // );
+
+      // console.log("res", res);
+
       const res = await fetch("/api/s3upload", {
         method: "POST",
         body: formData,
@@ -104,7 +115,6 @@ function Page() {
       });
 
       reloadUserData();
-      
     } catch (error: any) {
       toast.error("Somthing went wrong, please try again");
       console.error(error);
