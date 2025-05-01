@@ -46,6 +46,7 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
   const dataRef = useRef<{
     thresholds: any;
     lastViolationTime: Record<string, number | null>;
+    violationDuration: number;
     currentAttentionDirection: string | null;
   }>({
     thresholds: { attention: 54, eyeContact: 90, peopleCount: 1 },
@@ -55,6 +56,7 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
       moreThanOnePeople: null,
       movedAway: null,
     },
+    violationDuration: 1800,
     currentAttentionDirection: null,
   });
 
@@ -123,7 +125,7 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
 
   const processAttentionIssue = (detectedDirection: string | null) => {
     const currentTime = Date.now();
-    const { lastViolationTime } = dataRef.current;
+    const { lastViolationTime, violationDuration } = dataRef.current;
 
     if (hasKey("attention")) {
       return;
@@ -144,11 +146,16 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
       dataRef.current.currentAttentionDirection = detectedDirection;
       lastViolationTime["attention"] = currentTime;
     } else {
-      // Emit event after sustained attention issue
-      lastViolationTime["attention"] = null;
-      dataRef.current.currentAttentionDirection = null;
-      addKey("attention");
-      emitSpeakEvent("attention");
+      if (
+        currentTime - (lastViolationTime["attention"] ?? 0) >=
+        violationDuration
+      ) {
+        lastViolationTime["attention"] = null;
+        dataRef.current.currentAttentionDirection = null;
+        addKey("attention");
+
+        emitSpeakEvent("attention");
+      }
     }
   };
 
@@ -165,8 +172,10 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
     if (issueDetected) {
       if (!dataRef.current.lastViolationTime[type]) {
         dataRef.current.lastViolationTime[type] = currentTime;
-      } else {
-        // Issue persists, trigger event
+      } else if (
+        currentTime - dataRef.current.lastViolationTime[type]! >=
+        dataRef.current.violationDuration
+      ) {
         dataRef.current.lastViolationTime[type] = null;
         addKey(type);
         emitSpeakEvent(type);
@@ -195,9 +204,6 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
 
   const stopDetectingFace = () => {
     setStarted(false);
-    if (started) {
-      faceDetectionProcessor.stop();
-    }
   };
 
   const contextValue = useMemo(() => ({
