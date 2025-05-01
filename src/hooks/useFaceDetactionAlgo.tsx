@@ -29,7 +29,7 @@ const MESSAGE_MAP: Record<
 
 function useFaceDetactionAlgo() {
   const [started, setStarted] = useState(false);
-  const { addKey, hasKey } = useCache(3_000);
+  const { addKey, hasKey } = useCache(10_000);
 
   const dataRef = useRef<{
     thresholds: any;
@@ -37,14 +37,14 @@ function useFaceDetactionAlgo() {
     violationDuration: number;
     currentAttentionDirection: string | null;
   }>({
-    thresholds: { attention: 58, eyeContact: 90, peopleCount: 1 },
+    thresholds: { attention: 54, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
       attention: null,
       eyeContact: null,
       moreThanOnePeople: null,
       movedAway: null,
     },
-    violationDuration: 2000,
+    violationDuration: 1800,
     currentAttentionDirection: null,
   });
 
