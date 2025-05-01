@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileToS3 } from "@/libs/aws/s3";
-import { addProcterEvidance } from "@/action/interview-action";
+import {
+  addImageEvidance,
+} from "@/action/interview-action";
 import { randomUUID } from "crypto";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
           },
         };
       })
-      .then(addProcterEvidance)
+      .then(addImageEvidance)
       .then((result) => {
         console.log(
           "[save-evidence] Evidence record added successfully:",
