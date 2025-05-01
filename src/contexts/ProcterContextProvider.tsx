@@ -22,7 +22,9 @@ import {
 } from "@/constatnts/env-const";
 // import { VapiDomEvents } from "@/constatnts/vapi-const";
 import toast from "react-hot-toast";
-import { addProcterEvidance } from "@/action/interview-action";
+import {
+  addImageEvidance,
+} from "@/action/interview-action";
 
 type ModaleConfig = {
   showModel: boolean;
@@ -193,7 +195,7 @@ function ProcterContextProvider({ children }: { children: ReactNode }) {
         //   },
         // });
         // document.dispatchEvent(event);
-        addProcterEvidance({
+        addImageEvidance({
           interviewId: testAttemptID,
           evidence: {
             title: evidence?.title,

@@ -52,6 +52,7 @@ model Interview {
   interviewerId String?
   expiryDate    DateTime?       @default(now())
   procterReport Json?           @default("{}")
+  evidence      Json[]          @default([])
   interviewer   Interviewer?    @relation(fields: [interviewerId], references: [id])
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

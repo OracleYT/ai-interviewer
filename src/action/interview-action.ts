@@ -231,3 +231,87 @@ export async function sendInterviewDoneEvent(meetingId: string) {
   }
   return false;
 }
+
+export async function addImageEvidance(data: {
+  interviewId: string;
+  evidence: any;
+}) {
+  console.log(`[IMAGE_EVIDENCE] Starting to process image evidence for interview: ${data.interviewId}`);
+  
+  try {
+    console.log(`[IMAGE_EVIDENCE] Request payload: ${JSON.stringify({
+      interviewId: data.interviewId,
+      evidenceType: data.evidence?.title || 'unknown',
+      violation: data.evidence?.violation || 'unknown',
+      hasEvidenceURL: !!data.evidence?.evidenceURL
+    }, null, 2)}`);
+
+    // Input validation
+    if (!data.interviewId) {
+      console.warn(`[IMAGE_EVIDENCE] Missing required field: interviewId`);
+      return {
+        status: 400,
+        success: false,
+        message: "Interview ID is required",
+        data: null,
+      };
+    }
+    
+    if (!data.evidence) {
+      console.warn(`[IMAGE_EVIDENCE] Missing required field: evidence for interview ${data.interviewId}`);
+      return {
+        status: 400,
+        success: false,
+        message: "Evidence is required",
+        data: null,
+      };
+    }
+
+    console.log(`[IMAGE_EVIDENCE] Validation passed. Updating database for interview ${data.interviewId} with violation type: ${data.evidence.title || 'unknown'}`);
+
+    // Database operation
+    console.log(`[IMAGE_EVIDENCE] Executing database update for interview ${data.interviewId}`);
+    const interviewData = await prisma.interview.update({
+      where: {
+        id: data.interviewId,
+      },
+      data: {
+        evidence: {
+          push: {
+            title: data.evidence.title,
+            evidence: {
+              evidenceURL: data.evidence.evidenceURL,
+            },
+            violation: data.evidence.violation,
+            capturedAt: new Date(),
+          },
+        },
+      },
+    });
+
+    console.log(`[IMAGE_EVIDENCE] Successfully updated evidence for interview ${data.interviewId}`);
+    console.log(`[IMAGE_EVIDENCE] Evidence details: title=${data.evidence.title}, violation=${data.evidence.violation}, timestamp=${new Date().toISOString()}`);
+    
+    return {
+      status: 200,
+      success: true,
+      message: "Procter report updated",
+    };
+  } catch (error) {
+    // Enhanced error logging
+    console.error(`[IMAGE_EVIDENCE] ERROR updating evidence for interview ${data.interviewId || 'unknown'}`);
+    console.error(`[IMAGE_EVIDENCE] Error details:`, error);
+    
+    if (error instanceof Error) {
+      console.error(`[IMAGE_EVIDENCE] Error message: ${error.message}`);
+      console.error(`[IMAGE_EVIDENCE] Error stack: ${error.stack}`);
+    }
+    
+    return {
+      status: 500,
+      success: false,
+      message: "Failed to update evidence",
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+}
