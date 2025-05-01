@@ -12,7 +12,7 @@ const usePersistantRouter = () => {
   const push = (route: string, state: Record<string, any> = {}) => {
     setRedirectState(state);
     router.push(route); 
-    setTimeout(() => { 
+    setTimeout(() => {  
       setRedirectState(null); 
     }, 5000);
   };
