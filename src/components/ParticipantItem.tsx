@@ -13,7 +13,7 @@ import useFaceDetactionAlgo from "@/contexts/FaceDetectionProvider";
 // import useSoundDetected from "@/hooks/useSoundDetected";
 import SpeechIndicator from "./SpeechIndicator";
 // import toast from "react-hot-toast";
-import { VapiDomEvents } from "@/constatnts/vapi-const";
+// import { VapiDomEvents } from "@/constatnts/vapi-const";
 import useEvidanceSender from "@/hooks/useEvidanceSender";
 import { useParams } from "next/navigation";
 
@@ -69,23 +69,23 @@ const ParticipantItem = ({ participant }: any) => {
       startDetectingFace(mediaStream);
     }
 
-    const sendEvidanceImages = async (e: any) => {
-      const { message } = e.detail;
+    // const sendEvidanceImages = async (e: any) => {
+    //   const { message } = e.detail;
 
-      captureImage(vidRef.current!, message?.title);
-    };
+    //   captureImage(vidRef.current!, message?.title);
+    // };
 
-    document.addEventListener(
-      VapiDomEvents.SPEAK_ASSISTANT,
-      sendEvidanceImages
-    );
+    // document.addEventListener(
+    //   VapiDomEvents.SPEAK_ASSISTANT,
+    //   sendEvidanceImages
+    // );
     return () => {
       if (started) {
         stopDetectingFace();
-        document.removeEventListener(
-          VapiDomEvents.SPEAK_ASSISTANT,
-          sendEvidanceImages
-        );
+        // document.removeEventListener(
+        //   VapiDomEvents.SPEAK_ASSISTANT,
+        //   sendEvidanceImages
+        // );
       }
     };
   }, [mediaStream]);
