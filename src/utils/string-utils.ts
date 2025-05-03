@@ -14,6 +14,13 @@ export const extractFileName = (() => {
   };
 })();
 
+
+export function getFirstNameLetter(name: string): string {
+  if (!name) return "";
+  const first = name.split(" ")[0];
+  return first[0]?.toUpperCase() || "";
+}
+
 export const buildFileLinkMap = (docs: any, view_size = 20) => {
   return (
     docs?.reduce((acc: any, doc: any) => {

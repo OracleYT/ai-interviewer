@@ -173,7 +173,6 @@ const useVapi = (meetingId: string) => {
     }
     useCallStatus.current = "starting";
 
-    console.log(userData);
     const assistantOverrides = {
       transcriber: {
         provider: "deepgram" as const,
