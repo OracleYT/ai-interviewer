@@ -51,8 +51,8 @@ export function FaceDetectionProvider({ children }: FaceDetectionProviderProps) 
   }>({
     thresholds: { attention: 54, eyeContact: 90, peopleCount: 1 },
     lastViolationTime: {
-      attention: null,
-      eyeContact: null,
+      attention: null, 
+      eyeContact: null,  
       moreThanOnePeople: null,
       movedAway: null,
     },
