@@ -30,6 +30,7 @@ import {
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import { useInterview } from "@/contexts/InterviewContextProvider";
+import { START_MEETING_ID } from "./constants";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
@@ -132,6 +133,7 @@ const Lobby = () => {
 
   useEffect(() => {
     if (procterState === ProctorState.PROCTING_STARTED) {
+      localStorage.setItem(START_MEETING_ID, meetingId);
       router.push(`/meeting/${meetingId}/meeting`);
     }
   }, [procterState]);
