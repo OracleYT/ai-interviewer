@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 
 import MeetProvider from "@/contexts/MeetProvider";
-// import BrowserMediaProvider from "@/contexts/BrowserMediaProvider";
 import { ParticipantsProvider } from "@/contexts/ParticipantsProvider";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import VolumeLevelProvider from "@/contexts/VolumeLevelProvider";
@@ -16,8 +15,7 @@ export default function Layout({ children }: any) {
   const pathname = usePathname();
   const params = useParams<any>();
   const meetingId = params.meetingId;
-  const { interviewDetails: meetingData, fetchingInterviewDetails } =
-    useInterviewDetails();
+  const { interviewDetails: meetingData } = useInterviewDetails();
   const router = useRouter();
   const { modalConfig } = useAutoProctor();
   const [loading, setLoading] = useState(true);
@@ -57,13 +55,11 @@ export default function Layout({ children }: any) {
         </Popup>
       )}
       <ParticipantsProvider meetingId={meetingId}>
-        {/* <BrowserMediaProvider> */}
         <VolumeLevelProvider>
           <FaceDetectionProvider>
             <MeetProvider meetingId={meetingId}>{children}</MeetProvider>
           </FaceDetectionProvider>
         </VolumeLevelProvider>
-        {/* </BrowserMediaProvider> */}
       </ParticipantsProvider>
     </>
   );

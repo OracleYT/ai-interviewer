@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileToS3 } from "@/libs/aws/s3";
-import { prisma } from "@/libs/db/prisma";
+// import { prisma } from "@/libs/db/prisma";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
 export const maxDuration = 60;

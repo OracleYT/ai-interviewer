@@ -1,12 +1,14 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 /**
  * Hook for capturing photos from a camera stream
  * @returns Functions for capturing photos from a stream
  */
 const useEvidanceSender = () => { 
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const sendEvidence = useCallback(
     async (
       img: Blob,
@@ -60,8 +62,40 @@ const useEvidanceSender = () => {
     []
   );
 
+    const captureImageFromVideo = async (meetingId: string, videElem: HTMLVideoElement, message: string) => {
+      if (!videElem || !videElem.srcObject) return;
+  
+      if (!canvasRef.current) {
+        canvasRef.current = document.createElement("canvas");
+      }
+      // get size of video element
+      canvasRef.current.width = videElem.videoWidth;
+      canvasRef.current.height = videElem.videoHeight;
+  
+      canvasRef.current
+        .getContext("2d")
+        ?.drawImage(
+          videElem,
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height
+        );
+      // Convert the canvas to a data URL
+      const blob = await new Promise<Blob>((resolve) => {
+        canvasRef.current?.toBlob(
+          (blob) => resolve(blob ?? new Blob()),
+          "image/jpeg",
+          1
+        );
+      });
+  
+      sendEvidence(blob, meetingId, message, true);
+      canvasRef.current = null;
+    };
+
   return {
-    sendEvidence,
+    captureImageFromVideo,
   };
 };
 
