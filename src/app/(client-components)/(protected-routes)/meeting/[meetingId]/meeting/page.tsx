@@ -1,6 +1,6 @@
 "use client";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useContext, useEffect, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   // CallingState,
   // hasScreenShare,
@@ -38,10 +38,7 @@ import useVapi from "@/hooks/useVapi";
 // import { BrowserMediaContext } from "@/contexts/BrowserMediaProvider";
 import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 import { useAutoProctor } from "@/contexts/ProcterContextProvider";
-import {
-  useInterview,
-  useInterviewDetails,
-} from "@/contexts/InterviewContextProvider";
+import { START_MEETING_ID } from "../constants";
 // import usePersistantRouter from "@/hooks/usePersistantRouter";
 
 const Meeting = () => {
@@ -61,13 +58,13 @@ const Meeting = () => {
   // const participants = useParticipants();
   // const { screenShare } = useScreenShareState();
   // const callingState = useCallCallingState();
-  const { participants, meetingData } = useContext(ParticipantsContext);
+  const { meetingData } = useContext(ParticipantsContext);
   // const [chatChannel, setChatChannel] =
   //   useState<Channel<DefaultStreamChatGenerics>>();
   // const [isChatOpen, setIsChatOpen] = useState(false);
   // const [isRecordingListOpen, setIsRecordingListOpen] = useState(false);
   // const [participantInSpotlight, _] = participants;
-  const [prevParticipantsCount, setPrevParticipantsCount] = useState(0);
+  // const [prevParticipantsCount, setPrevParticipantsCount] = useState(0);
   // const [volumeLevel, setVolumeLevel] = useState(0);
   // const { isCameraOn, startCamera, stopCamera } =
   //   useContext(BrowserMediaContext);
@@ -86,35 +83,28 @@ const Meeting = () => {
   //     stopCamera();
   //   };
   // }, []);
+  const router = useRouter();
 
   useEffect(() => {
-    const id = setTimeout(() => {
-      if (!vapiInstance) {
-        startVapiSession(meetingData.interviewer?.assistantID);
-      }
-    }, 2000);
-
-    return () => {
-      clearTimeout(id);
-    };
+    
+    const isMeetingStartPresets =
+      localStorage.getItem(START_MEETING_ID) === meetingId;
+    if (!isMeetingStartPresets) {
+      router.push(`/meeting/${meetingId}`);
+      return;
+    }
+    sessionStorage.removeItem(START_MEETING_ID);
+    if (!vapiInstance) {
+      startVapiSession(meetingData.interviewer?.assistantID);
+      audioRef.current?.play();
+    }
   }, []);
 
-  useEffect(() => {
-    if (participants.length > prevParticipantsCount) {
-      audioRef.current?.play();
-      setPrevParticipantsCount(participants.length);
-    }
-  }, [participants.length, prevParticipantsCount]);
-
-  // const isSpeakerLayout = useMemo(() => {
-  //   // if (participantInSpotlight) {
-  //   //   return (
-  //   //     // hasScreenShare(participantInSpotlight) ||
-  //   //     // isPinned(participantInSpotlight)
-  //   //   );
-  //   // }
-  //   return false;
-  // }, [participantInSpotlight]);
+  // useEffect(() => {
+  //   if (participants.length > prevParticipantsCount) {
+  //     setPrevParticipantsCount(participants.length);
+  //   }
+  // }, [participants.length, prevParticipantsCount]);
 
   const leaveCall = async () => {
     setModalConfig &&
