@@ -18,15 +18,15 @@ export async function POST(req: NextRequest) {
     const uploadKey = `${Date.now()}-${file.name}`;
     const response = await uploadFileToS3(file, bucket, uploadKey);
 
-    await prisma.upload.create({
-      data: {
-        bucket: response.bucket,
-        path: response.path,
-        name: response.name,
-        region: response.region,
-        url: response.url,
-      },
-    });
+    // await prisma.upload.create({
+    //   data: {
+    //     bucket: response.bucket,
+    //     path: response.path,
+    //     name: response.name,
+    //     region: response.region,
+    //     url: response.url,
+    //   },
+    // });
     return NextResponse.json({
       message: "File uploaded successfully",
       path: response.path,
