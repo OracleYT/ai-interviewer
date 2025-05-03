@@ -61,3 +61,6 @@ export const initialParticipants = [
     audioStream: {},
   },
 ];
+
+
+export const START_MEETING_ID = "start_meeting_id";
