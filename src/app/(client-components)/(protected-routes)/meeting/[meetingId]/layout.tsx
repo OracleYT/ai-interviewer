@@ -23,7 +23,7 @@ export default function Layout({ children }: any) {
   useEffect(() => {
     if (!meetingData) {
       if (pathname === `/meeting/${meetingId}/meeting`) {
-        // router.push(`/meeting/${meetingId}`);
+        router.push(`/meeting/${meetingId}`);
       }
     }
     const id = setTimeout(() => {
