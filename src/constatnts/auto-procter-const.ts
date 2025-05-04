@@ -129,7 +129,7 @@ export const AP_BROWSER_ERRORS: Record<
   },
   "4016": {
     message: "Your browser is outdated.",
-    action: "Update Safari to the latest version, or use Google Chrome.",
+    action: "Update Safari to the latest version, or use Google Chrome.", 
   },
   "4017": {
     message: "Your browser is not supported for this test.",
