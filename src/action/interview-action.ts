@@ -218,7 +218,7 @@ export async function updateInterviewStatusById(data: {
 //       message: "Procter report updated",
 //     };
 //   } catch (error) {
-//     console.error("Error while updating procter report", error);
+//     console.log("Error while updating procter report", error);
 //   }
 // }
 
@@ -227,7 +227,7 @@ export async function sendInterviewDoneEvent(meetingId: string) {
     const response = await axios.post(interviewCompletionApi, { meetingId });
     response.status === 200;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
   return false;
 }
@@ -306,14 +306,14 @@ export async function addImageEvidance(data: {
     };
   } catch (error) {
     // Enhanced error logging
-    console.error(
+    console.log(
       `[IMAGE_EVIDENCE] ERROR updating evidence for interview ${data.interviewId || "unknown"}`
     );
-    console.error(`[IMAGE_EVIDENCE] Error details:`, error);
+    console.log(`[IMAGE_EVIDENCE] Error details:`, error);
 
     if (error instanceof Error) {
-      console.error(`[IMAGE_EVIDENCE] Error message: ${error.message}`);
-      console.error(`[IMAGE_EVIDENCE] Error stack: ${error.stack}`);
+      console.log(`[IMAGE_EVIDENCE] Error message: ${error.message}`);
+      console.log(`[IMAGE_EVIDENCE] Error stack: ${error.stack}`);
     }
 
     return {
