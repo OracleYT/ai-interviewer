@@ -55,7 +55,7 @@ const uploadFileToS3 = async (file: File, bucket: string, key: string) => {
       region: REGION,
     };
   } catch (error) {
-    console.error(
+    console.log(
       `[uploadFileToS3] Upload error for file: ${file.name}`,
       error
     );

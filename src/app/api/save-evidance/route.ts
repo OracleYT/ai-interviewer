@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { uploadFileToS3 } from "@/libs/aws/s3";
-import {
-  addImageEvidance,
-} from "@/action/interview-action";
+import { addImageEvidance } from "@/action/interview-action";
 import { randomUUID } from "crypto";
 
 const bucket = process.env.AWS_S3_BUCKET || "";
@@ -37,7 +35,7 @@ export async function POST(req: NextRequest) {
     console.log("[save-evidence] Starting S3 upload with key:", uploadKey);
 
     uploadFileToS3(file, bucket, uploadKey)
-      .then(async (response) => {
+      .then((response) => {
         console.log("[save-evidence] File uploaded successfully:", response);
         console.log("[save-evidence] Adding evidence record to database");
         return {
@@ -60,7 +58,7 @@ export async function POST(req: NextRequest) {
         );
       })
       .catch((err) => {
-        console.error(
+        console.log(
           "[save-evidence] Error in S3 upload or database update:",
           err
         );
@@ -70,8 +68,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       message: "processing voliation image",
     });
-  } catch (error) {
-    console.error("[save-evidence] Error processing request:", error);
+  } catch (error: any) {
+    console.log("[save-evidence] Error processing request:", error);
+    console.log("[save-evidence] Error details:", error);
+    console.log("[save-evidence] Error stack:", error.stack);
+    console.log("[save-evidence] Error message:", error.message);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }
