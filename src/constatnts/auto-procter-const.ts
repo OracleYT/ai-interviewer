@@ -36,11 +36,11 @@ export const AP_VOILATION_WARNINGS = {
     voilation: true,
   },
   "5005": {
-    title: "Document Page Hidden or Focus Lost ",
+    title: "Switched tab or screen",
     voilation: true,
-  },
+  }, 
   "5006": {
-    title: "Document Page Became Visible or Focus Was Gained",
+    title: "Switched tab or screen",
     voilation: false,
   },
   "5007": {
