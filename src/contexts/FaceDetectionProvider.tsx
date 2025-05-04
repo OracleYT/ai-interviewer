@@ -3,48 +3,15 @@ import { VapiDomEvents } from "@/constatnts/vapi-const";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useMemo,
   useRef,
   useState,
-  useEffect,
 } from "react";
 
 import useCache from "../hooks/useCache";
-
-const MESSAGE_MAP: Record<
-  "attention" | "you-moved-away" | "more-people" | "eye-contact",
-  any
-> = {
-  attention: {
-    message:
-      "user is looking here and there and seems distracted, tell them to focus and look straight (try to add human touch as well some different content based on the current conversation, reply should look like real.(if it's second or third time then you can warn them as it might affect their results)",
-    title: "Attention Broken",
-  },
-  "you-moved-away": {
-    message:
-      "user moved away from the camera and not visible, tell them to please come back to the camera (if it's the second or third time then you can warn them as it might affect their results)",
-    title: "useer moved away",
-  },
-  "more-people": {
-    title: "more people",
-    message:
-      "user has someone else in the camera, tell them I'm noticing someone else in the frame—this interview is just for you. Please continue alone. (if it's second or third time then you can warn them as it might affect their results)",
-  },
-  "eye-contact": {
-    title: "eye contact",
-    message:
-      "user is looking here and there and seems distracted, tell them You're looking around quite a bit. Let's stay focused here.",
-  },
-};
-
-import dynamic from "next/dynamic";
-
-const { FaceDetectionProcessor }: any = dynamic(
-  // @ts-ignore
-  () => import("@videosdk.live/videosdk-media-processor-web"),
-  { ssr: false }
-);
+import { MESSAGE_MAP } from "@/constatnts/face-detection-cosnt";
 
 type FaceDetectionContextType = {
   startDetectingFace: (stream: any) => void;
@@ -83,9 +50,7 @@ export function FaceDetectionProvider({
     currentAttentionDirection: null,
   });
 
-  const faceDetectionProcessor = useMemo(() => {
-    return new FaceDetectionProcessor();
-  }, [FaceDetectionProcessor]);
+  const faceDetectionProcessor = useRef<any>(null);
 
   const emitSpeakEvent = (
     type: "attention" | "you-moved-away" | "more-people" | "eye-contact"
@@ -207,7 +172,7 @@ export function FaceDetectionProvider({
     }
   };
 
-  const startDetectingFace = (stream: any) => {
+  const startDetectingFace = async (stream: any) => {
     if (started) {
       return;
     }
@@ -215,11 +180,21 @@ export function FaceDetectionProvider({
       return;
     }
 
-    if (!faceDetectionProcessor) {
+    if (!faceDetectionProcessor.current) {
       console.error("FaceDetectionProcessor is not initialized");
-      return;
+
+      const { FaceDetectionProcessor } = await import(
+        "@videosdk.live/videosdk-media-processor-web"
+      );
+
+      console.log("FaceDetectionProcessor", FaceDetectionProcessor);
+      if (!FaceDetectionProcessor) {
+        console.log("FaceDetectionProcessor not found");
+        return;
+      }
+      faceDetectionProcessor.current = new FaceDetectionProcessor();
     }
-    faceDetectionProcessor?.start({
+    faceDetectionProcessor.current?.start({
       options: {
         interval: 200,
       },
@@ -250,7 +225,7 @@ export function FaceDetectionProvider({
 }
 
 // Custom hook to use the face detection context
-function useFaceDetactionAlgo() {
+export function useFaceDetactionAlgo() {
   const context = useContext(FaceDetectionContext);
 
   if (!context) {
@@ -261,5 +236,3 @@ function useFaceDetactionAlgo() {
 
   return context;
 }
-
-export default useFaceDetactionAlgo;
