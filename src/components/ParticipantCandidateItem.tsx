@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import { VapiDomEvents } from "@/constatnts/vapi-const";
-import useFaceDetactionAlgo from "@/contexts/FaceDetectionProvider";
+import {useFaceDetactionAlgo} from "@/contexts/FaceDetectionProvider";
 import useEvidanceSender from "@/hooks/useEvidanceSender";
 import { getFirstNameLetter } from "@/utils/string-utils";
 
