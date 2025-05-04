@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 const useSoundDetected = () => {
   const [soundDetected, setSoundDetected] = useState(false);
   const { useMicrophoneState } = useCallStateHooks();
-  const { status: microphoneStatus, mediaStream } = useMicrophoneState();
+  const { status: microphoneStatus, mediaStream } = useMicrophoneState(); 
 
   useEffect(() => {
     if (microphoneStatus !== 'enabled' || !mediaStream) return;
