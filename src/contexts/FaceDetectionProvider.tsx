@@ -15,14 +15,14 @@ const MESSAGE_MAP: Record<
   },
   "you-moved-away": {
     "message":"user moved away from the camera and not visible, tell them to please come back to the camera (if it's the second or third time then you can warn them as it might affect their results)",
-    "title":"no one in camera",
+    "title":"Not visible in the camera",
   },
   "more-people":{
-    "title":"more than one person",
+    "title":"More than one person detected",
     "message": "user has someone else in the camera, tell them I'm noticing someone else in the frame—this interview is just for you. Please continue alone. (if it's second or third time then you can warn them as it might affect their results)",
   },
   "eye-contact": {
-    "title":"no eye contact",
+    "title":"No eye contact",
     "message": "user is looking here and there and seems distracted, tell them You're looking around quite a bit. Let's stay focused here.",
   }
 };
