@@ -9,7 +9,7 @@ export const sendInterviewDataToBackend = async (data: any) => {
     console.log("sendInterviewDataToBackend", data);
     await axios.post(sendInterviewDataUrl, data);
   } catch (e: any) {
-    console.error(e.message);
-    console.error("response:\n\n", e.response);
+    console.log(e.message);
+    console.log("response:\n\n", e.response);
   }
 };

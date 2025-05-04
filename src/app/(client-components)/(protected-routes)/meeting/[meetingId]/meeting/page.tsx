@@ -60,7 +60,7 @@ const Meeting = () => {
   // const callingState = useCallCallingState();
   const { meetingData } = useContext(ParticipantsContext);
   // const [chatChannel, setChatChannel] =
-  //   useState<Channel<DefaultStreamChatGenerics>>();
+  // useState<Channel<DefaultStreamChatGenerics>>();
   // const [isChatOpen, setIsChatOpen] = useState(false);
   // const [isRecordingListOpen, setIsRecordingListOpen] = useState(false);
   // const [participantInSpotlight, _] = participants;

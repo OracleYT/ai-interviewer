@@ -46,7 +46,7 @@ export async function verifyCredentials(email: string, password: string) {
       data: user,
     };
   } catch (error) {
-    console.error("Error verifying user credentials:", error);
+    console.log("Error verifying user credentials:", error);
     return {
       success: false,
       message: "Error verifying user credentials",
@@ -82,7 +82,7 @@ export async function resetPassword(
       };
     }
   } catch (error) {
-    console.error("Error resetting password:", error);
+    console.log("Error resetting password:", error);
   }
   return {
     success: false,
@@ -113,7 +113,7 @@ export async function fetchUserById(
       data: user,
     };
   } catch (error) {
-    console.error("Error fetching user by id:", error);
+    console.log("Error fetching user by id:", error);
     return {
       success: false,
       message: "Error fetching user by id",
@@ -175,7 +175,7 @@ export async function updateUserDocs(
       data: updatedUser.docs,
     };
   } catch (error) {
-    console.error("Error updating user docs:", error);
+    console.log("Error updating user docs:", error);
     return {
       success: false,
       message: "Error updating user docs",
@@ -210,7 +210,7 @@ export async function updateUserDetails(
       data: updatedUser,
     };
   } catch (error) {
-    console.error("Error updating user details:", error);
+    console.log("Error updating user details:", error);
     return {
       success: false,
       message: "Error updating user details",
@@ -229,7 +229,7 @@ export async function completeOnboarding(
       success: res.status === 200,
     };
   } catch (error) {
-    console.error("Error completing onboarding:", error);
+    console.log("Error completing onboarding:", error);
     return {
       success: false,
     };
@@ -249,7 +249,7 @@ export async function verifyDocument(data: {
       message: "Document verification registered",
     };
   } catch (error) {
-    console.error("Error verifying document:", error);
+    console.log("Error verifying document:", error);
     return {
       success: false,
       message: "Error verifying document",
