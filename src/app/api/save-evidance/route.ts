@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       fileSize: file?.size,
       interviewId,
       title,
-      isViolation: voilation === "true",
+      violation: voilation === "true",
     });
 
     if (!file) {
@@ -34,35 +34,30 @@ export async function POST(req: NextRequest) {
     const uploadKey = `evidence/${interviewId}/${fileName}`;
     console.log("[save-evidence] Starting S3 upload with key:", uploadKey);
 
-    uploadFileToS3(file, bucket, uploadKey)
-      .then((response) => {
-        console.log("[save-evidence] File uploaded successfully:", response);
-        console.log("[save-evidence] Adding evidence record to database");
-        return {
-          interviewId,
+    try {
+      const response = await uploadFileToS3(file, bucket, uploadKey);
+      console.log("[save-evidence] File uploaded successfully:", response);
+      console.log("[save-evidence] Adding evidence record to database");
+
+      const evidencePayload = {
+        interviewId,
+        evidence: {
+          title,
           evidence: {
-            title,
-            evidence: {
-              evidenceURL: response.url,
-            },
-            violation: voilation == "true",
-            capturedAt: new Date(),
+            evidenceURL: response.url,
           },
-        };
-      })
-      .then(addImageEvidance)
-      .then((result) => {
-        console.log(
-          "[save-evidence] Evidence record added successfully:",
-          result
-        );
-      })
-      .catch((err) => {
-        console.log(
-          "[save-evidence] Error in S3 upload or database update:",
-          err
-        );
-      });
+          violation: voilation == "true",
+          capturedAt: new Date(),
+        },
+      };
+
+      const result = await addImageEvidance(evidencePayload);
+
+      console.log("[save-evidence] Evidence record added successfully:", result);
+    } catch (err) {
+      console.log("[save-evidence] Error in S3 upload or database update:", err);
+      return NextResponse.json({ error: "Upload or DB update failed" }, { status: 500 });
+    }
 
     console.log("[save-evidence] Responding with success message");
     return NextResponse.json({
