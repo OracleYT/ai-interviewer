@@ -38,7 +38,7 @@ export const AP_VOILATION_WARNINGS = {
   "5005": {
     title: "Document Page Hidden or Focus Lost ",
     voilation: true,
-  },
+  }, 
   "5006": {
     title: "Document Page Became Visible or Focus Was Gained",
     voilation: false,
