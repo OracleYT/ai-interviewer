@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useEffect,
 } from "react";
 
 import useCache from "../hooks/useCache";
@@ -36,6 +37,14 @@ const MESSAGE_MAP: Record<
       "user is looking here and there and seems distracted, tell them You're looking around quite a bit. Let's stay focused here.",
   },
 };
+
+import dynamic from "next/dynamic";
+
+const { FaceDetectionProcessor }: any = dynamic(
+  // @ts-ignore
+  () => import("@videosdk.live/videosdk-media-processor-web"),
+  { ssr: false }
+);
 
 type FaceDetectionContextType = {
   startDetectingFace: (stream: any) => void;
@@ -74,17 +83,9 @@ export function FaceDetectionProvider({
     currentAttentionDirection: null,
   });
 
-  const faceDetectionProcessor: any = useMemo(() => {
-    if (typeof window !== "undefined") {
-      // Only require in the browser
-
-      import("@videosdk.live/videosdk-media-processor-web").then((module) => {
-        const { FaceDetectionProcessor } = module;
-        return new FaceDetectionProcessor();
-      });
-    }
-    return null;
-  }, []);
+  const faceDetectionProcessor = useMemo(() => {
+    return new FaceDetectionProcessor();
+  }, [FaceDetectionProcessor]);
 
   const emitSpeakEvent = (
     type: "attention" | "you-moved-away" | "more-people" | "eye-contact"
@@ -218,7 +219,6 @@ export function FaceDetectionProvider({
       console.error("FaceDetectionProcessor is not initialized");
       return;
     }
-
     faceDetectionProcessor?.start({
       options: {
         interval: 200,
