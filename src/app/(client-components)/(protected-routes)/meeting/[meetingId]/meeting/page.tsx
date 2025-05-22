@@ -40,11 +40,16 @@ import { ParticipantsContext } from "@/contexts/ParticipantsProvider";
 import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 import { START_MEETING_ID } from "../constants";
 // import usePersistantRouter from "@/hooks/usePersistantRouter";
+import { useLoadingBar } from "react-top-loading-bar";
 
 const Meeting = () => {
   const params = useParams<{ meetingId: string }>();
   // const { redirectState } = usePersistantRouter();
   const meetingId = params.meetingId;
+  const { start, complete, getProgress, increase, decrease } = useLoadingBar({
+    color: "blue",
+    height: 2,
+  });
 
   const audioRef = useRef<HTMLAudioElement>(null);
   // const router = useRouter();
@@ -68,7 +73,7 @@ const Meeting = () => {
   // const [volumeLevel, setVolumeLevel] = useState(0);
   // const { isCameraOn, startCamera, stopCamera } =
   //   useContext(BrowserMediaContext);
-  const { startVapiSession, stopVapiSession, vapiInstance } =
+  const { startVapiSession, stopVapiSession, vapiInstance, callStatus } =
     useVapi(meetingId);
   const { setModalConfig } = useAutoProctor();
 
@@ -86,7 +91,25 @@ const Meeting = () => {
   const router = useRouter();
 
   useEffect(() => {
-    
+    if (callStatus === "started") {
+      start("static", 1);
+      decrease(35);
+    }
+    if (callStatus === "ended") {
+      complete();
+    }
+    const id = setInterval(() => {
+      const progress = getProgress();
+      if (callStatus === "started" && progress <= 90) {
+        increase(1);
+      }
+    }, 20_000);
+    return () => {
+      clearTimeout(id);
+    };
+  }, [callStatus, start, complete, decrease]);
+
+  useEffect(() => {
     const isMeetingStartPresets =
       localStorage.getItem(START_MEETING_ID) === meetingId;
     if (!isMeetingStartPresets) {

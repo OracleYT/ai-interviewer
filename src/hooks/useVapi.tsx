@@ -25,6 +25,9 @@ const useVapi = (meetingId: string) => {
   const useCallStatus = useRef<
     "init" | "started" | "starting" | "ending" | "ended"
   >("init");
+  const [callStatus, setCallStatus] = useState<
+    "init" | "started" | "starting" | "ending" | "ended"
+  >("init");
 
   const [vapiInstance, setVapiInstance] = useState<Vapi>();
   const { setVolumeLevel } = useContext(VolumeLevelContext);
@@ -33,6 +36,7 @@ const useVapi = (meetingId: string) => {
 
   const { camera } = useCameraState();
   const { microphone } = useMicrophoneState();
+  const endCallHandlerRef = useRef<(() => void)[]>([]);
 
   useEffect(() => {
     const handleProctoringStop = async () => {
@@ -172,6 +176,7 @@ const useVapi = (meetingId: string) => {
       };
     }
     useCallStatus.current = "starting";
+    setCallStatus("starting");
 
     const assistantOverrides = {
       transcriber: {
@@ -188,6 +193,7 @@ const useVapi = (meetingId: string) => {
       assistantOverrides
     );
     useCallStatus.current = "started";
+    setCallStatus("started");
 
     updateInterviewStatusById({
       interviewId: meetingId,
@@ -202,6 +208,7 @@ const useVapi = (meetingId: string) => {
     startVapiSession,
     stopVapiSession,
     vapiInstance,
+    callStatus,
   };
 };
 
