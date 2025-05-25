@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useRef } from "react";
+import { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   // CallingState,
@@ -41,6 +41,9 @@ import { useAutoProctor } from "@/contexts/ProcterContextProvider";
 import { START_MEETING_ID } from "../constants";
 // import usePersistantRouter from "@/hooks/usePersistantRouter";
 import { useLoadingBar } from "react-top-loading-bar";
+import ModalPopup from "@/components/ModalPopup";
+import { THINGS_NOT_TO_DO, THINGS_TO_DO } from "@/constatnts/interview-const";
+import { CircleCheckBig, CircleX } from "lucide-react";
 
 const Meeting = () => {
   const params = useParams<{ meetingId: string }>();
@@ -76,6 +79,7 @@ const Meeting = () => {
   const { startVapiSession, stopVapiSession, vapiInstance, callStatus } =
     useVapi(meetingId);
   const { setModalConfig } = useAutoProctor();
+  const [modelContent, setModalContent] = useState<ReactNode | null>(null);
 
   // const isCreator = call?.state.createdBy?.id === user?.id;
   // const isCreator = true;
@@ -117,10 +121,7 @@ const Meeting = () => {
       return;
     }
     sessionStorage.removeItem(START_MEETING_ID);
-    if (!vapiInstance) {
-      startVapiSession(meetingData.interviewer?.assistantID);
-      audioRef.current?.play();
-    }
+    onInterviewStart();
   }, []);
 
   // useEffect(() => {
@@ -145,6 +146,81 @@ const Meeting = () => {
       });
   };
 
+  const startCall = async () => {
+    if (!vapiInstance) {
+      startVapiSession(meetingData.interviewer?.assistantID);
+      audioRef.current?.play();
+    }
+  };
+
+  function StartCallModal() {
+    const [isChecked, setIsChecked] = useState(false);
+
+    return (
+      <ModalPopup
+        ctaText="Start call"
+        ctaAction={() => {
+          if (isChecked) startCall();
+        }}
+        onClose={() => setModalContent(null)}
+        ctaDisabled={!isChecked}
+      >
+        <div className="text-center p-4">
+          <h1 className=" text-lg mb-2 flex flex-start items-center gap-2">
+            <CircleCheckBig className="text-green-600" />
+            Things To Do
+          </h1>
+          <ol className="text-left space-y-4 px-6 mb-6 border-b-[.5px] border-gray-100/40 py-4">
+            {THINGS_TO_DO.map((instruction, index) => (
+              <li
+                key={index}
+                className="flex items-center text-sm text-gray-700 "
+              >
+                {instruction.icon && (
+                  <span className="inline-block mr-2">
+                    {<instruction.icon className="text-green-600" />}
+                  </span>
+                )}
+                <span className="text-green-800">{instruction.text}</span>
+              </li>
+            ))}
+          </ol>
+          <h1 className="text-lg mb-2 flex flex-start items-center gap-2">
+            <CircleX className="text-red-600" />
+            Thing Not To Do
+          </h1>
+          <ol className="text-left space-y-4 px-6 mb-6 border-b-[.5px] border-gray-100/40 py-4">
+            {THINGS_NOT_TO_DO.map((instruction, index) => (
+              <li
+                key={index}
+                className="flex items-center text-sm text-red-600 "
+              >
+                {instruction.icon && (
+                  <span className="inline-block mr-2">
+                    {<instruction.icon className="text-red-600" />}
+                  </span>
+                )}
+                <span className="text-red-800">{instruction.text}</span>
+              </li>
+            ))}
+          </ol>
+          <label className="flex items-center gap-2 text-sm text-gray-700 px-6">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            />
+            I have read and agree to the instructions above.
+          </label>
+        </div>
+      </ModalPopup>
+    );
+  }
+
+  const onInterviewStart = async () => {
+    setModalContent(<StartCallModal />);
+  };
+
   // const toggleScreenShare = async () => {
   //   try {
   //     // await screenShare.toggle();
@@ -165,6 +241,7 @@ const Meeting = () => {
 
   return (
     <StreamTheme className="root-theme">
+      {modelContent}
       <div className="relative w-svw h-svh bg-meet-black overflow-hidden">
         {/* {isSpeakerLayout && <SpeakerLayout />} */}
         {/* { !isSpeakerLayout &&   } */}

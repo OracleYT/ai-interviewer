@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 // import {
 //   CallingState,
@@ -29,8 +29,10 @@ import {
 } from "@/contexts/ProcterContextProvider";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCallStateHooks } from "@stream-io/video-react-sdk";
-import { useInterview } from "@/contexts/InterviewContextProvider";
+// import { useInterview } from "@/contexts/InterviewContextProvider";
 import { START_MEETING_ID } from "./constants";
+import ModalPopup from "@/components/ModalPopup";
+import { IMPORANT_INSTRUCTIONS } from "@/constatnts/interview-const";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
@@ -63,6 +65,7 @@ const Lobby = () => {
   const { useMicrophoneState, useCameraState } = useCallStateHooks();
   const { hasBrowserPermission: hasMicPermission } = useMicrophoneState();
   const { hasBrowserPermission: hasCameraPermission } = useCameraState();
+  const [modelContent, setModalContent] = useState<ReactNode | null>(null);
 
   // useEffect(() => {
   //   if (isCameraOn) {
@@ -104,7 +107,7 @@ const Lobby = () => {
       // return null;
     }
   }, [loading, joining]);
-  const { setStartRedirect } = useInterview();
+  // const { setStartRedirect } = useInterview();
 
   // const updateGuestName = async () => {
   //   try {
@@ -148,6 +151,45 @@ const Lobby = () => {
     });
   };
 
+  function JoinCallModal() {
+    const [isChecked, setIsChecked] = useState(false);
+
+    return (
+      <ModalPopup
+        open={true}
+        title="⚠️ Important Instructions"
+        ctaText="Join call"
+        ctaAction={() => {
+          if (isChecked) joinCall();
+        }}
+        onClose={() => setModalContent(null)}
+        ctaDisabled={!isChecked}
+      >
+        <div className="text-center p-4">
+          <ol className="text-left space-y-4 px-6 mb-6">
+            {IMPORANT_INSTRUCTIONS.map((instruction, index) => (
+              <li key={index} className="text-sm text-gray-700 list-decimal">
+                {instruction}
+              </li>
+            ))}
+          </ol>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            />
+            I have read and agree to the instructions above.
+          </label>
+        </div>
+      </ModalPopup>
+    );
+  }
+
+  const onJoinClick = async () => {
+    setModalContent(<JoinCallModal />);
+  };
+
   if (!validMeetingId)
     return (
       <div>
@@ -165,6 +207,7 @@ const Lobby = () => {
 
   return (
     <div>
+      {modelContent}
       <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
         <MeetingPreview />
@@ -201,7 +244,7 @@ const Lobby = () => {
             {!joining && !loading && (
               <Button
                 className="w-60 text-sm"
-                onClick={joinCall}
+                onClick={onJoinClick}
                 rounding="lg"
                 disabled={!hasBrowserPermission}
                 // variant="secondry"
