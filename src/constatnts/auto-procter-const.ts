@@ -132,7 +132,7 @@ export const AP_BROWSER_ERRORS: Record<
     action: "Update Safari to the latest version, or use Google Chrome.", 
   },
   "4017": {
-    message: "Your browser is not supported for this test.",
+    message: "Your browser is not supported for this test. ",
     action: "Please use Google Chrome or Mozilla Firefox.",
   },
   "4018": {
