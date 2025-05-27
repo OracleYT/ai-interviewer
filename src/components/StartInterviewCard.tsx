@@ -83,7 +83,7 @@ function StartInterviewCard({
 
   return (
     <>
-      <div className="absolute top-0 left-0 w-full h-full">{modelContent}</div>
+      <div className="absolute top-0 left-0 -z-50 w-full h-full">{modelContent}</div>
       <Card
         background="#EDF0F6"
         borderRadius="15px"
