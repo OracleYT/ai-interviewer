@@ -41,7 +41,7 @@ function StartInterviewCard({
       <ModalPopup
         open={true}
         title="⚠️ Important Instructions"
-        ctaText="Join call"
+        ctaText="Start interview"
         ctaAction={() => {
           if (isChecked) {
             startCall && startCall();
