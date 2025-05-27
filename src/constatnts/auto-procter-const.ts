@@ -139,4 +139,5 @@ export const AP_BROWSER_ERRORS: Record<
     message: "There was an issue loading necessary files.",
     action: "Check your internet connection and reload the page.",
   },
+  
 };
