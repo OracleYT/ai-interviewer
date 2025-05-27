@@ -32,7 +32,8 @@ import { useCallStateHooks } from "@stream-io/video-react-sdk";
 // import { useInterview } from "@/contexts/InterviewContextProvider";
 import { START_MEETING_ID } from "./constants";
 import ModalPopup from "@/components/ModalPopup";
-import { IMPORANT_INSTRUCTIONS } from "@/constatnts/interview-const";
+import { THINGS_NOT_TO_DO, THINGS_TO_DO } from "@/constatnts/interview-const";
+import { CircleCheckBig, CircleX } from "lucide-react";
 // import { SettingsOut } from "svix";
 
 const Lobby = () => {
@@ -151,29 +152,58 @@ const Lobby = () => {
     });
   };
 
-  function JoinCallModal() {
+  function StartCallModal({ startCall }: { startCall: () => void }) {
     const [isChecked, setIsChecked] = useState(false);
 
     return (
       <ModalPopup
-        open={true}
-        title="⚠️ Important Instructions"
         ctaText="Join call"
         ctaAction={() => {
-          if (isChecked) joinCall();
+          if (isChecked) startCall && startCall();
         }}
         onClose={() => setModalContent(null)}
         ctaDisabled={!isChecked}
       >
         <div className="text-center p-4">
-          <ol className="text-left space-y-4 px-6 mb-6">
-            {IMPORANT_INSTRUCTIONS.map((instruction, index) => (
-              <li key={index} className="text-sm text-gray-700 list-decimal">
-                {instruction}
+          <h1 className=" text-lg mb-2 flex flex-start items-center gap-2">
+            <CircleCheckBig className="text-green-600" />
+            Things To Do
+          </h1>
+          <ol className="text-left space-y-4 px-6 mb-6 border-b-[.5px] border-gray-100/40 py-4">
+            {THINGS_TO_DO.map((instruction, index) => (
+              <li
+                key={index}
+                className="flex items-center text-sm text-gray-700 "
+              >
+                {instruction.icon && (
+                  <span className="inline-block mr-2">
+                    {<instruction.icon className="text-green-600" />}
+                  </span>
+                )}
+                <span className="text-green-800">{instruction.text}</span>
               </li>
             ))}
           </ol>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <h1 className="text-lg mb-2 flex flex-start items-center gap-2">
+            <CircleX className="text-red-600" />
+            Thing Not To Do
+          </h1>
+          <ol className="text-left space-y-4 px-6 mb-6 border-b-[.5px] border-gray-100/40 py-4">
+            {THINGS_NOT_TO_DO.map((instruction, index) => (
+              <li
+                key={index}
+                className="flex items-center text-sm text-red-600 "
+              >
+                {instruction.icon && (
+                  <span className="inline-block mr-2">
+                    {<instruction.icon className="text-red-600" />}
+                  </span>
+                )}
+                <span className="text-red-800">{instruction.text}</span>
+              </li>
+            ))}
+          </ol>
+          <label className="flex items-center gap-2 text-sm text-gray-700 px-6">
             <input
               type="checkbox"
               checked={isChecked}
@@ -187,7 +217,7 @@ const Lobby = () => {
   }
 
   const onJoinClick = async () => {
-    setModalContent(<JoinCallModal />);
+    setModalContent(<StartCallModal startCall={joinCall} />);
   };
 
   if (!validMeetingId)
