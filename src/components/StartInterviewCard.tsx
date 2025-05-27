@@ -2,7 +2,6 @@
 
 import React, { ReactNode, useState } from "react";
 import Card from "./Card";
-import Link from "next/link";
 import ModalPopup from "./ModalPopup";
 import { IMPORANT_INSTRUCTIONS } from "@/constatnts/interview-const";
 
@@ -29,14 +28,7 @@ function StartInterviewCard({
 }) {
   const [modelContent, setModalContent] = useState<ReactNode | null>(null);
 
-  const startInterview = (e: any) => {
-    e.preventDefault();
-    if (isInterviewExpired) {
-      return;
-    }
-    if (!isDocumentVerified) {
-      return;
-    }
+  const startInterview = () => {
     if (ctaHref) {
       window.location.href = ctaHref;
     }
@@ -51,7 +43,10 @@ function StartInterviewCard({
         title="⚠️ Important Instructions"
         ctaText="Join call"
         ctaAction={() => {
-          if (isChecked) startCall && startCall();
+          if (isChecked) {
+            startCall && startCall();
+            setModalContent(null);
+          }
         }}
         onClose={() => setModalContent(null)}
         ctaDisabled={!isChecked}
@@ -83,7 +78,11 @@ function StartInterviewCard({
 
   return (
     <>
-      <div className="absolute top-0 left-0 -z-50 w-full h-full">{modelContent}</div>
+      {modelContent && (
+        <div className="absolute top-0 left-0 w-full h-full">
+          {modelContent}
+        </div>
+      )}
       <Card
         background="#EDF0F6"
         borderRadius="15px"
@@ -117,13 +116,12 @@ function StartInterviewCard({
                   Start Interview
                 </span>
               ) : (
-                <Link
-                  href="#"
+                <button
                   onClick={onStartClick}
                   className="border text-[#ffffff] text-center py-1 bg-[#101010] rounded-lg px-4 cursor-pointer"
                 >
                   {cta ?? "Start Interview"}
-                </Link>
+                </button>
               )}
             </div>
           ) : (

@@ -159,7 +159,10 @@ const Lobby = () => {
       <ModalPopup
         ctaText="Join call"
         ctaAction={() => {
-          if (isChecked) startCall && startCall();
+          if (isChecked) {
+            startCall && startCall();
+            setModalContent(null);
+          }
         }}
         onClose={() => setModalContent(null)}
         ctaDisabled={!isChecked}
