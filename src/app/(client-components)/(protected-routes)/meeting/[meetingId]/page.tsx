@@ -164,6 +164,7 @@ const Lobby = () => {
             setModalContent(null);
           }
         }}
+        className="top-[15%]"
         onClose={() => setModalContent(null)}
         ctaDisabled={!isChecked}
       >
@@ -240,7 +241,11 @@ const Lobby = () => {
 
   return (
     <div>
-      {modelContent}
+      {modelContent && (
+        <div className="absolute top-0 left-0 h-full w-full">
+          {modelContent}
+        </div>
+      )}
       <Header navItems={false} user={meetingData?.user} />
       <main className="lg:h-[calc(100svh-80px)] p-4 mt-3 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
         <MeetingPreview />

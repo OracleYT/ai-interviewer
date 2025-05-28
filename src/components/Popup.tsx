@@ -1,7 +1,7 @@
 import React, { forwardRef, ReactNode } from "react";
 import clsx from "clsx";
 
-import Close from "./icons/Close";
+import { X } from "lucide-react";
 import Button from "./Button";
 
 interface PopupProps {
@@ -58,7 +58,7 @@ const Popup = forwardRef<HTMLDivElement | null, PopupProps>(function Popup(
               className="bg-transparent hover:bg-[#0000000a] rounded-full"
             >
               <div className="w-12 h-12 p-3">
-                <Close />
+                <X />
               </div>
             </button>
           </div>
