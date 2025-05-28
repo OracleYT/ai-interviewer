@@ -42,6 +42,7 @@ function StartInterviewCard({
         open={true}
         title="⚠️ Important Instructions"
         ctaText="Start interview"
+        className="top-[20%]"
         ctaAction={() => {
           if (isChecked) {
             startCall && startCall();

@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 
-import Close from "./icons/Close";
 import Button from "./Button";
+import { X } from "lucide-react";
 
 interface ModalPopupProps {
   className?: string;
@@ -37,7 +37,7 @@ function ModalPopup({
 
       <div
         className={clsx(
-          "absolute z-50 bg-white mx-auto top-[20%] w-[600px] rounded-3xl shadow-[0_1px_2px_0_rgba(60,_64,_67,_.3),_0_2px_6px_2px_rgba(60,_64,_67,_.15)] backdrop-blur-md border-3 border-red-600",
+          "absolute z-50 bg-white mx-auto w-[600px] rounded-3xl shadow-[0_1px_2px_0_rgba(60,_64,_67,_.3),_0_2px_6px_2px_rgba(60,_64,_67,_.15)] backdrop-blur-md",
           className
         )}
       >
@@ -46,16 +46,16 @@ function ModalPopup({
             <div className="text-lg leading-6 grow my-[15px] tracking-normal">
               {title}
             </div>
-            <button
-              onClick={closePopup}
-              className="bg-transparent hover:bg-[#0000000a] rounded-full"
-            >
-              <div className="w-12 h-12 p-3">
-                <Close />
-              </div>
-            </button>
           </div>
         )}
+        <button
+          onClick={closePopup}
+          className="absolute top-2 right-2 bg-transparent hover:bg-[#0000000a] rounded-full"
+        >
+          <div className="w-12 h-12 p-3">
+            <X />
+          </div>
+        </button>
         <div className="text-sm">{children}</div>
 
         {ctaAction && ctaText && (
