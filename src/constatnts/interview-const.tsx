@@ -8,47 +8,47 @@ import {
 } from "lucide-react";
 
 export const IMPORANT_INSTRUCTIONS = [
-  "You will get questions related to all domain and evaluated.",
-  "You will be asked questions based on your profile and documents.",
-  "You will be asked regarding your personal details, professional details, passports, financial related documents, random question to check English, understanding of questions, about university, country, why particular thing.",
-  "You should be able to not move much as we will take your 30 pictures where you break the rules.",
-  "We will warn you thrice and then when you misconduct or not been professional according to rules then we will drop the interview.",
+  "You will be asked questions about different topics and your answers will be checked.",
+  "The questions will be based on your profile and documents.",
+  "You may be asked about your personal details, education, job experience, passport, financial documents, and other papers. You may also be asked simple questions to check your English and understand your course,university, country, and your reasons for choosing them.",
+  "Please try not to move too much. We will take up to 30 pictures during the interview. If you move too much or break any rules, it will be noted.",
+  "If you do something wrong or act unprofessionally, we will warn you up to three times. If it continues, your interview will be cancelled.",
 ];
 
 export const THINGS_NOT_TO_DO = [
   {
     icon: CameraIcon,
-    text: "Don't cheat and look here and there.",
+    text: "Do not attempt to cheat or look around during the interview.",
   },
   {
     icon: StickyNote,
-    text: "Don't use any material to study answer.",
+    text: "Do not refer to any notes or study materials while answering.",
   },
   {
     icon: AlarmClock,
-    text: "Don't close until instructed.",
+    text: "Do not close the interview window unless instructed to do so.",
   },
   {
     icon: Globe,
-    text: "Don't open different websites as we will catch you.",
+    text: "Do not open any other websites or tabs during the interview, as this will be detected.",
   },
 ];
 
 export const THINGS_TO_DO = [
   {
     icon: Shield,
-    text: "Be truthful to your answers.",
+    text: "Provide honest and accurate answers.",
   },
   {
     icon: AlarmClock,
-    text: "Be precise and speak exactly in limited words.",
+    text: "Be clear and concise in your responses.",
   },
   {
     icon: Camera,
-    text: "Focus only towards camera and answer the words clearly.",
+    text: "Maintain eye contact with the camera and speak clearly.",
   },
   {
     icon: StickyNote,
-    text: "Be honest and motivated with correct answers.",
+    text: "Stay confident and answer with sincerity and motivation.",
   },
 ];
