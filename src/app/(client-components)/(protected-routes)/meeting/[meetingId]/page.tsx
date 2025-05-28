@@ -207,7 +207,7 @@ const Lobby = () => {
             ))}
           </ol>
           <label className="flex items-center gap-2 text-sm text-gray-700 px-6">
-            <input
+            <input 
               type="checkbox"
               checked={isChecked}
               onChange={(e) => setIsChecked(e.target.checked)}
